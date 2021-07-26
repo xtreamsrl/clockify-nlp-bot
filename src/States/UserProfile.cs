@@ -1,0 +1,24 @@
+﻿using System;
+using Microsoft.Bot.Schema;
+
+namespace Bot.States
+{
+    public class UserProfile
+    {
+        public string? ClockifyToken { get; set; }
+        public string? UserId { get; set; }
+        
+        public int? EmployeeId { get; set; }
+        
+        public string? DicToken { get; set; }
+
+        public string? FirstName { get; set; }
+        
+        public string? LastName { get; set; }
+        
+        public ConversationReference? ConversationReference { get; set; }
+
+        public DateTime? StopRemind { get; set; }
+        public bool Experimental { get; set; }
+    }
+}

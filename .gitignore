@@ -1,0 +1,12 @@
+bin/
+obj/
+packages/
+riderModule.iml
+/_ReSharper.Caches/
+
+.vscode/
+.idea
+*.DotSettings.user
+/src/appsettings.Development.json
+
+*test.runsettings

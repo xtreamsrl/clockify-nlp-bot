@@ -1,0 +1,895 @@
+{
+  "luis_schema_version": "7.0.0",
+  "intents": [
+    {
+      "name": "Fill",
+      "features": []
+    },
+    {
+      "name": "FillAsYesterday",
+      "features": []
+    },
+    {
+      "name": "Insult",
+      "features": []
+    },
+    {
+      "name": "None",
+      "features": []
+    },
+    {
+      "name": "Report",
+      "features": []
+    },
+    {
+      "name": "Thanks",
+      "features": []
+    },
+    {
+      "name": "Utilities.Help",
+      "inherits": {
+        "domain_name": "Utilities",
+        "model_name": "Help"
+      },
+      "features": []
+    },
+    {
+      "name": "Utilities.Stop",
+      "inherits": {
+        "domain_name": "Utilities",
+        "model_name": "Stop"
+      },
+      "features": []
+    }
+  ],
+  "entities": [
+    {
+      "name": "WorkedEntity",
+      "children": [],
+      "roles": [],
+      "features": []
+    }
+  ],
+  "hierarchicals": [],
+  "composites": [],
+  "closedLists": [],
+  "prebuiltEntities": [
+    {
+      "name": "datetimeV2",
+      "roles": []
+    }
+  ],
+  "utterances": [
+    {
+      "text": "1 hour on gci mobile",
+      "intent": "Fill",
+      "entities": [
+        {
+          "entity": "WorkedEntity",
+          "startPos": 10,
+          "endPos": 19,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "2 hours meeting with ladawn padilla at 5 on tuesday",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "2 hours on pun scenarios",
+      "intent": "Fill",
+      "entities": [
+        {
+          "entity": "WorkedEntity",
+          "startPos": 11,
+          "endPos": 23,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "30 minutes on tss sal",
+      "intent": "Fill",
+      "entities": [
+        {
+          "entity": "WorkedEntity",
+          "startPos": 14,
+          "endPos": 20,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "30 minutes working on administration",
+      "intent": "Fill",
+      "entities": [
+        {
+          "entity": "WorkedEntity",
+          "startPos": 22,
+          "endPos": 35,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "add 10 minutes on last friday on learning",
+      "intent": "Fill",
+      "entities": [
+        {
+          "entity": "WorkedEntity",
+          "startPos": 33,
+          "endPos": 40,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "add 2 hours on tss",
+      "intent": "Fill",
+      "entities": [
+        {
+          "entity": "WorkedEntity",
+          "startPos": 15,
+          "endPos": 17,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "add 3 hours on tss on yesterday",
+      "intent": "Fill",
+      "entities": [
+        {
+          "entity": "WorkedEntity",
+          "startPos": 15,
+          "endPos": 17,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "add coffee on august 12th at 2 pm with herman for one hour",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "add location to favorites",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "add ultimate frisbee on sunday at 2 pm for 2 hours",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "add work to calendar friday from 8 for an hour",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "any help",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "appending group meeting next monday at 11am for an hour",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "at 10 am do i have a 30 minutes meeting",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "baby just be quiet",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "be quiet",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "be quiet now",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "can you help",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "can you help me",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "can you please show me, for yesterday, my time report?",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "can you tell me the report from the 1st to yesterday?",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "come on stop",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "create a calendar appointment at 3:30 tomorrow for half an hour",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "create a event with eden roth at 4pm today for 30 mins",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "create appointment for 30 minutes",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "dear, from yesterday to today, show me my work",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "dismiss",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "display map for sacramento plastic surgery",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "distance between my home to tesco",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "do me a favor",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "end",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "end it",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "exit exit",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "exit stop",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "fuck you",
+      "intent": "Insult",
+      "entities": []
+    },
+    {
+      "text": "get report for yesterday",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "give me a favor",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "give me some help",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "go fuck yourself",
+      "intent": "Insult",
+      "entities": []
+    },
+    {
+      "text": "god shut up",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "half an hour on time survey bot",
+      "intent": "Fill",
+      "entities": [
+        {
+          "entity": "WorkedEntity",
+          "startPos": 16,
+          "endPos": 30,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "help",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "hey",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "hey stop",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "how can i get it",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "how far am i from fifty first avenue and indian school",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "how far away from school am i",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "how far i am from my work place",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "how far is it from here to home",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "how far is it from here to work",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "how far is it from home to new haven missouri",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "how far is it to from here",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "how far is it to mum and dad s house",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "how far is it to street",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "how far is mcdonalds from my home",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "how far is rite aid from acme",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "how much time did i work last month?",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "how to do it",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "i don't understand",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "i don't want to see you anymore",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "i love you to stop talking",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "i mean stop listening",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "i need help",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "i need some assistance",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "i need some help",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "i said stop",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "i worked 10 minutes on project tss today",
+      "intent": "Fill",
+      "entities": [
+        {
+          "entity": "WorkedEntity",
+          "startPos": 31,
+          "endPos": 33,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "i worked as yesterday",
+      "intent": "FillAsYesterday",
+      "entities": []
+    },
+    {
+      "text": "i would like to know how much time did i work from the beginning of the month.",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "is there any help",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "i've done 3 hours on teche_ti",
+      "intent": "Fill",
+      "entities": [
+        {
+          "entity": "WorkedEntity",
+          "startPos": 21,
+          "endPos": 28,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "i've worked on presales for 45 minutes",
+      "intent": "Fill",
+      "entities": [
+        {
+          "entity": "WorkedEntity",
+          "startPos": 15,
+          "endPos": 22,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "just be quiet",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "let's rate microsoft visitor center 5 stars on google map",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "my entries today are exactly as yesterday",
+      "intent": "FillAsYesterday",
+      "entities": []
+    },
+    {
+      "text": "my god shut up",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "my hours on yesterday?",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "my work from yesterday to three days ago",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "my work in 2018",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "my work in 2019?",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "my work in 2020?",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "my work last week?",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "my work last year?",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "my work yesterday?",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "never mind stop",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "no be quiet",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "no be quiet now",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "no no no no stop talking",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "no shut up",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "no stop",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "nobody cares stop talking",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "nowhere just be quiet",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "oh my god shut up",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "ok stop stop",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "one hour of internals",
+      "intent": "Fill",
+      "entities": [
+        {
+          "entity": "WorkedEntity",
+          "startPos": 12,
+          "endPos": 20,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "open help",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "please fill my entries as yesterday",
+      "intent": "FillAsYesterday",
+      "entities": []
+    },
+    {
+      "text": "please help",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "please i'd like to report that i've worked 3 hours on presales today",
+      "intent": "Fill",
+      "entities": [
+        {
+          "entity": "WorkedEntity",
+          "startPos": 54,
+          "endPos": 61,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "please schedule an all hands meeting for 2 hours",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "propagate my entries from yesterday to today",
+      "intent": "FillAsYesterday",
+      "entities": []
+    },
+    {
+      "text": "quiet",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "quiet now",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "r",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "report 10 minutes on marketing",
+      "intent": "Fill",
+      "entities": [
+        {
+          "entity": "WorkedEntity",
+          "startPos": 21,
+          "endPos": 29,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "report for today",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "report from 5 days ago to now",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "report from monday to today",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "report from the 1st of july to today",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "report from yesterday?",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "report my entries as yesterday",
+      "intent": "FillAsYesterday",
+      "entities": []
+    },
+    {
+      "text": "report this for today",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "schedule appointment yearly check up friday march one 10 am one hour",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "schedule lunch with pura at noon on wednesday may 20 minutes",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "show me the report for this month",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "show report for this entire year",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "shut up",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "shut up be quiet",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "shut up quiet",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "shut your mouth",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "silence",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "some help",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "son of a bitch",
+      "intent": "Insult",
+      "entities": []
+    },
+    {
+      "text": "stop please",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "stop talking",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "suck my dick",
+      "intent": "Insult",
+      "entities": []
+    },
+    {
+      "text": "super, thanks",
+      "intent": "Thanks",
+      "entities": []
+    },
+    {
+      "text": "tell me my work for last year.",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "thank you",
+      "intent": "Thanks",
+      "entities": []
+    },
+    {
+      "text": "thanks",
+      "intent": "Thanks",
+      "entities": []
+    },
+    {
+      "text": "today i worked exactly as yesterday",
+      "intent": "FillAsYesterday",
+      "entities": []
+    },
+    {
+      "text": "turn off",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "turn off stop",
+      "intent": "Utilities.Stop",
+      "entities": []
+    },
+    {
+      "text": "what have i worked on today?",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "what should i do",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "who can help me",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "work from the 1 of month to now",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "worked hours from yesterday to now",
+      "intent": "Report",
+      "entities": []
+    },
+    {
+      "text": "wow, thanks",
+      "intent": "Thanks",
+      "entities": []
+    },
+    {
+      "text": "yesterday i've worked 30 minutes on flutter",
+      "intent": "Fill",
+      "entities": [
+        {
+          "entity": "WorkedEntity",
+          "startPos": 36,
+          "endPos": 42,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "you suck",
+      "intent": "Insult",
+      "entities": []
+    },
+    {
+      "text": "you're great",
+      "intent": "Thanks",
+      "entities": []
+    }
+  ],
+  "versionId": "0.1",
+  "name": "TimeSurveyBot Luis",
+  "desc": "",
+  "culture": "en-us",
+  "tokenizerVersion": "1.0.0",
+  "patternAnyEntities": [],
+  "regex_entities": [],
+  "phraselists": [],
+  "regex_features": [],
+  "patterns": [],
+  "settings": []
+}
