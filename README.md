@@ -39,6 +39,28 @@ This bot has been created using [Bot Framework](https://dev.botframework.com), i
   - Select `Bot.csproj` file
   - Press `F5` to run the project
 
+## Integration testing setup
+
+- Create a clockify account and generate the API key
+
+- Create testing workspaces and a tag named `bot`
+
+- Create a `test.runsettings` file with the following env variables
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+    <RunConfiguration>
+        <EnvironmentVariables>
+            <CLOCKIFY_API_KEY><!--API-KEY--></CLOCKIFY_API_KEY>
+            <CLOCKIFY_WS_ID><!--ACTIVE-WORKSPACE-ID--></CLOCKIFY_WS_ID>
+        </EnvironmentVariables>
+    </RunConfiguration>
+</RunSettings>
+```
+
+- Configure the Test Runner to use the custom settings
+
 ## Testing the bot using Bot Framework Emulator
 
 [Bot Framework Emulator](https://github.com/microsoft/botframework-emulator) is a desktop application that allows bot developers to test and debug their bots on localhost or running remotely through a tunnel.
