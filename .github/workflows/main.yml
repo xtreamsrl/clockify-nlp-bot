@@ -35,5 +35,7 @@ jobs:
       
     # Run dotnet test
     - name: Test
-      run: dotnet test --no-build --verbosity diagnostic
+      run: |
+        dotnet --info
+        dotnet test --no-build --verbosity diagnostic
     
