@@ -15,6 +15,7 @@ env:
 
 jobs:
   build:
+    name: Build and package
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -59,6 +60,8 @@ jobs:
       if: ${{ success() && matrix.os == 'windows-latest'}}
       
   deploy:
+    name: Deploy artifact
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Download artifact
