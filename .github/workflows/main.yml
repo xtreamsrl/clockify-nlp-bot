@@ -36,6 +36,13 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
       
-    # Run dotnet test
+    # Run dotnet test and upload resulting artifacts for analysis
     - name: Test
-      run: dotnet test --no-restore
+      run: dotnet test --no-restore --logger trx --results-directory "TestResults-${{ matrix.os }}"
+    - name: Upload dotnet test results
+      uses: actions/upload-artifact@v2
+      with:
+        name: dotnet-results-${{ matrix.os }}
+        path: TestResults-${{ matrix.os }}
+      # Use always() to always run this step to publish test results when there are test failures
+      if: ${{ always() }}
