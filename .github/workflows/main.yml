@@ -15,7 +15,10 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
 
     steps:
     # Checkout the repo
@@ -35,4 +38,4 @@ jobs:
       
     # Run dotnet test
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test --no-restore
