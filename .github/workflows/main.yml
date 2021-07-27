@@ -35,7 +35,4 @@ jobs:
       
     # Run dotnet test
     - name: Test
-      run: |
-        dotnet --info
-        dotnet test --no-restore --verbosity diagnostic
-    
+      run: dotnet test --no-restore --verbosity normal
