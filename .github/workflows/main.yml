@@ -16,6 +16,7 @@ env:
 jobs:
   build:
     name: Build and package
+    timeout-minutes: 30
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -61,6 +62,7 @@ jobs:
       
   deploy:
     name: Deploy artifact
+    timeout-minutes: 5
     needs: build
     runs-on: ubuntu-latest
     steps:
