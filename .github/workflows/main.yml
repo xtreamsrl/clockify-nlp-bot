@@ -9,7 +9,7 @@ on:
 env:
   AZURE_WEBAPP_NAME: netTimeSurveyBot
   AZURE_WEBAPP_PACKAGE_PATH: '.'
-  DOTNET_VERSIONE: '3.1.x'
+  DOTNET_VERSION: '3.1.x'
   CLOCKIFY_API_KEY: ${{ secrets.CLOCKIFY_API_KEY }}
   CLOCKIFY_WS_ID: ${{ secrets.CLOCKIFY_WS_ID }}
 
