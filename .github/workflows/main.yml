@@ -1,0 +1,39 @@
+name: .NET Core CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  AZURE_WEBAPP_NAME: netTimeSurveyBot
+  AZURE_WEBAPP_PACKAGE_PATH: '.'
+  DOTNET_VERSIONE: '3.1.x'
+  CLOCKIFY_API_KEY: ${{ secrets.CLOCKIFY_API_KEY }}
+  CLOCKIFY_WS_ID: ${{ secrets.CLOCKIFY_WS_ID }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the repo
+    - uses: actions/checkout@v2
+    
+    # Setup .NET Core SDK
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    # Run dotnet build
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+      
+    # Run dotnet test
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+    
