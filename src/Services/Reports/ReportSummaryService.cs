@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Bot.Models;
+using Bot.Services.Clockify;
 using Bot.States;
 using Bot.Utils;
 

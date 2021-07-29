@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Bot.Services;
+using Bot.Services.Clockify;
 using Clockify.Net.Models.TimeEntries;
 using FluentAssertions;
 using FluentAssertions.Extensions;

@@ -8,7 +8,7 @@ using Clockify.Net.Models.TimeEntries;
 using Clockify.Net.Models.Users;
 using Clockify.Net.Models.Workspaces;
 
-namespace Bot.Services
+namespace Bot.Services.Clockify
 {
     public interface IClockifyService
     {

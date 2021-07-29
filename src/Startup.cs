@@ -3,6 +3,7 @@ using Bot.Dialogs;
 using Bot.Recognizers;
 using Bot.Security;
 using Bot.Services;
+using Bot.Services.Clockify;
 using Bot.Services.Reminds;
 using Bot.Services.Reports;
 using Bot.Services.TimeEntries;

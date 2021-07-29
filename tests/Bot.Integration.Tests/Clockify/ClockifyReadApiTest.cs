@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Bot.Services;
+using Bot.Services.Clockify;
 using FluentAssertions;
 using Microsoft.Bot.Schema;
 using Xunit;

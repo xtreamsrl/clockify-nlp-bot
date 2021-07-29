@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bot.Dialogs;
 using Bot.Services;
+using Bot.Services.Clockify;
 using Bot.Services.Reports;
 using Bot.States;
 using Bot.Utils;

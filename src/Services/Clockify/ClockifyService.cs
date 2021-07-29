@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Bot.Factories;
 using Clockify.Net.Models.Clients;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.Tasks;
@@ -10,7 +9,7 @@ using Clockify.Net.Models.Users;
 using Clockify.Net.Models.Workspaces;
 using Microsoft.Bot.Schema;
 
-namespace Bot.Services
+namespace Bot.Services.Clockify
 {
     // Read operations
     public partial class ClockifyService : IClockifyService

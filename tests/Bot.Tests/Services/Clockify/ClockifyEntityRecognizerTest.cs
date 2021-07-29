@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Bot.Exceptions;
 using Bot.Recognizers;
 using Bot.Services;
+using Bot.Services.Clockify;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.Workspaces;
 using F23.StringSimilarity;

@@ -1,6 +1,4 @@
-﻿using Bot.Services;
-
-namespace Bot.Factories
+﻿namespace Bot.Services.Clockify
 {
     public static class ClockifyClientFactory
     {
