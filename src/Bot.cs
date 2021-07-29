@@ -154,44 +154,16 @@ namespace Bot
                     return;
                 }
 
-                if (topIntent == TimeSurveyBotLuis.Intent.Thanks)
-                {
-                    const string message = "You're welcome ❤";
-                    await turnContext.SendActivityAsync(MessageFactory.Text(message), cancellationToken);
-                    return;
-                }
 
-                if (topIntent == TimeSurveyBotLuis.Intent.Insult)
+                bool intentHasBeenHandled = await IntentManager.HandleIntent(dialogContext, topIntent, cancellationToken, 
+                    turnContext, entities, _fillDialog, _reportDialog, _stopReminderDialog);
+                if (!intentHasBeenHandled)
                 {
-                    const string message = "Language, please...";
-                    await turnContext.SendActivityAsync(MessageFactory.Text(message), cancellationToken);
-                    return;
+                    await turnContext.SendActivityAsync(MessageFactory.Text(
+                            "mmm, I don't know exactly how to respond to " +
+                            "that 😔... if you're stuck, just ask me for help"),
+                        cancellationToken);
                 }
-
-                if (topIntent == TimeSurveyBotLuis.Intent.Report)
-                {
-                    await dialogContext.BeginDialogAsync(_reportDialog.Id, entities, cancellationToken);
-                    return;
-                }
-
-                if (topIntent == TimeSurveyBotLuis.Intent.Fill ||
-                    entities.datetime != null && entities.WorkedEntity != null)
-                {
-                    await dialogContext.BeginDialogAsync(_fillDialog.Id, entities, cancellationToken);
-                    return;
-                }
-
-                if (topIntent == TimeSurveyBotLuis.Intent.Utilities_Stop)
-                {
-                    await dialogContext.BeginDialogAsync(_stopReminderDialog.Id, entities, cancellationToken);
-                    return;
-                }
-                
-                await turnContext.SendActivityAsync(MessageFactory.Text(
-                        "mmm, I don't know exactly how to respond to " +
-                        "that 😔... if you're stuck, just ask me for help"),
-                    cancellationToken);
-
             }
             else
             {
