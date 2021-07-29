@@ -6,9 +6,9 @@ using FluentAssertions;
 using FluentAssertions.Extensions;
 using Microsoft.Bot.Schema;
 using Xunit;
-using static Bot.Tests.Services.Clockify.ClockifyConsts;
+using static Bot.Integration.Tests.Clockify.ClockifyConsts;
 
-namespace Bot.Tests.Services.Clockify
+namespace Bot.Integration.Tests.Clockify
 {
     public class ClockifyWriteApiTest
     {
