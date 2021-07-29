@@ -8,9 +8,9 @@ using Microsoft.Bot.Connector;
 using Microsoft.Bot.Schema;
 using Moq;
 using Xunit;
-using static Bot.Tests.Services.Clockify.ClockifyConsts;
+using static Bot.Integration.Tests.Clockify.ClockifyConsts;
 
-namespace Bot.Tests.Dialogs
+namespace Bot.Integration.Tests.Dialogs
 {
     public class UserSetupDialogTest
     {

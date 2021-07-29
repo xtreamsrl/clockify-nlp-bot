@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bot.Exceptions;
 using Bot.Services;
-using Castle.Core.Internal;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.Tasks;
 using Clockify.Net.Models.Workspaces;
@@ -42,7 +41,7 @@ namespace Bot.Recognizers
                 })
                 .OrderBy(x => x.Distance);
             var scoredProjectsList = scoredProjects.ToList();
-            if (scoredProjectsList.IsNullOrEmpty())
+            if (!scoredProjectsList.Any())
             {
                 throw new CannotRecognizeProjectException(workedEntity);
             }
@@ -99,7 +98,7 @@ namespace Bot.Recognizers
                 })
                 .OrderBy(x => x.Distance);
             var scoredTaskList = scoredTasks.ToList();
-            if (scoredTaskList.IsNullOrEmpty())
+            if (!scoredTaskList.Any())
             {
                 throw new CannotRecognizeProjectException(
                     $"Project {project.Name} does not seem to have tasks defined, hence I can't really get " +

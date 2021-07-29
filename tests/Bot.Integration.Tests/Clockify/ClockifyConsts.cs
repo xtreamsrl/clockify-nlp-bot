@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Bot.Tests.Services.Clockify
+namespace Bot.Integration.Tests.Clockify
 {
     public static class ClockifyConsts
     {

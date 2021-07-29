@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bot.States;
-using Castle.Core.Internal;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.TimeEntries;
 
@@ -23,7 +22,7 @@ namespace Bot.Services
             string clockifyToken = user.ClockifyToken ?? throw new ArgumentNullException(nameof(user.ClockifyToken));
             string userId = user.UserId ?? throw new ArgumentNullException(nameof(user.UserId));
             var associatedTasks = await _clockifyService.GetTasksAsync(clockifyToken, project.WorkspaceId, project.Id);
-            if (associatedTasks.IsNullOrEmpty()) return false;
+            if (!associatedTasks.Any()) return false;
             var end = DateTimeOffset.Now;
             var start = end.AddDays(-90);
             List<HydratedTimeEntryDtoImpl> history = await _clockifyService.GetHydratedTimeEntriesAsync(
