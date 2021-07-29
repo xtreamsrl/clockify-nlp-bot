@@ -1,5 +1,4 @@
 ﻿using Bot.Dialogs;
-using Bot.Services;
 using Bot.Services.Clockify;
 using Bot.States;
 using FluentAssertions;
@@ -19,7 +18,7 @@ namespace Bot.Integration.Tests.Dialogs
         private async void UserSetupDialogMainFlowTest()
         {
             var userState = new UserState(new MemoryStorage());
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             var dialog = new ClockifySetupDialog(userState, clockifyService);
             var dialogTestClient = new DialogTestClient(Channels.Telegram, dialog);

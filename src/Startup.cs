@@ -35,7 +35,7 @@ namespace Bot
         {
             services.AddControllers().AddNewtonsoftJson();
 
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
             var dicService = new DipendentiInCloudService(new DipendentiInCloudClient());
 
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
