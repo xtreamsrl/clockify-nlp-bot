@@ -1,4 +1,5 @@
-﻿using Castle.Core.Internal;
+﻿
+using System.Linq;
 
 namespace Bot.Security
 {
@@ -15,12 +16,12 @@ namespace Bot.Security
         {
             string serverApiKey = _proactiveApiKeyProvider.GetApiKey();
 
-            if (serverApiKey.IsNullOrEmpty())
+            if (!serverApiKey.Any())
             {
                 return;
             }
             
-            if (clientApiKey.IsNullOrEmpty() && !serverApiKey.IsNullOrEmpty())
+            if (!clientApiKey.Any())
             {
                 throw new MissingApiKeyException("Proactive api key is missing");
             }
