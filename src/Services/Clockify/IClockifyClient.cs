@@ -32,7 +32,6 @@ namespace Bot.Services.Clockify
 
         Task<IRestResponse<List<ProjectDtoImpl>>> FindAllProjectsOnWorkspaceAsync(
             string workspaceId,
-            bool? isActive = null,
             int page = 1,
             int pageSize = 50);
 

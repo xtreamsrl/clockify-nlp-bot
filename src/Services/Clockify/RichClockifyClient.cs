@@ -86,16 +86,10 @@ namespace Bot.Services.Clockify
 
         public Task<IRestResponse<List<ProjectDtoImpl>>> FindAllProjectsOnWorkspaceAsync(
             string workspaceId,
-            bool? isActive = null,
             int page = 1,
             int pageSize = 50)
         {
-            var restRequest = new RestRequest("workspaces/" + workspaceId + "/projects");
-            if (isActive.HasValue)
-                restRequest.AddQueryParameter("is-active", isActive.ToString()!);
-            restRequest.AddQueryParameter("page", page.ToString());
-            restRequest.AddQueryParameter("page-size", pageSize.ToString());
-            return _client.ExecuteGetAsync<List<ProjectDtoImpl>>(restRequest);
+            return _clockifyClient.FindAllProjectsOnWorkspaceAsync(workspaceId, page: page, pageSize: pageSize);
         }
 
         public Task<IRestResponse<List<TagDto>>> FindAllTagsOnWorkspaceAsync(string workspaceId)

@@ -57,7 +57,7 @@ namespace Bot.Services.Clockify
             string workspaceId)
         {
             var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
-            var response = await clockifyClient.FindAllProjectsOnWorkspaceAsync(workspaceId, true, 1, PageSize);
+            var response = await clockifyClient.FindAllProjectsOnWorkspaceAsync(workspaceId, 1, PageSize);
 
             if (!response.IsSuccessful)
                 throw new ErrorResponseException($"Unable to get projects for workspaceId {workspaceId}");
