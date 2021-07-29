@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Clockify.Net;
 using Clockify.Net.Models.Clients;
@@ -9,25 +10,16 @@ using Clockify.Net.Models.Tasks;
 using Clockify.Net.Models.TimeEntries;
 using Clockify.Net.Models.Users;
 using Clockify.Net.Models.Workspaces;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 using RestSharp;
-using RestSharp.Serializers.NewtonsoftJson;
 
 namespace Bot.Services.Clockify
 {
     public class RichClockifyClient : IClockifyClient
     {
-        private const string BaseUrl = "https://api.clockify.me/api/v1";
-        private const string ApiKeyHeaderName = "X-Api-Key";
-
-        private IRestClient _client = null!;
         private readonly ClockifyClient _clockifyClient;
 
         public RichClockifyClient(string apiKey)
         {
-            InitRestClient(apiKey);
             _clockifyClient = new ClockifyClient(apiKey);
         }
 
@@ -39,11 +31,7 @@ namespace Bot.Services.Clockify
         public Task<IRestResponse<List<ProjectDtoImpl>>> FindAllProjectsOnWorkspaceByClientsAsync(
             string workspaceId, IEnumerable<string> clients)
         {
-            var restRequest = new RestRequest("workspaces/" + workspaceId + "/projects");
-            restRequest.AddQueryParameter("clients", string.Join(",", clients));
-
-            return _client.ExecuteGetAsync<List<ProjectDtoImpl>>(
-                restRequest);
+            return _clockifyClient.FindAllProjectsOnWorkspaceAsync(workspaceId, clients: clients.ToArray());
         }
 
         public Task<IRestResponse<List<HydratedTimeEntryDtoImpl>>> FindAllHydratedTimeEntriesForUserAsync(
@@ -102,25 +90,6 @@ namespace Bot.Services.Clockify
         {
             return _clockifyClient.CreateTimeEntryAsync(workspaceId, timeEntryRequest);
         }
-
-        private void InitRestClient(string apiKey)
-        {
-            var jsonSerializerSettings = new JsonSerializerSettings()
-            {
-                Converters = new List<JsonConverter>
-                {
-                    new StringEnumConverter(),
-                    new IsoDateTimeConverter()
-                    {
-                        DateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'"
-                    }
-                },
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            };
-
-            _client = new RestClient(BaseUrl);
-            _client.AddDefaultHeader(ApiKeyHeaderName, apiKey);
-            _client.UseNewtonsoftJson(jsonSerializerSettings);
-        }
+        
     }
 }
