@@ -46,21 +46,25 @@ namespace Bot.Services.Clockify
                 restRequest);
         }
 
-        public Task<IRestResponse<List<HydratedTimeEntryDtoImpl>>> FindAllHydratedTimeEntriesForUserAsync(string workspaceId, string userId, string? description = null,
+        public Task<IRestResponse<List<HydratedTimeEntryDtoImpl>>> FindAllHydratedTimeEntriesForUserAsync(
+            string workspaceId, string userId, string? description = null,
             DateTimeOffset? start = null, DateTimeOffset? end = null, string? project = null, string? task = null,
             bool? projectRequired = null, bool? taskRequired = null, bool? considerDurationFormat = null,
             bool? inProgress = null, int page = 1, int pageSize = 50)
         {
-            return _clockifyClient.FindAllHydratedTimeEntriesForUserAsync(workspaceId, userId, description, start, end, project, task, projectRequired, taskRequired, considerDurationFormat, inProgress, page, pageSize);
+            return _clockifyClient.FindAllHydratedTimeEntriesForUserAsync(workspaceId, userId, description, start, end,
+                project, task, projectRequired, taskRequired, considerDurationFormat, inProgress, page, pageSize);
         }
 
-        public Task<IRestResponse<List<TaskDto>>> FindAllTasksAsync(string workspaceId, string projectId, bool? isActive = null, string? name = null, int page = 1,
+        public Task<IRestResponse<List<TaskDto>>> FindAllTasksAsync(string workspaceId, string projectId,
+            bool? isActive = null, string? name = null, int page = 1,
             int pageSize = 50)
         {
             return _clockifyClient.FindAllTasksAsync(workspaceId, projectId, isActive, name, page, pageSize);
         }
 
-        public Task<IRestResponse<TaskDto>> CreateTaskAsync(string workspaceId, string projectId, TaskRequest taskRequest)
+        public Task<IRestResponse<TaskDto>> CreateTaskAsync(string workspaceId, string projectId,
+            TaskRequest taskRequest)
         {
             return _clockifyClient.CreateTaskAsync(workspaceId, projectId, taskRequest);
         }
@@ -99,7 +103,8 @@ namespace Bot.Services.Clockify
             return _clockifyClient.FindAllTagsOnWorkspaceAsync(workspaceId);
         }
 
-        public Task<IRestResponse<TimeEntryDtoImpl>> CreateTimeEntryAsync(string workspaceId, TimeEntryRequest timeEntryRequest)
+        public Task<IRestResponse<TimeEntryDtoImpl>> CreateTimeEntryAsync(string workspaceId,
+            TimeEntryRequest timeEntryRequest)
         {
             return _clockifyClient.CreateTimeEntryAsync(workspaceId, timeEntryRequest);
         }
@@ -118,7 +123,7 @@ namespace Bot.Services.Clockify
                 },
                 ContractResolver = new CamelCasePropertyNamesContractResolver(),
             };
-            
+
             _client = new RestClient(BaseUrl);
             _client.AddDefaultHeader(ApiKeyHeaderName, apiKey);
             _client.UseNewtonsoftJson(jsonSerializerSettings);
