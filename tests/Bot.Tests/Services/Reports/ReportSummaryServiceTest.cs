@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Bot.Models;
 using Bot.Services;
+using Bot.Services.Clockify;
 using Bot.Services.Reports;
 using Bot.States;
 using Clockify.Net.Models.Projects;

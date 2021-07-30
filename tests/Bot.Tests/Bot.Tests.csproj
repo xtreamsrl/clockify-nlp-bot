@@ -18,7 +18,5 @@
     <ItemGroup>
       <ProjectReference Include="..\..\src\Bot.csproj" />
     </ItemGroup>
-    
-    
 
 </Project>

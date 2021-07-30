@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bot.Exceptions;
 using Bot.Services;
+using Bot.Services.Clockify;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.Tasks;
 using Clockify.Net.Models.Workspaces;

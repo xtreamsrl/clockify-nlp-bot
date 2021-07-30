@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Bot.Exceptions;
 using Bot.Recognizers;
 using Bot.Services;
+using Bot.Services.Clockify;
 using Bot.Services.TimeEntries;
 using Bot.Utils;
 using Clockify.Net.Models.Projects;
