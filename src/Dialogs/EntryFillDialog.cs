@@ -48,7 +48,7 @@ namespace Bot.Dialogs
             }));
             AddDialog(new TextPrompt(AskForTaskStep, ClockifyTaskValidatorAsync));
             AddDialog(new TextPrompt(AskForNewTaskNameStep));
-            Id = nameof(EntryFillDialog);
+            Id = DialogIdProvider.GetDialogId(typeof(EntryFillDialog));
         }
 
         private async Task<DialogTurnResult> FeedbackAndExit(WaterfallStepContext stepContext, CancellationToken cancellationToken)

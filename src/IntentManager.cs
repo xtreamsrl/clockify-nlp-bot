@@ -17,16 +17,15 @@ namespace Bot
             CancellationToken cancellationToken,
             ITurnContext<IMessageActivity> turnContext,
             TimeSurveyBotLuis._Entities._Instance entities,
-            EntryFillDialog fillDialog,
-            ReportDialog reportDialog,
-            StopReminderDialog stopReminderDialog
-            )
+            DialogSet dialogSet
+        )
         {
             
             // TODO add integration test and put this condition inside the appropriate switch
             // Sometimes the intent is not recognized properly
             if (entities.datetime != null && entities.WorkedEntity != null)
             {
+                var fillDialog = dialogSet.Find(TimeSurveyBotLuis.Intent.Fill.ToString());
                 await dialogContext.BeginDialogAsync(fillDialog.Id, entities, cancellationToken);
                 return true;
             }
@@ -46,9 +45,11 @@ namespace Bot
                     return true;
                 }
                 case TimeSurveyBotLuis.Intent.Report:
+                    var reportDialog = dialogSet.Find(TimeSurveyBotLuis.Intent.Report.ToString());
                     await dialogContext.BeginDialogAsync(reportDialog.Id, entities, cancellationToken);
                     return true;
                 case TimeSurveyBotLuis.Intent.Fill:
+                    var fillDialog = dialogSet.Find(TimeSurveyBotLuis.Intent.Fill.ToString());
                     await dialogContext.BeginDialogAsync(fillDialog.Id, entities, cancellationToken);
                     return true;
                 case TimeSurveyBotLuis.Intent.FillAsYesterday:
@@ -60,6 +61,7 @@ namespace Bot
                     // Unused
                     break;
                 case TimeSurveyBotLuis.Intent.Utilities_Stop:
+                    var stopReminderDialog = dialogSet.Find(TimeSurveyBotLuis.Intent.Utilities_Stop.ToString());
                     await dialogContext.BeginDialogAsync(stopReminderDialog.Id, entities, cancellationToken);
                     break;
                 default:

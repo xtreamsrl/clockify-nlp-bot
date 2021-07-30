@@ -153,10 +153,9 @@ namespace Bot
                     await turnContext.SendActivityAsync(MessageFactory.Text(message), cancellationToken);
                     return;
                 }
-
-
+                
                 bool intentHasBeenHandled = await IntentManager.HandleIntent(dialogContext, topIntent, cancellationToken, 
-                    turnContext, entities, _fillDialog, _reportDialog, _stopReminderDialog);
+                    turnContext, entities, _dialogSet);
                 if (!intentHasBeenHandled)
                 {
                     await turnContext.SendActivityAsync(MessageFactory.Text(

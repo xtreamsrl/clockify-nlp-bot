@@ -27,7 +27,7 @@ namespace Bot.Dialogs
             {
                 FeedbackAndExitAsync
             }));
-            Id = nameof(GetType);
+            Id = DialogIdProvider.GetDialogId(typeof(StopReminderDialog));
         }
         
         private async Task<DialogTurnResult> FeedbackAndExitAsync(WaterfallStepContext stepContext,

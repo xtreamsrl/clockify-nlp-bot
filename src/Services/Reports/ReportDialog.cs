@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Bot.Dialogs;
 using Bot.Exceptions;
 using Bot.Utils;
 using Luis;
@@ -27,7 +28,7 @@ namespace Bot.Services.Reports
             {
                 HandleReportRequestAsync,
             }));
-            Id = nameof(ReportDialog);
+            Id = DialogIdProvider.GetDialogId(typeof(ReportDialog));
         }
 
         private async Task<DialogTurnResult> HandleReportRequestAsync(WaterfallStepContext stepContext,
