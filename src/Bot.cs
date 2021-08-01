@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Bot.Dialogs;
+using Bot.DIC;
 using Bot.Services;
 using Bot.Services.Reports;
 using Bot.States;
@@ -11,7 +12,7 @@ using Luis;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
-using RestSharp.Extensions;
+using static Bot.DIC.DicHandler;
 
 namespace Bot
 {
@@ -24,27 +25,15 @@ namespace Bot
         private readonly ClockifySetupDialog _clockifySetupDialog;
         private readonly StopReminderDialog _stopReminderDialog;
         private readonly IClockifyService _clockifyService;
-        private readonly DicSetupDialog _dicSetupDialog;
-        private readonly IDipendentiInCloudService _dicService;
-        private readonly NextWeekRemoteWorkingDialog _nextWeekRemoteWorkingDialog;
-        private readonly LongTermRemoteWorkingDialog _longTermRemoteWorkingDialog;
-        private readonly TeamAvailabilityService _teamAvailabilityService;
-        private readonly NotifyUsersDialog _notifyUsersDialog;
-
-
+        private readonly DicHandler _dicHandler;
         private readonly UserState _userState;
-
         private readonly DialogSet _dialogSet;
         private readonly IStatePropertyAccessor<DialogState> _dialogState;
 
         public Bot(ConversationState conversationState, EntryFillDialog fillDialog,
             LuisRecognizerProxy luisRecognizer,
             ReportDialog reportDialog, ClockifySetupDialog clockifySetupDialog, UserState userState, 
-            StopReminderDialog stopReminderDialog, IClockifyService clockifyService, 
-            DicSetupDialog dicSetupDialog, IDipendentiInCloudService dicService, 
-            NextWeekRemoteWorkingDialog nextWeekRemoteWorkingDialog, 
-            LongTermRemoteWorkingDialog longTermRemoteWorkingDialog, TeamAvailabilityService teamAvailabilityService, 
-            NotifyUsersDialog notifyUsersDialog)
+            StopReminderDialog stopReminderDialog, IClockifyService clockifyService, DicHandler dicHandler)
         {
             _conversationState = conversationState;
             _dialogState = _conversationState.CreateProperty<DialogState>("DialogState");
@@ -55,19 +44,11 @@ namespace Bot
             _userState = userState;
             _stopReminderDialog = stopReminderDialog;
             _clockifyService = clockifyService;
-            _dicSetupDialog = dicSetupDialog;
-            _dicService = dicService;
-            _nextWeekRemoteWorkingDialog = nextWeekRemoteWorkingDialog;
-            _longTermRemoteWorkingDialog = longTermRemoteWorkingDialog;
-            _teamAvailabilityService = teamAvailabilityService;
-            _notifyUsersDialog = notifyUsersDialog;
+            _dicHandler = dicHandler;
             _dialogSet = new DialogSet(_dialogState)
                 .Add(_clockifySetupDialog)
                 .Add(_fillDialog)
                 .Add(_reportDialog)
-                .Add(_nextWeekRemoteWorkingDialog)
-                .Add(_longTermRemoteWorkingDialog)
-                .Add(_notifyUsersDialog)
                 .Add(_stopReminderDialog);
         }
 
@@ -86,74 +67,18 @@ namespace Bot
             var userProfile =
                 await StaticUserProfileHelper.GetUserProfileAsync(_userState, turnContext, cancellationToken);
             userProfile.ConversationReference = turnContext.Activity.GetConversationReference();
-            if (await RunDICSetupIfNeeded(turnContext, cancellationToken, userProfile)) return;
+            
             if (await RunClockifySetupIfNeeded(turnContext, cancellationToken, userProfile)) return;
 
             bool anyActiveDialog = dialogContext.ActiveDialog != null;
-            var isMaintainer = false;
-            if (userProfile.DicToken != null)
-            {
-                var currentEmployee = await _dicService.GetCurrentEmployeeAsync(userProfile.DicToken!);
-                isMaintainer = currentEmployee.teams.Any(t => t.team.name == "Bot Maintainers");
-            }
+            
             if (!anyActiveDialog)
             {
+                if (await _dicHandler.Handle(cancellationToken, userProfile, dialogContext)) return;
+                
                 var (topIntent, entities) =
                     await _luisRecognizer.RecognizeAsyncIntent(turnContext, cancellationToken);
 
-                if (turnContext.Activity.Text.ToLower() == "enter test mode" && !userProfile.Experimental)
-                {
-                    await turnContext.SendActivityAsync(
-                        MessageFactory.Text("Ok sir, you will be getting experimental features"), cancellationToken);
-                    userProfile.Experimental = true;
-                    return;
-                }
-                
-                if (turnContext.Activity.Text.ToLower() == "exit test mode" && userProfile.Experimental)
-                {
-                    await turnContext.SendActivityAsync(
-                        MessageFactory.Text("Ok sir, I'm cutting you out of tests"), cancellationToken);
-                    userProfile.Experimental = false;
-                    return;
-                }
-
-                if (turnContext.Activity.Text.ToLower() == "next week remote" && userProfile.Experimental)
-                {
-                    await dialogContext.BeginDialogAsync(_nextWeekRemoteWorkingDialog.Id, entities, cancellationToken);
-                    return;
-                }
-                
-                if (turnContext.Activity.Text.ToLower() == "set remote days" && userProfile.Experimental)
-                {
-                    await dialogContext.BeginDialogAsync(_longTermRemoteWorkingDialog.Id, entities, cancellationToken);
-                    return;
-                }
-                
-                if (turnContext.Activity.Text.ToLower() == "my team" && userProfile.Experimental)
-                {
-                    var report = await _teamAvailabilityService.CreateAvailabilityReportAsync(userProfile);
-                    await dialogContext.Context.SendActivityAsync(MessageFactory.Attachment(report), cancellationToken);
-                    return;
-                }
-
-                if (turnContext.Activity.Text.ToLower() == "notify users" && isMaintainer)
-                {
-                    await dialogContext.BeginDialogAsync(_notifyUsersDialog.Id, entities, cancellationToken);
-                    return;
-                }
-
-                if (topIntent == TimeSurveyBotLuis.Intent.Utilities_Help)
-                {
-                    const string message = "I can sure help you. This is what I can do:\n" +
-                                           "- **reporting**: ask me to give you insight about a reporting period, and surprisingly enough I will! " +
-                                           "For example, ask me *how much did I work last week?' and I'll give you all needed info\n\n" +
-                                           "- **insertion**: feel like adding some entries? just tell me! For example, say to me *add 15 minutes on " +
-                                           "r&d* and I will add it to today's time sheet.\n\n\n" +
-                                           "Working with multiple workspaces? Don't worry, I got you covered";
-                    await turnContext.SendActivityAsync(MessageFactory.Text(message), cancellationToken);
-                    return;
-                }
-                
                 bool intentHasBeenHandled = await IntentManager.HandleIntent(dialogContext, topIntent, cancellationToken, 
                     turnContext, entities, _dialogSet);
                 if (!intentHasBeenHandled)
@@ -186,30 +111,6 @@ namespace Bot
             catch (ErrorResponseException)
             {
                 await _clockifySetupDialog.RunAsync(turnContext, _dialogState, cancellationToken);
-                return true;
-            }
-
-            return false;
-        }
-        
-        // ReSharper disable once InconsistentNaming
-        private async Task<bool> RunDICSetupIfNeeded(ITurnContext turnContext, CancellationToken cancellationToken,
-            UserProfile userProfile)
-        {
-            if (!userProfile.Experimental) return false;
-            if (userProfile.DicToken == null)
-            {
-                await _dicSetupDialog.RunAsync(turnContext, _dialogState, cancellationToken);
-                return true;
-            }
-
-            try
-            {
-                await _dicService.GetCurrentEmployeeAsync(userProfile.DicToken);
-            }
-            catch (ErrorResponseException)
-            {
-                await _dicSetupDialog.RunAsync(turnContext, _dialogState, cancellationToken);
                 return true;
             }
 
