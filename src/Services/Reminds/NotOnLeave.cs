@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bot.States;
-using Microsoft.Azure.Cosmos.Linq;
 
 namespace Bot.Services.Reminds
 {

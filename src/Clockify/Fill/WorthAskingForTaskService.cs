@@ -7,7 +7,7 @@ using Bot.States;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.TimeEntries;
 
-namespace Bot.Services
+namespace Bot.Clockify.Fill
 {
     public class WorthAskingForTaskService
     {

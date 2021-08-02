@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Bot.States;
 
-namespace Bot.Services.Reminds
+namespace Bot.States
 {
     public interface IUserProfilesProvider
     {
