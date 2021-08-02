@@ -40,10 +40,17 @@ namespace Bot.DIC
                 .Add(_notifyUsersDialog);
         }
 
-        public async Task<bool> Handle(CancellationToken cancellationToken, UserProfile userProfile,
-            DialogContext dialogContext)
+        public async Task<bool> Handle(ITurnContext turnContext, CancellationToken cancellationToken, UserProfile userProfile)
         {
-            var turnContext = dialogContext.Context;
+            var dialogContext = await _dialogSet.CreateContextAsync(turnContext, cancellationToken);
+            bool anyActiveDialog = dialogContext.ActiveDialog != null;
+            if (anyActiveDialog)
+            {
+                await dialogContext.ContinueDialogAsync(cancellationToken);
+                return true;
+            }
+            
+            // TODO add dic setup to the dialog set
             if (await RunDICSetupIfNeeded(turnContext, cancellationToken, userProfile)) return true;
 
             var isMaintainer = false;
