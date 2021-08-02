@@ -1,3 +1,4 @@
+using Bot.Clockify;
 using Bot.Data;
 using Bot.Dialogs;
 using Bot.DIC;
@@ -87,6 +88,7 @@ namespace Bot
             // Bot supports
             services.AddSingleton<BotHandlerChain>();
             services.AddSingleton<IBotHandler, DicHandler>();
+            services.AddSingleton<IBotHandler, ClockifyHandler>();
             
             // Security
             services.AddSingleton<IProactiveApiKeyProvider, ProactiveApiKeyProvider>();
