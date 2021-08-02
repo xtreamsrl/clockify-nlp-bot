@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Bot.Dialogs;
@@ -8,11 +7,9 @@ using Bot.Services;
 using Bot.Services.Reports;
 using Bot.States;
 using Bot.Utils;
-using Luis;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
-using static Bot.DIC.DicHandler;
 
 namespace Bot
 {
@@ -74,7 +71,7 @@ namespace Bot
             
             if (!anyActiveDialog)
             {
-                if (await _dicHandler.Handle(cancellationToken, userProfile, dialogContext)) return;
+                if (await _dicHandler.Handle(turnContext, cancellationToken, userProfile)) return;
                 
                 var (topIntent, entities) =
                     await _luisRecognizer.RecognizeAsyncIntent(turnContext, cancellationToken);
