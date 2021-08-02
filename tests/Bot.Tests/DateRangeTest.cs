@@ -1,4 +1,5 @@
 ﻿using System;
+using Bot.Clockify;
 using Bot.Models;
 using FluentAssertions;
 using Xunit;

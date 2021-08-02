@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Bot.Models.Reports;
+using Bot.Clockify.Reports;
 using Bot.Utils;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.Tasks;

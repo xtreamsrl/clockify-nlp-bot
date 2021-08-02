@@ -1,5 +1,7 @@
 ﻿using System;
-using Bot.Exceptions;
+using Bot.Clockify;
+using Bot.Clockify.Reports;
+using Bot.Common;
 using Bot.Models;
 using Bot.Services.Reports;
 using FluentAssertions;

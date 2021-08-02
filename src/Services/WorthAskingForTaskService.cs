@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Bot.Clockify.Client;
 using Bot.States;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.TimeEntries;

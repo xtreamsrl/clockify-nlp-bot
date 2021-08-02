@@ -1,13 +1,15 @@
 using Bot.Clockify;
+using Bot.Clockify.Client;
+using Bot.Clockify.Fill;
+using Bot.Clockify.Reports;
+using Bot.Common;
 using Bot.Data;
 using Bot.Dialogs;
 using Bot.DIC;
-using Bot.Recognizers;
 using Bot.Security;
 using Bot.Services;
 using Bot.Services.Reminds;
 using Bot.Services.Reports;
-using Bot.Services.TimeEntries;
 using Bot.Supports;
 using Bot.Utils;
 using F23.StringSimilarity;

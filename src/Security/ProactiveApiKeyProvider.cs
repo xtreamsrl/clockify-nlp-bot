@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-using static Bot.Utils.ProactiveApiKeyUtil;
+using static Bot.Security.ProactiveApiKeyUtil;
 
 namespace Bot.Security
 {

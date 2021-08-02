@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Bot.Exceptions;
-using Bot.Recognizers;
+using Bot.Clockify;
+using Bot.Clockify.Client;
+using Bot.Clockify.Fill;
 using Bot.Services;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.Workspaces;

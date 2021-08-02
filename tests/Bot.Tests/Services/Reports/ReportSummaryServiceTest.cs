@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Bot.Clockify;
+using Bot.Clockify.Client;
+using Bot.Clockify.Reports;
 using Bot.Models;
 using Bot.Services;
 using Bot.Services.Reports;

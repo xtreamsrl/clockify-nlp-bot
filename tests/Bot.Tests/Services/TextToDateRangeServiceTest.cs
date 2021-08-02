@@ -1,4 +1,6 @@
 ﻿using System;
+using Bot.Clockify;
+using Bot.Clockify.Reports;
 using Bot.Models;
 using Bot.Utils;
 using FluentAssertions;

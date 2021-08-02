@@ -3,7 +3,7 @@ using Bot.Security;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
-using static Bot.Utils.ProactiveApiKeyUtil;
+using static Bot.Security.ProactiveApiKeyUtil;
 
 namespace Bot.Tests.Security
 {

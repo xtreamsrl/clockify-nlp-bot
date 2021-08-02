@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Bot.Clockify.Client;
+using Bot.Clockify.Fill;
+using Bot.Clockify.Reports;
 using Bot.Dialogs;
 using Bot.Services;
 using Bot.Services.Reports;
