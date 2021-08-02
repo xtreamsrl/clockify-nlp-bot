@@ -11,7 +11,7 @@ using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 
-namespace Bot
+namespace Bot.Supports
 {
     public class Bot : ActivityHandler
     {
@@ -26,11 +26,12 @@ namespace Bot
         private readonly UserState _userState;
         private readonly DialogSet _dialogSet;
         private readonly IStatePropertyAccessor<DialogState> _dialogState;
+        private readonly BotHandlerChain _botHandlerChain;
 
         public Bot(ConversationState conversationState, EntryFillDialog fillDialog,
             LuisRecognizerProxy luisRecognizer,
             ReportDialog reportDialog, ClockifySetupDialog clockifySetupDialog, UserState userState, 
-            StopReminderDialog stopReminderDialog, IClockifyService clockifyService, DicHandler dicHandler)
+            StopReminderDialog stopReminderDialog, IClockifyService clockifyService, DicHandler dicHandler, BotHandlerChain botHandlerChain)
         {
             _conversationState = conversationState;
             _dialogState = _conversationState.CreateProperty<DialogState>("DialogState");
@@ -42,6 +43,7 @@ namespace Bot
             _stopReminderDialog = stopReminderDialog;
             _clockifyService = clockifyService;
             _dicHandler = dicHandler;
+            _botHandlerChain = botHandlerChain;
             _dialogSet = new DialogSet(_dialogState)
                 .Add(_clockifySetupDialog)
                 .Add(_fillDialog)
@@ -67,12 +69,11 @@ namespace Bot
             
             if (await RunClockifySetupIfNeeded(turnContext, cancellationToken, userProfile)) return;
 
-            bool anyActiveDialog = dialogContext.ActiveDialog != null;
+            if(await _botHandlerChain.Handle(turnContext, cancellationToken, userProfile)) return;
             
+            bool anyActiveDialog = dialogContext.ActiveDialog != null;
             if (!anyActiveDialog)
             {
-                if (await _dicHandler.Handle(turnContext, cancellationToken, userProfile)) return;
-                
                 var (topIntent, entities) =
                     await _luisRecognizer.RecognizeAsyncIntent(turnContext, cancellationToken);
 

@@ -5,13 +5,14 @@ using Bot.Dialogs;
 using Bot.Services;
 using Bot.Services.Reports;
 using Bot.States;
+using Bot.Supports;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 
 namespace Bot.DIC
 {
-    public class DicHandler
+    public class DicHandler: IBotHandler
     {
         private readonly NextWeekRemoteWorkingDialog _nextWeekRemoteWorkingDialog;
         private readonly LongTermRemoteWorkingDialog _longTermRemoteWorkingDialog;

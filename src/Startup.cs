@@ -1,11 +1,13 @@
 using Bot.Data;
 using Bot.Dialogs;
+using Bot.DIC;
 using Bot.Recognizers;
 using Bot.Security;
 using Bot.Services;
 using Bot.Services.Reminds;
 using Bot.Services.Reports;
 using Bot.Services.TimeEntries;
+using Bot.Supports;
 using Bot.Utils;
 using F23.StringSimilarity;
 using F23.StringSimilarity.Interfaces;
@@ -75,12 +77,16 @@ namespace Bot
             services.AddSingleton<ConversationState>();
             services.AddSingleton<UserState>();
             services.AddSingleton<LuisRecognizerProxy>();
-            services.AddSingleton<IBot, Bot>();
+            services.AddSingleton<IBot, Supports.Bot>();
             services.AddSingleton<IAzureBlobReader, AzureBlobReader>();
             services.AddSingleton<IUserProfileStorageReader, UserProfileStorageReader>();
             services.AddSingleton<IUserProfilesProvider, UserProfilesProvider>();
             services.AddSingleton<IEntryFillRemindService, EntryFillRemindService>();
             services.AddSingleton<ISmartWorkingRemindService, SmartWorkingRemindService>();
+            
+            // Bot supports
+            services.AddSingleton<BotHandlerChain>();
+            services.AddSingleton<IBotHandler, DicHandler>();
             
             // Security
             services.AddSingleton<IProactiveApiKeyProvider, ProactiveApiKeyProvider>();

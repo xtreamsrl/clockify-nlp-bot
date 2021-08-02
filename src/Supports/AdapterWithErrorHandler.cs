@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Bot
+namespace Bot.Supports
 {
     public class AdapterWithErrorHandler : BotFrameworkHttpAdapter
     {
