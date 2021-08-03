@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 
-namespace Bot.Services.Reminds
+namespace Bot.Remind
 {
     public interface IRemindService
     {

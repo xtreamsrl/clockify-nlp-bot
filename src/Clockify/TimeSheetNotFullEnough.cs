@@ -2,9 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
+using Bot.Remind;
 using Bot.States;
 
-namespace Bot.Services.Reminds
+namespace Bot.Clockify
 {
     public class TimeSheetNotFullEnough : INeedRemindService
     {

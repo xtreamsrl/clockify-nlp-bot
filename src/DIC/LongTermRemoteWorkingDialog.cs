@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AdaptiveCards;
+using Bot.DIC;
 using Bot.Services;
 using Bot.States;
 using Bot.Utils;

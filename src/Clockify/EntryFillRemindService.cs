@@ -1,12 +1,14 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using Bot.Remind;
 using Bot.States;
 using Microsoft.Bot.Builder;
 using Microsoft.Extensions.Configuration;
 
-namespace Bot.Services.Reminds
+namespace Bot.Clockify
 {
-    public class EntryFillRemindService : GenericRemindService, IEntryFillRemindService
+    public class EntryFillRemindService : GenericRemindService
     {
         private static async Task BotCallback(ITurnContext turnContext, CancellationToken cancellationToken)
         {
@@ -18,8 +20,8 @@ namespace Bot.Services.Reminds
         }
 
         public EntryFillRemindService(IUserProfilesProvider userProfilesProvider, IConfiguration configuration,
-            INeedRemindService needRemindService) :
-            base(userProfilesProvider, configuration, needRemindService, BotCallback)
+            ICompositeNeedReminderService compositeNeedRemindService) :
+            base(userProfilesProvider, configuration, compositeNeedRemindService, BotCallback)
         {
         }
     }

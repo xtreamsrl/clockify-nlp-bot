@@ -7,20 +7,20 @@ using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Extensions.Configuration;
 
-namespace Bot.Services.Reminds
+namespace Bot.Remind
 {
     public class GenericRemindService : IRemindService
     {
         private readonly IUserProfilesProvider _userProfilesProvider;
-        private readonly INeedRemindService _needRemindService;
+        private readonly ICompositeNeedReminderService _compositeNeedRemindService;
         private readonly string _appId;
         private readonly BotCallbackHandler _botCallback;
 
         protected GenericRemindService(IUserProfilesProvider userProfilesProvider, IConfiguration configuration,
-            INeedRemindService needRemindService, BotCallbackHandler botCallback)
+            ICompositeNeedReminderService compositeNeedReminderService, BotCallbackHandler botCallback)
         {
             _userProfilesProvider = userProfilesProvider;
-            _needRemindService = needRemindService;
+            _compositeNeedRemindService = compositeNeedReminderService;
             _botCallback = botCallback;
             _appId = configuration["MicrosoftAppId"];
             if (string.IsNullOrEmpty(_appId))
@@ -33,7 +33,7 @@ namespace Bot.Services.Reminds
         {
             var reminderCounter = 0;
 
-            async Task<bool> ReminderNeeded(UserProfile u) => await _needRemindService.ReminderIsNeeded(u);
+            async Task<bool> ReminderNeeded(UserProfile u) => await _compositeNeedRemindService.ReminderIsNeeded(u);
 
             List<UserProfile> userProfiles = await _userProfilesProvider.GetUserProfilesAsync();
 
@@ -55,6 +55,7 @@ namespace Bot.Services.Reminds
                 }
                 catch (Exception e)
                 {
+                    // TODO Use logger
                     Console.WriteLine(e);
                 }
             }

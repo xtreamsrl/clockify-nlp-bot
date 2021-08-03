@@ -6,13 +6,10 @@ using Bot.Common;
 using Bot.Data;
 using Bot.Dialogs;
 using Bot.DIC;
+using Bot.Remind;
 using Bot.Security;
-using Bot.Services;
-using Bot.Services.Reminds;
-using Bot.Services.Reports;
 using Bot.States;
 using Bot.Supports;
-using Bot.Utils;
 using F23.StringSimilarity;
 using F23.StringSimilarity.Interfaces;
 using Microsoft.AspNetCore.Builder;
@@ -56,17 +53,22 @@ namespace Bot
             services.AddSingleton<ClockifyEntityRecognizer, ClockifyEntityRecognizer>();
             services.AddSingleton<UserProfilesProvider>();
             services.AddSingleton<IClockifyService>(clockifyService);
-            services.AddSingleton<DicSetupDialog, DicSetupDialog>();
-            services.AddSingleton<IDipendentiInCloudService>(dicService);
             services.AddSingleton<NextWeekRemoteWorkingDialog, NextWeekRemoteWorkingDialog>();
             services.AddSingleton<LongTermRemoteWorkingDialog, LongTermRemoteWorkingDialog>();
             services.AddSingleton<TeamAvailabilityService, TeamAvailabilityService>();
             services.AddSingleton<NotifyUsersDialog, NotifyUsersDialog>();
             
-            services.AddSingleton<INeedRemindService>(
-                new CompositeNeedReminderService(new TimeSheetNotFullEnough(clockifyService), 
-                    new UserDidNotSayStop(),
-                    new NotOnLeave(dicService)));
+            // DIC
+            services.AddSingleton<DicSetupDialog, DicSetupDialog>();
+            services.AddSingleton<IDipendentiInCloudService>(dicService);
+
+            services.AddSingleton<INeedRemindService, TimeSheetNotFullEnough>();
+            services.AddSingleton<INeedRemindService, UserDidNotSayStop>();
+            services.AddSingleton<INeedRemindService, NotOnLeave>();
+            services.AddSingleton<ICompositeNeedReminderService, CompositeNeedReminderService>();
+            services.AddSingleton<IRemindService, EntryFillRemindService>();
+            services.AddSingleton<IRemindService, SmartWorkingRemindService>();
+            services.AddSingleton<IRemindServiceResolver, RemindServiceResolver>();
 
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
             services.AddSingleton<ClockifySetupDialog, ClockifySetupDialog>();
@@ -85,14 +87,12 @@ namespace Bot
             services.AddSingleton<IAzureBlobReader, AzureBlobReader>();
             services.AddSingleton<IUserProfileStorageReader, UserProfileStorageReader>();
             services.AddSingleton<IUserProfilesProvider, UserProfilesProvider>();
-            services.AddSingleton<IEntryFillRemindService, EntryFillRemindService>();
-            services.AddSingleton<ISmartWorkingRemindService, SmartWorkingRemindService>();
-            
+
             // Bot supports
-            services.AddSingleton<BotHandlerChain>();
             services.AddSingleton<IBotHandler, DicHandler>();
             services.AddSingleton<IBotHandler, ClockifyHandler>();
-            
+            services.AddSingleton<BotHandlerChain>();
+
             // Security
             services.AddSingleton<IProactiveApiKeyProvider, ProactiveApiKeyProvider>();
             services.AddSingleton<IProactiveBotApiKeyValidator, ProactiveBotApiKeyValidator>();

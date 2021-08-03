@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Bot.Remind;
 using Bot.States;
 
-namespace Bot.Services.Reminds
+namespace Bot.DIC
 {
     public class NotOnLeave : INeedRemindService
     {
-        private readonly DipendentiInCloudService _dipendentiInCloudService;
+        private readonly IDipendentiInCloudService _dipendentiInCloudService;
 
-        public NotOnLeave(DipendentiInCloudService dipendentiInCloudService)
+        public NotOnLeave(IDipendentiInCloudService dipendentiInCloudService)
         {
             _dipendentiInCloudService = dipendentiInCloudService;
         }

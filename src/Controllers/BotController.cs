@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
+using Bot.Remind;
 using Bot.Security;
-using Bot.Services.Reminds;
-using Bot.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
@@ -15,17 +14,17 @@ namespace Bot.Controllers
         private readonly IBotFrameworkHttpAdapter _adapter;
         private readonly IProactiveBotApiKeyValidator _proactiveBotApiKeyValidator;
         private readonly IBot _bot;
-        private readonly IEntryFillRemindService _entryFillRemindService;
-        private readonly ISmartWorkingRemindService _smartWorkingRemindService;
+        private readonly IRemindService _entryFillRemindService;
+        private readonly IRemindService _smartWorkingRemindService;
 
         public BotController(IBotFrameworkHttpAdapter adapter, IProactiveBotApiKeyValidator proactiveBotApiKeyValidator, 
-            IBot bot, IEntryFillRemindService entryFillRemindService, ISmartWorkingRemindService smartWorkingRemindService)
+            IBot bot, IRemindServiceResolver remindServiceResolver)
         {
             _bot = bot;
             _adapter = adapter;
             _proactiveBotApiKeyValidator = proactiveBotApiKeyValidator;
-            _entryFillRemindService = entryFillRemindService;
-            _smartWorkingRemindService = smartWorkingRemindService;
+            _entryFillRemindService = remindServiceResolver.Resolve("EntryFill");
+            _smartWorkingRemindService = remindServiceResolver.Resolve("SmartWorking");
         }
 
         [Route("api/messages")]

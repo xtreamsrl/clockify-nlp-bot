@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Bot.States;
 
-namespace Bot.Services.Reminds
+namespace Bot.Remind
 {
     public class UserDidNotSayStop: INeedRemindService
     {

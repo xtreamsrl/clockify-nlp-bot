@@ -1,5 +1,5 @@
 ﻿using System;
-using Bot.Services.Reminds;
+using Bot.Remind;
 using Bot.States;
 using FluentAssertions;
 using Xunit;
