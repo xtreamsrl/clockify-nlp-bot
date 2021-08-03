@@ -23,7 +23,7 @@ namespace Bot.Clockify
             {
                 FeedbackAndExitAsync
             }));
-            Id = DialogIdProvider.GetDialogId(typeof(StopReminderDialog));
+            Id = nameof(StopReminderDialog);
         }
         
         private async Task<DialogTurnResult> FeedbackAndExitAsync(WaterfallStepContext stepContext,

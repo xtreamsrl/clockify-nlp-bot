@@ -28,7 +28,7 @@ namespace Bot.Clockify.Reports
             {
                 HandleReportRequestAsync,
             }));
-            Id = DialogIdProvider.GetDialogId(typeof(ReportDialog));
+            Id = nameof(ReportDialog);
         }
 
         private async Task<DialogTurnResult> HandleReportRequestAsync(WaterfallStepContext stepContext,
