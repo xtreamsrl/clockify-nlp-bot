@@ -2,17 +2,15 @@
 using Bot.Clockify;
 using Bot.Clockify.Reports;
 using Bot.Common;
-using Bot.Models;
-using Bot.Services.Reports;
 using FluentAssertions;
 using Luis;
 using Microsoft.Bot.Builder.AI.Luis;
 using Moq;
 using Xunit;
 
-namespace Bot.Tests.Services.Reports
+namespace Bot.Tests.Clockify.Reports
 {
-    public class ReportExtractorUtil
+    public class ReportExtractorTest
     {
         [Fact]
         public void GetDateTimeInstance_ValidEntitiesInstance_ShouldReturnFirstDateTimeText()

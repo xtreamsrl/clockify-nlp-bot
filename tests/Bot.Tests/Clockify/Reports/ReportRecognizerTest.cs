@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using Bot.Clockify;
-using Bot.Utils;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 
-namespace Bot.Tests.Recognizers
+namespace Bot.Tests.Clockify.Reports
 {
     public class ReportRecognizerTest
     {

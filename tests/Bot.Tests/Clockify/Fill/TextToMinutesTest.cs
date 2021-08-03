@@ -1,9 +1,8 @@
 ﻿using Bot.Clockify.Fill;
-using Bot.Utils;
 using FluentAssertions;
 using Xunit;
 
-namespace Bot.Tests.Utils
+namespace Bot.Tests.Clockify.Fill
 {
     public class TextToMinutesTest
     {

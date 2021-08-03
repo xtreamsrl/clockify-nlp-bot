@@ -1,7 +1,5 @@
 ﻿using Bot.Clockify;
 using Bot.Clockify.Client;
-using Bot.Dialogs;
-using Bot.Services;
 using Bot.States;
 using FluentAssertions;
 using Microsoft.Bot.Builder;

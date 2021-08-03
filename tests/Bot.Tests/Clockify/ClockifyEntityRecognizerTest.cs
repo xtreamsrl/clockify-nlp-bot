@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Bot.Clockify;
 using Bot.Clockify.Client;
 using Bot.Clockify.Fill;
-using Bot.Services;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.Workspaces;
 using F23.StringSimilarity;
@@ -12,7 +10,7 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace Bot.Tests.Services.Clockify
+namespace Bot.Tests.Clockify
 {
     public class ClockifyEntityRecognizerTest
     {

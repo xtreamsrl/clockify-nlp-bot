@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using Bot.Clockify;
 using Bot.Clockify.Client;
 using Bot.Clockify.Reports;
-using Bot.Models;
-using Bot.Services;
-using Bot.Services.Reports;
 using Bot.States;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.Tasks;
@@ -15,7 +12,7 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace Bot.Tests.Services.Reports
+namespace Bot.Tests.Clockify.Reports
 {
     public class ReportSummaryServiceTest
     {

@@ -1,12 +1,10 @@
 ﻿using System;
 using Bot.Clockify;
 using Bot.Clockify.Reports;
-using Bot.Models;
-using Bot.Utils;
 using FluentAssertions;
 using Xunit;
 
-namespace Bot.Tests.Services
+namespace Bot.Tests.Clockify.Reports
 {
     public class TextToDateRangeServiceTest
     {

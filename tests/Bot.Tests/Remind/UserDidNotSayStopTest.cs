@@ -4,7 +4,7 @@ using Bot.States;
 using FluentAssertions;
 using Xunit;
 
-namespace Bot.Tests.Services
+namespace Bot.Tests.Remind
 {
     public class UserDidNotSayStopTest
     {

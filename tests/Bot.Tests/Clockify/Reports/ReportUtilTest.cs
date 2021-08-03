@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Linq;
 using Bot.Clockify.Reports;
-using Bot.Utils;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.Tasks;
 using Clockify.Net.Models.TimeEntries;
 using FluentAssertions;
 using Xunit;
 
-namespace Bot.Tests.Utils
+namespace Bot.Tests.Clockify.Reports
 {
     public class ReportUtilTest
     {

@@ -1,10 +1,9 @@
 ﻿using System;
 using Bot.Clockify;
-using Bot.Models;
 using FluentAssertions;
 using Xunit;
 
-namespace Bot.Tests
+namespace Bot.Tests.Clockify.Reports
 {
     public class DateRangeTest
     {
