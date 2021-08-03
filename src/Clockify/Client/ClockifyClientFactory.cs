@@ -1,8 +1,8 @@
 ﻿namespace Bot.Clockify.Client
 {
-    public static class ClockifyClientFactory
+    public class ClockifyClientFactory: IClockifyClientFactory
     {
-        public static IClockifyClient CreateClient(string apiKey)
+        public IClockifyClient CreateClient(string apiKey)
         {
             return new RichClockifyClient(apiKey);
         }

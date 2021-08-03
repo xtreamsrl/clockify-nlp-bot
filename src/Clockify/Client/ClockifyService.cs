@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Bot.Factories;
 using Clockify.Net.Models.Clients;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.Tasks;
@@ -16,10 +15,16 @@ namespace Bot.Clockify.Client
     public partial class ClockifyService : IClockifyService
     {
         private const int PageSize = 200;
+        private readonly IClockifyClientFactory _clockifyClientFactory;
+
+        public ClockifyService(IClockifyClientFactory clockifyClientFactory)
+        {
+            _clockifyClientFactory = clockifyClientFactory;
+        }
 
         public async Task<CurrentUserDto> GetCurrentUserAsync(string apiKey)
         {
-            var clockifyClient = ClockifyClientFactory.CreateClient(apiKey);
+            var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.GetCurrentUserAsync();
 
             if (!response.IsSuccessful) throw new ErrorResponseException("Unable to get current user");
@@ -29,7 +34,7 @@ namespace Bot.Clockify.Client
 
         public async Task<List<WorkspaceDto>> GetWorkspacesAsync(string apiKey)
         {
-            var clockifyClient = ClockifyClientFactory.CreateClient(apiKey);
+            var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.GetWorkspacesAsync();
 
             if (!response.IsSuccessful) throw new ErrorResponseException("Unable to get workspaces");
@@ -39,7 +44,7 @@ namespace Bot.Clockify.Client
 
         public async Task<List<ClientDto>> GetClientsAsync(string apiKey, string workspaceId)
         {
-            var clockifyClient = ClockifyClientFactory.CreateClient(apiKey);
+            var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.FindAllClientsOnWorkspaceAsync(workspaceId);
 
             if (!response.IsSuccessful)
@@ -51,8 +56,8 @@ namespace Bot.Clockify.Client
         public async Task<List<ProjectDtoImpl>> GetProjectsAsync(string apiKey,
             string workspaceId)
         {
-            var clockifyClient = ClockifyClientFactory.CreateClient(apiKey);
-            var response = await clockifyClient.FindAllProjectsOnWorkspaceAsync(workspaceId, true, 1, PageSize);
+            var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
+            var response = await clockifyClient.FindAllProjectsOnWorkspaceAsync(workspaceId, 1, PageSize);
 
             if (!response.IsSuccessful)
                 throw new ErrorResponseException($"Unable to get projects for workspaceId {workspaceId}");
@@ -63,7 +68,7 @@ namespace Bot.Clockify.Client
         public async Task<List<ProjectDtoImpl>> GetProjectsByClientsAsync(string apiKey,
             string workspaceId, IEnumerable<string> clients)
         {
-            var clockifyClient = ClockifyClientFactory.CreateClient(apiKey);
+            var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.FindAllProjectsOnWorkspaceByClientsAsync(workspaceId, clients);
 
             if (!response.IsSuccessful)
@@ -78,7 +83,7 @@ namespace Bot.Clockify.Client
             string projectId)
         {
             // TODO Implement pagination? Clockify api do not put any total page in response body
-            var clockifyClient = ClockifyClientFactory.CreateClient(apiKey);
+            var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.FindAllTasksAsync(workspaceId, projectId, pageSize: PageSize);
 
             if (!response.IsSuccessful)
@@ -97,7 +102,7 @@ namespace Bot.Clockify.Client
             DateTimeOffset? end = null)
         {
             // TODO Implement pagination? Clockify api do not put any total page in response body
-            var clockifyClient = ClockifyClientFactory.CreateClient(apiKey);
+            var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.FindAllHydratedTimeEntriesForUserAsync(
                 workspaceId,
                 userId,
@@ -121,7 +126,7 @@ namespace Bot.Clockify.Client
                 return null;
             }
 
-            var clockifyClient = ClockifyClientFactory.CreateClient(apiKey);
+            var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.FindAllTagsOnWorkspaceAsync(workspaceId);
 
             if (!response.IsSuccessful)
@@ -134,7 +139,7 @@ namespace Bot.Clockify.Client
 
         public async Task<TaskDto> CreateTaskAsync(string apiKey, string taskName, string projectId, string workspaceId)
         {
-            var clockifyClient = ClockifyClientFactory.CreateClient(apiKey);
+            var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.CreateTaskAsync(workspaceId, projectId, new TaskRequest()
             {
                 Name = taskName
@@ -154,7 +159,7 @@ namespace Bot.Clockify.Client
             string workspaceId,
             TimeEntryRequest timeEntryRequest)
         {
-            var clockifyClient = ClockifyClientFactory.CreateClient(apiKey);
+            var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.CreateTimeEntryAsync(workspaceId, timeEntryRequest);
 
             if (!response.IsSuccessful)
@@ -168,7 +173,7 @@ namespace Bot.Clockify.Client
         public async Task DeleteTimeEntry(string apiKey, string workspaceId,
             string timeEntryId)
         {
-            var clockifyClient = ClockifyClientFactory.CreateClient(apiKey);
+            var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.DeleteTimeEntryAsync(workspaceId, timeEntryId);
 
             if (!response.IsSuccessful)

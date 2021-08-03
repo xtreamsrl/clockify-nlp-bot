@@ -18,7 +18,7 @@ namespace Bot.Integration.Tests.Clockify
         [Fact]
         public async void GetClients_ApiKeyIsNotValidAndWorkspaceExist_ThrowsException()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             Func<Task> action = () => clockifyService.GetClientsAsync(InvalidApiKey, ClockifyWorkspaceId);
 
@@ -29,7 +29,7 @@ namespace Bot.Integration.Tests.Clockify
         [Fact]
         public async void GetClients_ApiKeyIsValidAndWorkspaceDoesNotExist_ThrowsException()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             Func<Task> action = () => clockifyService.GetClientsAsync(ClockifyApiKey, NotExistingWorkspaceId);
 
@@ -40,7 +40,7 @@ namespace Bot.Integration.Tests.Clockify
         [Fact]
         public async void GetTag_ApiKeyIsValid_ShouldReturnTag()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
             
             string? tag = await clockifyService.GetTagAsync(ClockifyApiKey, ClockifyWorkspaceId, "bot");
 
@@ -50,7 +50,7 @@ namespace Bot.Integration.Tests.Clockify
         [Fact]
         public async void GetTag_ApiKeyIsInvalid_ThrowException()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             Func<Task> action = () => clockifyService.GetTagAsync(InvalidApiKey, ClockifyApiKey, "bot");
 
@@ -60,7 +60,7 @@ namespace Bot.Integration.Tests.Clockify
         [Fact]
         public async void GetClients_ApiKeyIsValidAndWorkspaceExist_ShouldReturnAllClients()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             var clients = await clockifyService.GetClientsAsync(ClockifyApiKey, ClockifyWorkspaceId);
 
@@ -71,7 +71,7 @@ namespace Bot.Integration.Tests.Clockify
         public async void
             GetHydratedTimeEntries_ApiKeyIsInvalid_ThrowException()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             Func<Task> action = () =>
                 clockifyService.GetHydratedTimeEntriesAsync(InvalidApiKey, ClockifyWorkspaceId, "invalid");
@@ -84,7 +84,7 @@ namespace Bot.Integration.Tests.Clockify
         public async void
             GetHydratedTimeEntries_ApiKeyIsValidAndWorkspaceExistAndUserExist_ShouldReturnAllUserTimeEntries()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             // TODO read user from workspace
             const string existingUserId = "5efc6d24f833d7257bfa352b";
@@ -98,7 +98,7 @@ namespace Bot.Integration.Tests.Clockify
         [Fact]
         public async void GetProjects_ApiKeyIsNotValidAndWorkspaceExist_ThrowsException()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             Func<Task> action = () => clockifyService.GetProjectsAsync(InvalidApiKey, ClockifyWorkspaceId);
 
@@ -109,7 +109,7 @@ namespace Bot.Integration.Tests.Clockify
         [Fact]
         public async void GetProjects_ApiKeyIsValidAndWorkspaceDoesNotExist_ThrowsException()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             Func<Task> action = () => clockifyService.GetProjectsAsync(ClockifyApiKey, NotExistingWorkspaceId);
 
@@ -120,7 +120,7 @@ namespace Bot.Integration.Tests.Clockify
         [Fact]
         public async void GetProjects_ApiKeyIsValidAndWorkspaceExist_ShouldReturnAllProjects()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             var projects = await clockifyService.GetProjectsAsync(ClockifyApiKey, ClockifyWorkspaceId);
 
@@ -130,7 +130,7 @@ namespace Bot.Integration.Tests.Clockify
         [Fact]
         public async void GetProjectsByClients_ApiKeyIsValidAndWorkspaceDoesNotExistAndClientsExist_ThrowsException()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             const string client = "5efc6e5d963f622c66c55662";
 
@@ -147,7 +147,7 @@ namespace Bot.Integration.Tests.Clockify
         public async void
             GetProjectsByClients_ApiKeyIsValidAndWorkspaceExistAndClientNotExist_ShouldReturnZeroProjects()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             const string notExistingClientId = "invalid-client-id";
 
@@ -162,7 +162,7 @@ namespace Bot.Integration.Tests.Clockify
         public async void
             GetProjectsByClients_ApiKeyIsValidAndWorkspaceExistAndClientsExist_ShouldReturnAllProjectsFilteredByClients()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             // TODO read clients from workspace
             const string client1 = "5efc6e5d963f622c66c55662";
@@ -180,7 +180,7 @@ namespace Bot.Integration.Tests.Clockify
         [Fact]
         public async void GetTasks_ApiKeyIsValidAndWorkspaceExistAndProjectDoesNotExist_ThrowsException()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             const string notExistingProjectId = "invalid-project-id";
 
@@ -195,7 +195,7 @@ namespace Bot.Integration.Tests.Clockify
         [Fact]
         public async void GetTasks_ApiKeyIsValidAndWorkspaceExistAndProjectExist_ShouldReturnAllProjectTasks()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             // TODO read project id from api
             const string projectId = "5efc6ee1963f622c66c55819";
@@ -208,7 +208,7 @@ namespace Bot.Integration.Tests.Clockify
         [Fact]
         public async void GetUser_ApiKeyIsInvalid_ThrowException()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             Func<Task> action = () => clockifyService.GetCurrentUserAsync(InvalidApiKey);
 
@@ -219,7 +219,7 @@ namespace Bot.Integration.Tests.Clockify
         [Fact]
         public async void GetUser_ApiKeyIsValid_ShouldReturnCurrentUser()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             var currentUser = await clockifyService.GetCurrentUserAsync(ClockifyApiKey);
 
@@ -230,7 +230,7 @@ namespace Bot.Integration.Tests.Clockify
         public void GetWorkspaces_ApiKeyIsInvalid_ThrowsException()
         {
             // arrange
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             // act
             Func<Task> action = async () => await clockifyService.GetWorkspacesAsync(InvalidApiKey);
@@ -242,7 +242,7 @@ namespace Bot.Integration.Tests.Clockify
         [Fact]
         public async void GetWorkspaces_ApiKeyIsValid_ShouldReturnAllWorkspaces()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
             var workspaces = await clockifyService.GetWorkspacesAsync(ClockifyApiKey);
 

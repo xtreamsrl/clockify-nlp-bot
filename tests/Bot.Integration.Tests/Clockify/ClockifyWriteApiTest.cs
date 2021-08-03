@@ -15,7 +15,7 @@ namespace Bot.Integration.Tests.Clockify
         [Fact]
         public async void AddTimeEntry_ApiKeyIsValidAndRequestBodyIsValid_ShouldAddTimeEntry()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
             var clockifyClient = new RichClockifyClient(ClockifyApiKey);
 
             var now = DateTimeOffset.UtcNow;
@@ -41,7 +41,7 @@ namespace Bot.Integration.Tests.Clockify
         [Fact]
         public async void DeleteTimeEntry_ApiKeyIsValidAndTimeEntryExist_ShouldDeleteChosenTimeEntry()
         {
-            var clockifyService = new ClockifyService();
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
             var clockifyClient = new RichClockifyClient(ClockifyApiKey);
 
             var now = DateTimeOffset.UtcNow;

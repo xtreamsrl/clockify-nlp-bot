@@ -65,6 +65,7 @@ jobs:
     timeout-minutes: 5
     needs: build
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' }}
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v2
