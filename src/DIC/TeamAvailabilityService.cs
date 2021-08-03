@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using AdaptiveCards;
@@ -10,7 +9,7 @@ using FluentDateTime;
 using Microsoft.Bot.Schema;
 using Newtonsoft.Json;
 
-namespace Bot.Services.Reports
+namespace Bot.DIC
 {
     public class TeamAvailabilityService
     {

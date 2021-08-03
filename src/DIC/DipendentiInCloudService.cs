@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 using Bot.Models.DIC;
 using Microsoft.Bot.Schema;
@@ -11,7 +10,7 @@ using NuGet.Packaging;
 using RestSharp;
 using RestSharp.Serializers.NewtonsoftJson;
 
-namespace Bot.Services
+namespace Bot.DIC
 {
     public class DipendentiInCloudService : IDipendentiInCloudService
     {

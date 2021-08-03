@@ -8,9 +8,9 @@ namespace Bot.Supports
 {
     public class BotHandlerChain
     {
-        private readonly List<IBotHandler> _botHandlers;
+        private readonly IEnumerable<IBotHandler> _botHandlers;
 
-        public BotHandlerChain(List<IBotHandler> botHandlers)
+        public BotHandlerChain(IEnumerable<IBotHandler> botHandlers)
         {
             _botHandlers = botHandlers;
         }

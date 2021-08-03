@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Bot.Services;
 using Bot.States;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 
-namespace Bot.Dialogs
+namespace Bot.DIC
 {
     public class DicSetupDialog : ComponentDialog
     {
