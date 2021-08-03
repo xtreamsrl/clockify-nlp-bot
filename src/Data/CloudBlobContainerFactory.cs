@@ -1,7 +1,7 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 
-namespace Bot.Factories
+namespace Bot.Data
 {
     public static class CloudBlobContainerFactory
     {

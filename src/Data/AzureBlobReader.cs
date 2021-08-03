@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Bot.Factories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage.Blob;
 
