@@ -14,7 +14,6 @@ namespace Bot.Controllers
         private readonly IBotFrameworkHttpAdapter _adapter;
         private readonly IProactiveBotApiKeyValidator _proactiveBotApiKeyValidator;
         private readonly IBot _bot;
-        private readonly IRemindService _entryFillRemindService;
         private readonly IRemindService _smartWorkingRemindService;
 
         public BotController(IBotFrameworkHttpAdapter adapter, IProactiveBotApiKeyValidator proactiveBotApiKeyValidator, 
@@ -23,7 +22,6 @@ namespace Bot.Controllers
             _bot = bot;
             _adapter = adapter;
             _proactiveBotApiKeyValidator = proactiveBotApiKeyValidator;
-            _entryFillRemindService = remindServiceResolver.Resolve("EntryFill");
             _smartWorkingRemindService = remindServiceResolver.Resolve("SmartWorking");
         }
 
@@ -35,15 +33,7 @@ namespace Bot.Controllers
             await _adapter.ProcessAsync(Request, Response, _bot);
         }
         
-        [Route("api/timesheet/remind")]
-        [HttpGet]
-        public async Task<string> GetTimesheetRemindAsync()
-        {
-            string apiToken = ProactiveApiKeyUtil.Extract(Request);
-            _proactiveBotApiKeyValidator.Validate(apiToken);
-            
-            return await _entryFillRemindService.SendReminderAsync(_adapter);
-        }
+        
         
         [Route("api/flextime/remind")]
         [HttpGet]
