@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
-using Bot.Services;
 using Bot.States;
 using Bot.Utils;
 using Clockify.Net.Models.Projects;
