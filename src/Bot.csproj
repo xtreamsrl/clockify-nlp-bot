@@ -49,9 +49,5 @@
       <_ContentIncludedByDefault Remove="wwwroot\default.htm" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="CognitiveModels" />
-    </ItemGroup>
-
 
 </Project>

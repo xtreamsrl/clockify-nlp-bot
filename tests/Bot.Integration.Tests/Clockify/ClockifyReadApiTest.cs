@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Bot.Services.Clockify;
+using Bot.Clockify.Client;
 using FluentAssertions;
 using Microsoft.Bot.Schema;
 using Xunit;
