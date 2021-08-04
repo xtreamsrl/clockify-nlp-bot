@@ -34,6 +34,7 @@ namespace Bot.DIC
             _teamAvailabilityService = teamAvailabilityService;
             _notifyUsersDialog = notifyUsersDialog;
             _dialogSet = new DialogSet(_dialogState)
+                .Add(_dicSetupDialog)
                 .Add(_nextWeekRemoteWorkingDialog)
                 .Add(_longTermRemoteWorkingDialog)
                 .Add(_notifyUsersDialog);
