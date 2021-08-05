@@ -27,7 +27,9 @@ namespace Bot.DIC
             var timesheet = await _dipendentiInCloudService.GetTimesheetBetweenDates(startDate, startDate.AddDays(7),
                 profile.DicToken!, employees.Select(e => e.id).ToList());
             var interestingEmployees =
-                employees.Where(e => timesheet.Keys.Contains(e.id.ToString()) && e.id != profile.EmployeeId)
+                employees.Where(e => timesheet.Keys.Contains(e.id.ToString()) 
+                                     && e.id != profile.EmployeeId
+                                     && e.active)
                     .OrderBy(e => e.number ?? e.full_name).ToList();
             var leftColumn = new AdaptiveColumn
             {
@@ -98,6 +100,7 @@ namespace Bot.DIC
             IReadOnlyDictionary<string, Dictionary<string, DicDay>> timesheet,
             IEnumerable<Employee> interestingEmployees)
         {
+            var dayString = day.ToString("yyyy-MM-dd");
             var column = new AdaptiveColumn
             {
                 Width = AdaptiveColumnWidth.Stretch,
@@ -114,10 +117,11 @@ namespace Bot.DIC
             };
             column.Items.AddRange(interestingEmployees
                 .Select(e => e.id)
-                .Select(id =>
+                .Select(id => timesheet[id.ToString()][dayString])
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                .Where(dicDay => dicDay.reasons != null)
+                .Select(dicDay =>
                 {
-                    var dayString = day.ToString("yyyy-MM-dd");
-                    var dicDay = timesheet[id.ToString()][dayString];
                     int onLeave = dicDay.reasons
                         .Where(r => r.reason.id != 34)
                         .Select(r => r.duration ?? 0)
