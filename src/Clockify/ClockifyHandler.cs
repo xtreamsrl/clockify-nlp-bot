@@ -63,8 +63,7 @@ namespace Bot.Clockify
             // Sometimes the intent is not recognized properly
             if (entities.datetime != null && entities.WorkedEntity != null)
             {
-                var fillDialog = _dialogSet.Find(TimeSurveyBotLuis.Intent.Fill.ToString());
-                await dialogContext.BeginDialogAsync(fillDialog.Id, entities, cancellationToken);
+                await dialogContext.BeginDialogAsync(_fillDialog.Id, entities, cancellationToken);
                 return true;
             }
 
