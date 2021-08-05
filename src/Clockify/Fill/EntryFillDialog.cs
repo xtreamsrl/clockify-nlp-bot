@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
+using Bot.Data;
 using Bot.States;
 using Bot.Utils;
 using Clockify.Net.Models.Projects;
@@ -20,6 +21,7 @@ namespace Bot.Clockify.Fill
     {
         private readonly ClockifyEntityRecognizer _clockifyWorkableRecognizer;
         private readonly IClockifyService _clockifyService;
+        private readonly ITokenRepository _tokenRepository;
         private readonly ITimeEntryStoreService _timeEntryStoreService;
         private readonly WorthAskingForTaskService _worthAskingForTask;
         private readonly UserState _userState;
@@ -31,13 +33,14 @@ namespace Bot.Clockify.Fill
 
         public EntryFillDialog(ClockifyEntityRecognizer clockifyWorkableRecognizer,
             ITimeEntryStoreService timeEntryStoreService, WorthAskingForTaskService worthAskingForTask,
-            UserState userState, IClockifyService clockifyService)
+            UserState userState, IClockifyService clockifyService, ITokenRepository tokenRepository)
         {
             _clockifyWorkableRecognizer = clockifyWorkableRecognizer;
             _timeEntryStoreService = timeEntryStoreService;
             _worthAskingForTask = worthAskingForTask;
             _userState = userState;
             _clockifyService = clockifyService;
+            _tokenRepository = tokenRepository;
             AddDialog(new WaterfallDialog(TaskWaterfall, new List<WaterfallStep>
             {
                 PromptForTaskAsync,
@@ -54,8 +57,7 @@ namespace Bot.Clockify.Fill
         {
             var userProfile =
                 await StaticUserProfileHelper.GetUserProfileAsync(_userState, stepContext.Context, cancellationToken);
-            // TODO throw a domain exception
-            string clockifyToken = userProfile.ClockifyToken ?? throw new ArgumentNullException();
+            string clockifyToken = await ClockifyUtil.GetClockifyToken(userProfile, _tokenRepository);
             stepContext.Values["Token"] = clockifyToken;
             var entities = (TimeSurveyBotLuis._Entities._Instance) stepContext.Options;
 

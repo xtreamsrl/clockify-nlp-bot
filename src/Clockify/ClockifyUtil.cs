@@ -25,6 +25,7 @@ namespace Bot.Clockify
                 return userProfile.ClockifyToken;
             }
             
+            // TODO throw a domain exception
             // New users do not have ClockifyToken populated
             TokenData token = await tokenRepository.ReadAsync(userProfile.ClockifyTokenId) ??
                               throw new Exception("Token not found");

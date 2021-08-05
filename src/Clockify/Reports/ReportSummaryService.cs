@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
+using Bot.Data;
 using Bot.States;
 
 namespace Bot.Clockify.Reports
@@ -10,17 +11,18 @@ namespace Bot.Clockify.Reports
     public class ReportSummaryService : IReportSummaryService
     {
         private readonly IClockifyService _clockifyService;
+        private readonly ITokenRepository _tokenRepository;
 
-        public ReportSummaryService(IClockifyService clockifyService)
+        public ReportSummaryService(IClockifyService clockifyService, ITokenRepository tokenRepository)
         {
             _clockifyService = clockifyService;
+            _tokenRepository = tokenRepository;
         }
 
         public async Task<string> Summary(UserProfile userProfile, DateRange dateRange)
         {
-            var workspaces = await _clockifyService.GetWorkspacesAsync(
-                userProfile.ClockifyToken ?? throw new ArgumentNullException()
-            );
+            string clockifyToken = await ClockifyUtil.GetClockifyToken(userProfile, _tokenRepository);
+            var workspaces = await _clockifyService.GetWorkspacesAsync(clockifyToken);
 
             var fullSummary = new StringBuilder();
             int numOfWorkspaces = workspaces.Count;
@@ -30,7 +32,7 @@ namespace Bot.Clockify.Reports
             {
                 var workspaceBuilder = new StringBuilder();
                 var hydratedTimeEntries = await _clockifyService.GetHydratedTimeEntriesAsync(
-                    userProfile.ClockifyToken,
+                    clockifyToken,
                     workspace.Id,
                     userProfile.UserId ?? throw new ArgumentNullException(),
                     dateRange.Start,

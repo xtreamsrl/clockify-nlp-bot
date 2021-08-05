@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Bot.Data;
 using Bot.Dialogs;
 using Bot.States;
 using Bot.Utils;
@@ -11,19 +12,22 @@ using Microsoft.Bot.Builder.Dialogs;
 
 namespace Bot.Clockify.Reports
 {
-    public class ReportDialog: ComponentDialog
+    public class ReportDialog : ComponentDialog
     {
         private readonly IReportSummaryService _reportSummaryService;
         private readonly IReportExtractor _reportExtractor;
         private const string ReportWaterfall = "ReportWaterfall";
         private readonly UserState _userState;
+        private readonly ITokenRepository _tokenRepository;
 
         public ReportDialog(
-            IReportSummaryService reportSummaryService, IReportExtractor reportExtractor, UserState userState)
+            IReportSummaryService reportSummaryService, IReportExtractor reportExtractor, UserState userState,
+            ITokenRepository tokenRepository)
         {
             _reportSummaryService = reportSummaryService;
             _reportExtractor = reportExtractor;
             _userState = userState;
+            _tokenRepository = tokenRepository;
             AddDialog(new WaterfallDialog(ReportWaterfall, new List<WaterfallStep>
             {
                 HandleReportRequestAsync,
@@ -34,13 +38,12 @@ namespace Bot.Clockify.Reports
         private async Task<DialogTurnResult> HandleReportRequestAsync(WaterfallStepContext stepContext,
             CancellationToken cancellationToken)
         {
-            
             var userProfile =
                 await StaticUserProfileHelper.GetUserProfileAsync(_userState, stepContext.Context, cancellationToken);
-            string clockifyToken = userProfile.ClockifyToken ?? throw new ArgumentNullException(nameof(userProfile.ClockifyToken));
+            string clockifyToken = await ClockifyUtil.GetClockifyToken(userProfile, _tokenRepository);
             stepContext.Values["Token"] = clockifyToken;
             var entities = (TimeSurveyBotLuis._Entities._Instance) stepContext.Options;
-            
+
             try
             {
                 string timePeriodInstance = _reportExtractor.GetDateTimeInstance(entities);
