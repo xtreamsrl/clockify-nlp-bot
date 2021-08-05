@@ -6,6 +6,9 @@ namespace Bot.States
     public class UserProfile
     {
         public string? ClockifyToken { get; set; }
+        
+        public string? ClockifyTokenId { get; set; }
+        
         public string? UserId { get; set; }
         
         public int? EmployeeId { get; set; }

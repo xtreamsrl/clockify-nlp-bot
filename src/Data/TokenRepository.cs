@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Azure;
 using Azure.Security.KeyVault.Secrets;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Bot.Data
 {
@@ -15,11 +17,11 @@ namespace Bot.Data
             _secretClient = secretClient;
         }
 
-        public async Task<TokenData?> ReadAsync(string name)
+        public async Task<TokenData?> ReadAsync(string id)
         {
             try
             {
-                KeyVaultSecret secret = await _secretClient.GetSecretAsync(name);
+                KeyVaultSecret secret = await _secretClient.GetSecretAsync(id);
                 return new TokenData(secret.Name, secret.Value);
             }
             catch (RequestFailedException e)
@@ -33,8 +35,9 @@ namespace Bot.Data
             }
         }
 
-        public async Task<TokenData> WriteAsync(string name, string value)
+        public async Task<TokenData> WriteAsync(string value)
         {
+            string name = Guid.NewGuid().ToString();
             KeyVaultSecret secret = await _secretClient.SetSecretAsync(name, value);
             return new TokenData(secret.Name, secret.Value);
         }

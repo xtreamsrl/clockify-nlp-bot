@@ -2,16 +2,16 @@
 {
     public class TokenData
     {
-        private readonly string _name;
+        private readonly string _id;
         private readonly string _value;
 
-        public TokenData(string name, string value)
+        public TokenData(string id, string value)
         {
-            _name = name;
+            _id = id;
             _value = value;
         }
 
-        public string Name => _name;
+        public string Id => _id;
 
         public string Value => _value;
     }
