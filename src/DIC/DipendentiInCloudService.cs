@@ -177,8 +177,10 @@ namespace Bot.DIC
             throw new Exception("Error while fetching timesheet from DIC");
         }
 
-        public async Task<IRestResponse<DipendentiInCloudDTO<List<Employee>>>> GetEmployees(string apiKey) =>
-            await _client.ExecuteGetAsync<DipendentiInCloudDTO<List<Employee>>>(Authorized(new RestRequest("employees"),
-                apiKey));
+        public async Task<IRestResponse<DipendentiInCloudDTO<List<Employee>>>> GetEmployees(string apiKey)
+        {
+            var employeeReq = new RestRequest("employees").AddParameter("permission", "timesheet_read");
+            return await _client.ExecuteGetAsync<DipendentiInCloudDTO<List<Employee>>>(Authorized(employeeReq, apiKey));
+        }
     }
 }
