@@ -67,6 +67,11 @@ namespace Bot.Clockify
         {
             string? token = promptContext.Recognized.Value;
 
+            if (string.IsNullOrWhiteSpace(token) || token.Length > 100)
+            {
+                return false;
+            }
+
             try
             {
                 var userProfile = await _userState.CreateProperty<UserProfile>("UserProfile")
