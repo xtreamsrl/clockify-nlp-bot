@@ -13,6 +13,6 @@ namespace Bot.Data
 
       
         // TODO doc
-        Task<TokenData> WriteAsync(string value);
+        Task<TokenData> WriteAsync(string value, string? id = null);
     }
 }
