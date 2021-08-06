@@ -113,6 +113,12 @@ namespace Bot.DIC
             try
             {
                 await _dicService.GetCurrentEmployeeAsync(userProfile.DicToken);
+                // It will be removed when only DicTokenId will be used
+                if (userProfile.DicTokenId == null)
+                {
+                    var tokenData = await _tokenRepository.WriteAsync(userProfile.DicToken);
+                    userProfile.DicTokenId = tokenData.Id;
+                }
             }
             catch (ErrorResponseException)
             {
