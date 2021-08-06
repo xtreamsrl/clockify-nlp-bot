@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bot.Common;
 using Bot.Data;
-using Bot.Dialogs;
 using Bot.States;
 using Bot.Utils;
 using Luis;

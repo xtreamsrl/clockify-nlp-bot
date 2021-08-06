@@ -5,14 +5,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AdaptiveCards;
-using Bot.DIC;
+using Bot.Data;
 using Bot.States;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 using Newtonsoft.Json;
 
-namespace Bot.Dialogs
+namespace Bot.DIC
 {
     public class NextWeekRemoteWorkingDialog : ComponentDialog
     {
@@ -25,12 +25,14 @@ namespace Bot.Dialogs
 
         private readonly IDipendentiInCloudService _dicService;
         private readonly UserState _userState;
+        private readonly ITokenRepository _tokenRepository;
 
-        public NextWeekRemoteWorkingDialog(UserState userState, IDipendentiInCloudService clockifyService) :
-            base(nameof(NextWeekRemoteWorkingDialog))
+        public NextWeekRemoteWorkingDialog(UserState userState, IDipendentiInCloudService clockifyService,
+            ITokenRepository tokenRepository) : base(nameof(NextWeekRemoteWorkingDialog))
         {
             _userState = userState;
             _dicService = clockifyService;
+            _tokenRepository = tokenRepository;
 
             AddDialog(new WaterfallDialog(RemoteWaterfall, new List<WaterfallStep>
             {
@@ -67,6 +69,10 @@ namespace Bot.Dialogs
                 await StaticUserProfileHelper.GetUserProfileAsync(_userState, stepContext.Context, cancellationToken);
             try
             {
+                var tokenData = await _tokenRepository.ReadAsync(userProfile.DicTokenId!) ??
+                                throw new Exception("Token not found");
+                string dicToken = tokenData.Value;
+                
                 Dictionary<int, bool> remotePlan = JsonConvert.DeserializeObject<Dictionary<int, bool>>(
                     JsonConvert.SerializeObject(context.Activity.Value));
                 var nextMonday =
@@ -76,12 +82,11 @@ namespace Bot.Dialogs
                     var day = nextMonday.AddDays(dayOfWeekIndex);
                     if (remote)
                     {
-                        await _dicService.SetRemoteWorkday(day, userProfile.DicToken!, userProfile.EmployeeId!.Value);
+                        await _dicService.SetRemoteWorkday(day, dicToken, userProfile.EmployeeId!.Value);
                     }
                     else
                     {
-                        await _dicService.DeleteRemoteWorkday(day, userProfile.DicToken!,
-                            userProfile.EmployeeId!.Value);
+                        await _dicService.DeleteRemoteWorkday(day, dicToken, userProfile.EmployeeId!.Value);
                     }
                 }
 

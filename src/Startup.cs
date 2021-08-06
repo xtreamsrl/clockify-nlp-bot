@@ -8,7 +8,6 @@ using Bot.Clockify.Fill;
 using Bot.Clockify.Reports;
 using Bot.Common;
 using Bot.Data;
-using Bot.Dialogs;
 using Bot.DIC;
 using Bot.Remind;
 using Bot.Security;

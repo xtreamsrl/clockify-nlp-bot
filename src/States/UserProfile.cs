@@ -14,6 +14,8 @@ namespace Bot.States
         public int? EmployeeId { get; set; }
         
         public string? DicToken { get; set; }
+        
+        public string? DicTokenId { get; set; }
 
         public string? FirstName { get; set; }
         
