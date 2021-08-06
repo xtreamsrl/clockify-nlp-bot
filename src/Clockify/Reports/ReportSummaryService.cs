@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
+using Bot.Common;
 using Bot.Data;
 using Bot.States;
 
@@ -21,7 +22,8 @@ namespace Bot.Clockify.Reports
 
         public async Task<string> Summary(UserProfile userProfile, DateRange dateRange)
         {
-            string clockifyToken = await ClockifyUtil.GetClockifyToken(userProfile, _tokenRepository);
+            string clockifyToken = await TokenUtils.GetToken(userProfile.ClockifyTokenId,
+                userProfile.ClockifyToken, _tokenRepository);
             var workspaces = await _clockifyService.GetWorkspacesAsync(clockifyToken);
 
             var fullSummary = new StringBuilder();

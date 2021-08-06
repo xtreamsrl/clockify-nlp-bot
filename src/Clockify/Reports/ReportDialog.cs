@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Bot.Common;
 using Bot.Data;
 using Bot.Dialogs;
 using Bot.States;
@@ -40,7 +41,8 @@ namespace Bot.Clockify.Reports
         {
             var userProfile =
                 await StaticUserProfileHelper.GetUserProfileAsync(_userState, stepContext.Context, cancellationToken);
-            string clockifyToken = await ClockifyUtil.GetClockifyToken(userProfile, _tokenRepository);
+            string clockifyToken = await TokenUtils.GetToken(userProfile.ClockifyTokenId,
+                userProfile.ClockifyToken, _tokenRepository);
             stepContext.Values["Token"] = clockifyToken;
             var entities = (TimeSurveyBotLuis._Entities._Instance) stepContext.Options;
 
