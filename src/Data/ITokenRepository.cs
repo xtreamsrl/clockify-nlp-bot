@@ -12,7 +12,12 @@ namespace Bot.Data
         Task<TokenData?> ReadAsync(string id);
 
       
-        // TODO doc
+        /// <summary>
+        /// Write provided key value pair. If the id is null a new id will be automatically generated.
+        /// </summary>
+        /// <param name="value">The token value</param>
+        /// <param name="id">The token identifier</param>
+        /// <returns>Returns the saved token data</returns>
         Task<TokenData> WriteAsync(string value, string? id = null);
     }
 }
