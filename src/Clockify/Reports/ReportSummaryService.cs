@@ -22,8 +22,9 @@ namespace Bot.Clockify.Reports
 
         public async Task<string> Summary(UserProfile userProfile, DateRange dateRange)
         {
-            string clockifyToken = await TokenUtils.GetToken(userProfile.ClockifyTokenId,
-                userProfile.ClockifyToken, _tokenRepository);
+            var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId) ??
+                            throw new Exception("Token not found");
+            string clockifyToken = tokenData.Value;
             var workspaces = await _clockifyService.GetWorkspacesAsync(clockifyToken);
 
             var fullSummary = new StringBuilder();

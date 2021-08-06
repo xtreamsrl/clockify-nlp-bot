@@ -41,8 +41,9 @@ namespace Bot.Clockify.Reports
         {
             var userProfile =
                 await StaticUserProfileHelper.GetUserProfileAsync(_userState, stepContext.Context, cancellationToken);
-            string clockifyToken = await TokenUtils.GetToken(userProfile.ClockifyTokenId,
-                userProfile.ClockifyToken, _tokenRepository);
+            var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId) ??
+                            throw new Exception("Token not found");
+            string clockifyToken = tokenData.Value;
             stepContext.Values["Token"] = clockifyToken;
             var entities = (TimeSurveyBotLuis._Entities._Instance) stepContext.Options;
 

@@ -18,6 +18,8 @@ namespace Bot.Data
 
         public async Task<TokenData?> ReadAsync(string id)
         {
+            if (id == null) throw new ArgumentNullException(id);
+            
             try
             {
                 KeyVaultSecret secret = await _secretClient.GetSecretAsync(id);
