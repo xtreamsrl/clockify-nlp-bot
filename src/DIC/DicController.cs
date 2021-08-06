@@ -4,7 +4,7 @@ using Bot.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 
-namespace Bot.Controllers
+namespace Bot.DIC
 {
     [ApiController]
     public class DicController : ControllerBase
