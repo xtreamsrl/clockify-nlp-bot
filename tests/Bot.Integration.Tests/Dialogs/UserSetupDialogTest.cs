@@ -39,8 +39,7 @@ namespace Bot.Integration.Tests.Dialogs
             var userProfile = await userState.CreateProperty<UserProfile>("UserProfile")
                 .GetAsync(dialogTestClient.DialogContext.Context);
 
-            userProfile.ClockifyToken.Should().Be(ClockifyApiKey);
-            userProfile.UserId.Should().NotBeNull().And.HaveLength(24);
+            userProfile.ClockifyTokenId.Should().NotBeNull();
 
             // TODO: How do we test the end of the dialog?
         }
