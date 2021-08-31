@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Bot.Data;
 using Bot.States;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
@@ -21,11 +22,14 @@ namespace Bot.DIC
 
         private readonly IDipendentiInCloudService _dicService;
         private readonly UserState _userState;
+        private readonly ITokenRepository _tokenRepository;
 
-        public DicSetupDialog(UserState userState, IDipendentiInCloudService clockifyService) : base(nameof(DicSetupDialog))
+        public DicSetupDialog(UserState userState, IDipendentiInCloudService clockifyService,
+            ITokenRepository tokenRepository) : base(nameof(DicSetupDialog))
         {
             _userState = userState;
             _dicService = clockifyService;
+            _tokenRepository = tokenRepository;
 
             AddDialog(new WaterfallDialog(TokenWaterfall, new List<WaterfallStep>
             {
@@ -58,12 +62,22 @@ namespace Bot.DIC
             CancellationToken cancellationToken)
         {
             string? token = promptContext.Recognized.Value;
+            
+            if (string.IsNullOrWhiteSpace(token) || token.Length > 100)
+            {
+                return false;
+            }
+            
             try
             {
                 var userProfile = await _userState.CreateProperty<UserProfile>("UserProfile")
                     .GetAsync(promptContext.Context, () => new UserProfile(), cancellationToken);
                 var employee = _dicService.GetCurrentEmployeeAsync(token).Result;
-                userProfile.DicToken = token;
+                
+                var tokenData = await _tokenRepository.WriteAsync(token, userProfile.DicTokenId);
+                userProfile.DicTokenId = tokenData.Id;
+                userProfile.DicToken = null;
+                
                 userProfile.EmployeeId = employee.id;
                 userProfile.FirstName = employee.first_name;
                 userProfile.LastName = employee.last_name;

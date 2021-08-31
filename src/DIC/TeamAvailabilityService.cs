@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AdaptiveCards;
+using Bot.Data;
 using Bot.Models.DIC;
 using Bot.States;
 using FluentDateTime;
@@ -14,21 +15,26 @@ namespace Bot.DIC
     public class TeamAvailabilityService
     {
         private readonly IDipendentiInCloudService _dipendentiInCloudService;
+        private readonly ITokenRepository _tokenRepository;
 
-        public TeamAvailabilityService(IDipendentiInCloudService dipendentiInCloudService)
+        public TeamAvailabilityService(IDipendentiInCloudService dipendentiInCloudService,
+            ITokenRepository tokenRepository)
         {
             _dipendentiInCloudService = dipendentiInCloudService;
+            _tokenRepository = tokenRepository;
         }
 
-        public async Task<Attachment> CreateAvailabilityReportAsync(UserProfile profile)
+        public async Task<Attachment> CreateAvailabilityReportAsync(UserProfile userProfile)
         {
             var startDate = DateTime.Today;
-            var employees = await _dipendentiInCloudService.GetAllEmployeesAsync(profile.DicToken!);
+            var tokenData = await _tokenRepository.ReadAsync(userProfile.DicTokenId!);
+            string dicToken = tokenData.Value;
+            var employees = await _dipendentiInCloudService.GetAllEmployeesAsync(dicToken);
             var timesheet = await _dipendentiInCloudService.GetTimesheetBetweenDates(startDate, startDate.AddDays(7),
-                profile.DicToken!, employees.Select(e => e.id).ToList());
+                dicToken, employees.Select(e => e.id).ToList());
             var interestingEmployees =
-                employees.Where(e => timesheet.Keys.Contains(e.id.ToString()) 
-                                     && e.id != profile.EmployeeId
+                employees.Where(e => timesheet.Keys.Contains(e.id.ToString())
+                                     && e.id != userProfile.EmployeeId
                                      && e.active)
                     .OrderBy(e => e.number ?? e.full_name).ToList();
             var leftColumn = new AdaptiveColumn
@@ -52,10 +58,10 @@ namespace Bot.DIC
                     Text = name,
                     Separator = true
                 }));
-            var otherColumns = new List<int> {0, 1, 2, 3, 4}
+            var otherColumns = new List<int> { 0, 1, 2, 3, 4 }
                 .Select(i => startDate.AddBusinessDays(i))
                 .Select(day => CreateDayColumn(day, timesheet, interestingEmployees));
-            var allColumns = new List<AdaptiveColumn> {leftColumn};
+            var allColumns = new List<AdaptiveColumn> { leftColumn };
             allColumns.AddRange(otherColumns);
             var card = new AdaptiveCard("1.2")
             {

@@ -1,5 +1,6 @@
 ﻿using Bot.Clockify;
 using Bot.Clockify.Client;
+using Bot.Data;
 using Bot.States;
 using FluentAssertions;
 using Microsoft.Bot.Builder;
@@ -19,8 +20,11 @@ namespace Bot.Integration.Tests.Dialogs
         {
             var userState = new UserState(new MemoryStorage());
             var clockifyService = new ClockifyService(new ClockifyClientFactory());
+            var mockTokenRepository = new Mock<ITokenRepository>();
+            mockTokenRepository.Setup(r => r.WriteAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(new TokenData("id", ClockifyApiKey));
 
-            var dialog = new ClockifySetupDialog(userState, clockifyService);
+            var dialog = new ClockifySetupDialog(userState, clockifyService, mockTokenRepository.Object);
             var dialogTestClient = new DialogTestClient(Channels.Telegram, dialog);
 
             var reply = await dialogTestClient.SendActivityAsync<IMessageActivity>("ciao");
@@ -35,8 +39,7 @@ namespace Bot.Integration.Tests.Dialogs
             var userProfile = await userState.CreateProperty<UserProfile>("UserProfile")
                 .GetAsync(dialogTestClient.DialogContext.Context);
 
-            userProfile.ClockifyToken.Should().Be(ClockifyApiKey);
-            userProfile.UserId.Should().NotBeNull().And.HaveLength(24);
+            userProfile.ClockifyTokenId.Should().NotBeNull();
 
             // TODO: How do we test the end of the dialog?
         }
@@ -49,8 +52,9 @@ namespace Bot.Integration.Tests.Dialogs
             clockifyService
                 .Setup(service => service.GetCurrentUserAsync(It.IsAny<string>()))
                 .ThrowsAsync(new ErrorResponseException(ClockifySetupDialog.Reject));
+            var mockTokenRepository = new Mock<ITokenRepository>();
 
-            var dialog = new ClockifySetupDialog(userState, clockifyService.Object);
+            var dialog = new ClockifySetupDialog(userState, clockifyService.Object, mockTokenRepository.Object);
             var dialogTestClient = new DialogTestClient(Channels.Telegram, dialog);
 
             var reply = await dialogTestClient.SendActivityAsync<IMessageActivity>("ciao");

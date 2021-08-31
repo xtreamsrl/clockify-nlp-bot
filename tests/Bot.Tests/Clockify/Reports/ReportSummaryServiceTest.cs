@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Bot.Clockify;
 using Bot.Clockify.Client;
 using Bot.Clockify.Reports;
+using Bot.Data;
 using Bot.States;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.Tasks;
@@ -22,7 +23,10 @@ namespace Bot.Tests.Clockify.Reports
         {
             // Stub
             var mockClockifyService = new Mock<IClockifyService>();
-
+            var mockTokenRepository = new Mock<ITokenRepository>();
+            
+            mockTokenRepository.Setup(r => r.ReadAsync(It.IsAny<string>()))
+                .ReturnsAsync(new TokenData("id", "clockifyToken"));
             var workspaces = new List<WorkspaceDto>
             {
                 Workspace1(),
@@ -51,7 +55,7 @@ namespace Bot.Tests.Clockify.Reports
                 new DateTime(2020, 1, 1, 0, 0, 0),
                 new DateTime(2020, 3, 1, 0, 0, 0)
             );
-            var reportSummaryService = new ReportSummaryService(mockClockifyService.Object);
+            var reportSummaryService = new ReportSummaryService(mockClockifyService.Object, mockTokenRepository.Object);
 
             // Act
             string summary = await reportSummaryService.Summary(userProfile, dateRange);
@@ -72,7 +76,10 @@ namespace Bot.Tests.Clockify.Reports
         {
             // Stub
             var mockClockifyService = new Mock<IClockifyService>();
-
+            var mockTokenRepository = new Mock<ITokenRepository>();
+            
+            mockTokenRepository.Setup(r => r.ReadAsync(It.IsAny<string>()))
+                .ReturnsAsync(new TokenData("id", "clockifyToken"));
             var workspaces = new List<WorkspaceDto>
             {
                 Workspace1(),
@@ -96,7 +103,7 @@ namespace Bot.Tests.Clockify.Reports
                 new DateTime(2020, 1, 1, 0, 0, 0),
                 new DateTime(2020, 3, 1, 0, 0, 0)
             );
-            var reportSummaryService = new ReportSummaryService(mockClockifyService.Object);
+            var reportSummaryService = new ReportSummaryService(mockClockifyService.Object, mockTokenRepository.Object);
 
             // Act
             string summary = await reportSummaryService.Summary(userProfile, dateRange);
@@ -113,7 +120,10 @@ namespace Bot.Tests.Clockify.Reports
         {
             // Stub
             var mockClockifyService = new Mock<IClockifyService>();
-
+            var mockTokenRepository = new Mock<ITokenRepository>();
+            
+            mockTokenRepository.Setup(r => r.ReadAsync(It.IsAny<string>()))
+                .ReturnsAsync(new TokenData("id", "clockifyToken"));
             var workspaces = new List<WorkspaceDto>
             {
                 Workspace1()
@@ -139,7 +149,7 @@ namespace Bot.Tests.Clockify.Reports
                 new DateTime(2020, 1, 1, 0, 0, 0),
                 new DateTime(2020, 3, 1, 0, 0, 0)
             );
-            var reportSummaryService = new ReportSummaryService(mockClockifyService.Object);
+            var reportSummaryService = new ReportSummaryService(mockClockifyService.Object, mockTokenRepository.Object);
 
             // Act
             string summary = await reportSummaryService.Summary(userProfile, dateRange);

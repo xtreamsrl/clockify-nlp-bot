@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
+using Bot.Data;
 using Bot.States;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
@@ -14,6 +15,7 @@ namespace Bot.Clockify
     {
         private const string TokenWaterfall = "TokenWaterfall";
         private const string AskForTokenStep = "AskForToken";
+
         public const string Feedback = "Thanks! We will use this token whenever establishing a " +
                                        "Clockify connection from now on ⚙";
 
@@ -24,11 +26,14 @@ namespace Bot.Clockify
 
         private readonly IClockifyService _clockifyService;
         private readonly UserState _userState;
+        private readonly ITokenRepository _tokenRepository;
 
-        public ClockifySetupDialog(UserState userState, IClockifyService clockifyService) : base(nameof(ClockifySetupDialog))
+        public ClockifySetupDialog(UserState userState, IClockifyService clockifyService,
+            ITokenRepository tokenRepository) : base(nameof(ClockifySetupDialog))
         {
             _userState = userState;
             _clockifyService = clockifyService;
+            _tokenRepository = tokenRepository;
 
             AddDialog(new WaterfallDialog(TokenWaterfall, new List<WaterfallStep>
             {
@@ -42,7 +47,6 @@ namespace Bot.Clockify
         private static async Task<DialogTurnResult> PromptForTokenAsync(WaterfallStepContext stepContext,
             CancellationToken cancellationToken)
         {
-            
             return await stepContext.PromptAsync(AskForTokenStep,
                 new PromptOptions
                 {
@@ -62,16 +66,23 @@ namespace Bot.Clockify
             CancellationToken cancellationToken)
         {
             string? token = promptContext.Recognized.Value;
-            
+
+            if (string.IsNullOrWhiteSpace(token) || token.Length > 100)
+            {
+                return false;
+            }
+
             try
             {
                 var userProfile = await _userState.CreateProperty<UserProfile>("UserProfile")
                     .GetAsync(promptContext.Context, () => new UserProfile(), cancellationToken);
 
                 string? userId = _clockifyService.GetCurrentUserAsync(token).Result.Id;
-
-                userProfile.ClockifyToken = token;
+                var tokenData = await _tokenRepository.WriteAsync(token, userProfile.ClockifyTokenId);
+                userProfile.ClockifyTokenId = tokenData.Id;
+                userProfile.ClockifyToken = null;
                 userProfile.UserId = userId;
+                
                 return true;
             }
             catch (AggregateException ae)
@@ -83,6 +94,7 @@ namespace Bot.Clockify
                         return false;
                     }
                 }
+
                 // Unexpected exception occurred
                 throw;
             }

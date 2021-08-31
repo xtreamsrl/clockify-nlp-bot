@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
+using Bot.Data;
 using Bot.States;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.TimeEntries;
@@ -12,16 +13,19 @@ namespace Bot.Clockify.Fill
     public class WorthAskingForTaskService
     {
         private readonly IClockifyService _clockifyService;
+        private readonly ITokenRepository _tokenRepository;
 
-        public WorthAskingForTaskService(IClockifyService clockifyService)
+        public WorthAskingForTaskService(IClockifyService clockifyService, ITokenRepository tokenRepository)
         {
             _clockifyService = clockifyService;
+            _tokenRepository = tokenRepository;
         }
 
-        public async Task<bool> IsWorthAskingForTask(ProjectDtoImpl project, UserProfile user)
+        public async Task<bool> IsWorthAskingForTask(ProjectDtoImpl project, UserProfile userProfile)
         {
-            string clockifyToken = user.ClockifyToken ?? throw new ArgumentNullException(nameof(user.ClockifyToken));
-            string userId = user.UserId ?? throw new ArgumentNullException(nameof(user.UserId));
+            var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
+            string clockifyToken = tokenData.Value;
+            string userId = userProfile.UserId ?? throw new ArgumentNullException(nameof(userProfile.UserId));
             var associatedTasks = await _clockifyService.GetTasksAsync(clockifyToken, project.WorkspaceId, project.Id);
             if (!associatedTasks.Any()) return false;
             var end = DateTimeOffset.Now;

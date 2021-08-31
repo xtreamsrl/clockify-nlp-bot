@@ -6,9 +6,9 @@ namespace Bot.Remind
 {
     public class UserDidNotSayStop: INeedRemindService
     {
-        public Task<bool> ReminderIsNeeded(UserProfile profile)
+        public Task<bool> ReminderIsNeeded(UserProfile userProfile)
         {
-            return Task.FromResult(profile.StopRemind?.ToUniversalTime() != DateTime.Today.ToUniversalTime());
+            return Task.FromResult(userProfile.StopRemind?.ToUniversalTime() != DateTime.Today.ToUniversalTime());
         }
     }
 }

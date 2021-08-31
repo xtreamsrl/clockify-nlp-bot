@@ -1,10 +1,13 @@
+using System;
+using Azure.Core;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using Bot.Clockify;
 using Bot.Clockify.Client;
 using Bot.Clockify.Fill;
 using Bot.Clockify.Reports;
 using Bot.Common;
 using Bot.Data;
-using Bot.Dialogs;
 using Bot.DIC;
 using Bot.Remind;
 using Bot.Security;
@@ -27,8 +30,10 @@ namespace Bot
     {
         private readonly string _dataConnectionString;
         private readonly string _containerName;
+        private readonly IConfiguration _configuration;
         public Startup(IConfiguration configuration)
         {
+            _configuration = configuration;
             _dataConnectionString = configuration.GetSection("BlobStorage")["DataConnectionString"];
             _containerName = configuration.GetSection("BlobStorage")["ContainerName"];
         }
@@ -73,11 +78,14 @@ namespace Bot
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
             services.AddSingleton<ClockifySetupDialog, ClockifySetupDialog>();
 
+            // TODO use memory storage only for Development
             IStorage storage = new MemoryStorage();
             if (_dataConnectionString != null && _containerName != null)
             {
                 storage = new AzureBlobStorage(_dataConnectionString, _containerName);
             }
+            
+            ConfigureAzureKeyVault(services, _configuration["KeyVaultName"]);
 
             services.AddSingleton(storage);
             services.AddSingleton<ConversationState>();
@@ -96,6 +104,29 @@ namespace Bot
             // Security
             services.AddSingleton<IProactiveApiKeyProvider, ProactiveApiKeyProvider>();
             services.AddSingleton<IProactiveBotApiKeyValidator, ProactiveBotApiKeyValidator>();
+        }
+
+        private static void ConfigureAzureKeyVault(IServiceCollection services, string keyVaultName)
+        {
+            if (keyVaultName == null)
+            {
+                throw new ArgumentNullException(keyVaultName);
+            }
+            
+            var options = new SecretClientOptions()
+            {
+                Retry =
+                {
+                    Delay = TimeSpan.FromSeconds(2),
+                    MaxDelay = TimeSpan.FromSeconds(16),
+                    MaxRetries = 5,
+                    Mode = RetryMode.Exponential
+                }
+            };
+            var secretClient = new SecretClient(new Uri($"https://{keyVaultName}.vault.azure.net/"),
+                new DefaultAzureCredential(), options);
+            services.AddSingleton(secretClient);
+            services.AddSingleton<ITokenRepository, TokenRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

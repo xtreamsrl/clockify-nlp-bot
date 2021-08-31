@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Bot.Dialogs;
+using Bot.Data;
 using Bot.States;
 using Bot.Supports;
 using Microsoft.Bot.Builder;
@@ -20,14 +20,16 @@ namespace Bot.DIC
         private readonly DialogSet _dialogSet;
         private readonly DicSetupDialog _dicSetupDialog;
         private readonly IStatePropertyAccessor<DialogState> _dialogState;
+        private readonly ITokenRepository _tokenRepository;
 
         public DicHandler(NextWeekRemoteWorkingDialog nextWeekRemoteWorkingDialog,
             LongTermRemoteWorkingDialog longTermRemoteWorkingDialog, TeamAvailabilityService teamAvailabilityService,
-            NotifyUsersDialog notifyUsersDialog,
-            ConversationState conversationState, IDipendentiInCloudService dicService, DicSetupDialog dicSetupDialog)
+            NotifyUsersDialog notifyUsersDialog, ConversationState conversationState,
+            IDipendentiInCloudService dicService, DicSetupDialog dicSetupDialog, ITokenRepository tokenRepository)
         {
             _dicService = dicService;
             _dicSetupDialog = dicSetupDialog;
+            _tokenRepository = tokenRepository;
             _dialogState = conversationState.CreateProperty<DialogState>("DicDialogState");
             _nextWeekRemoteWorkingDialog = nextWeekRemoteWorkingDialog;
             _longTermRemoteWorkingDialog = longTermRemoteWorkingDialog;
@@ -50,13 +52,14 @@ namespace Bot.DIC
                 return true;
             }
             
-            // TODO add dic setup to the dialog set
             if (await RunDICSetupIfNeeded(turnContext, cancellationToken, userProfile)) return true;
 
             var isMaintainer = false;
-            if (userProfile.DicToken != null)
+            if (userProfile.DicTokenId != null)
             {
-                var currentEmployee = await _dicService.GetCurrentEmployeeAsync(userProfile.DicToken!);
+                var tokenData = await _tokenRepository.ReadAsync(userProfile.DicTokenId);
+                string dicToken = tokenData.Value;
+                var currentEmployee = await _dicService.GetCurrentEmployeeAsync(dicToken);
                 isMaintainer = currentEmployee.teams.Any(t => t.team.name == "Bot Maintainers");
             }
 
@@ -99,7 +102,7 @@ namespace Bot.DIC
             UserProfile userProfile)
         {
             if (!userProfile.Experimental) return false;
-            if (userProfile.DicToken == null)
+            if (userProfile.DicTokenId == null)
             {
                 await _dicSetupDialog.RunAsync(turnContext, _dialogState, cancellationToken);
                 return true;
@@ -107,7 +110,10 @@ namespace Bot.DIC
 
             try
             {
-                await _dicService.GetCurrentEmployeeAsync(userProfile.DicToken);
+                var tokenData = await _tokenRepository.ReadAsync(userProfile.DicTokenId);
+                await _dicService.GetCurrentEmployeeAsync(tokenData.Value);
+                // TODO Remove when porting will be completed
+                userProfile.DicToken = null;
             }
             catch (ErrorResponseException)
             {
