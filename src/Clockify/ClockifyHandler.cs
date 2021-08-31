@@ -132,17 +132,24 @@ namespace Bot.Clockify
                 if (userProfile.ClockifyTokenId == null)
                 {
                     var tokenData = await _tokenRepository.WriteAsync(userProfile.ClockifyToken);
+                    userProfile.ClockifyToken = null;
                     userProfile.ClockifyTokenId = tokenData.Id;
                 }
+                else
+                {
+                    var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId);
+                    await _clockifyService.GetCurrentUserAsync(tokenData!.Value);
+                    userProfile.ClockifyToken = null;
+                }
+                return false;
             }
             catch (ErrorResponseException)
             {
                 // TODO check if it is an UnauthorizedException
+                // old login is invalid, asking again
                 await _clockifySetupDialog.RunAsync(turnContext, _dialogState, cancellationToken);
                 return true;
             }
-
-            return false;
         }
     }
 }
