@@ -56,9 +56,9 @@ namespace Bot.DIC
             if (await RunDICSetupIfNeeded(turnContext, cancellationToken, userProfile)) return true;
 
             var isMaintainer = false;
-            if (userProfile.DicToken != null)
+            if (userProfile.DicTokenId != null)
             {
-                var tokenData = await _tokenRepository.ReadAsync(userProfile.DicTokenId!);
+                var tokenData = await _tokenRepository.ReadAsync(userProfile.DicTokenId);
                 string dicToken = tokenData.Value;
                 var currentEmployee = await _dicService.GetCurrentEmployeeAsync(dicToken);
                 isMaintainer = currentEmployee.teams.Any(t => t.team.name == "Bot Maintainers");

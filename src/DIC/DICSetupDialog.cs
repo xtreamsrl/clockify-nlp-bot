@@ -75,7 +75,6 @@ namespace Bot.DIC
                 var employee = _dicService.GetCurrentEmployeeAsync(token).Result;
                 
                 var tokenData = await _tokenRepository.WriteAsync(token, userProfile.DicTokenId);
-                userProfile.DicToken = tokenData.Value;
                 userProfile.DicTokenId = tokenData.Id;
                 
                 userProfile.EmployeeId = employee.id;
