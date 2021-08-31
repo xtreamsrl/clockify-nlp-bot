@@ -5,6 +5,6 @@ namespace Bot.Remind
 {
     public interface INeedRemindService
     {
-        public Task<bool> ReminderIsNeeded(UserProfile profile);
+        public Task<bool> ReminderIsNeeded(UserProfile userProfile);
     }
 }

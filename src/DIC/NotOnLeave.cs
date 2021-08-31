@@ -15,12 +15,12 @@ namespace Bot.DIC
             _dipendentiInCloudService = dipendentiInCloudService;
         }
 
-        public async Task<bool> ReminderIsNeeded(UserProfile profile)
+        public async Task<bool> ReminderIsNeeded(UserProfile userProfile)
         {
-            if (profile.DicToken == null) return true;
+            if (userProfile.DicToken == null) return true;
             var timesheet =
-                await _dipendentiInCloudService.GetTimesheetForDay(DateTime.Today, profile.DicToken!,
-                    profile.EmployeeId!.Value);
+                await _dipendentiInCloudService.GetTimesheetForDay(DateTime.Today, userProfile.DicToken!,
+                    userProfile.EmployeeId!.Value);
             int onLeaveHours = timesheet.reasons
                 .Where(r => r.reason.id != 34)
                 .Select(r => r.duration ?? 0)
