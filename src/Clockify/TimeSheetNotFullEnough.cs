@@ -23,8 +23,7 @@ namespace Bot.Clockify
         {
             try
             {
-                var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!) ??
-                                throw new Exception("Token not found");
+                var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
                 string clockifyToken = tokenData.Value;
                 string userId = userProfile.UserId ?? throw new ArgumentNullException(nameof(userProfile.UserId));
                 var workspaces = await _clockifyService.GetWorkspacesAsync(clockifyToken);

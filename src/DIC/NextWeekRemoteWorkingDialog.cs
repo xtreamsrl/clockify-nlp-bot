@@ -69,8 +69,7 @@ namespace Bot.DIC
                 await StaticUserProfileHelper.GetUserProfileAsync(_userState, stepContext.Context, cancellationToken);
             try
             {
-                var tokenData = await _tokenRepository.ReadAsync(userProfile.DicTokenId!) ??
-                                throw new Exception("Token not found");
+                var tokenData = await _tokenRepository.ReadAsync(userProfile.DicTokenId!);
                 string dicToken = tokenData.Value;
                 
                 Dictionary<int, bool> remotePlan = JsonConvert.DeserializeObject<Dictionary<int, bool>>(

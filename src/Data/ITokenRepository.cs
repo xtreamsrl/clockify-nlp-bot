@@ -9,7 +9,8 @@ namespace Bot.Data
         /// </summary>
         /// <param name="id">The token identifier</param>
         /// <returns>The token value</returns>
-        Task<TokenData?> ReadAsync(string id);
+        /// <exception cref="TokenNotFoundException">The token could not be found.</exception>
+        Task<TokenData> ReadAsync(string id);
 
       
         /// <summary>

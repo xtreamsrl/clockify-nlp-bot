@@ -5,7 +5,7 @@ using Azure.Security.KeyVault.Secrets;
 
 namespace Bot.Data
 {
-    class TokenRepository : ITokenRepository
+    internal class TokenRepository : ITokenRepository
     {
         private readonly SecretClient _secretClient;
         
@@ -16,7 +16,7 @@ namespace Bot.Data
             _secretClient = secretClient;
         }
 
-        public async Task<TokenData?> ReadAsync(string id)
+        public async Task<TokenData> ReadAsync(string id)
         {
             if (id == null) throw new ArgumentNullException(id);
             
@@ -29,7 +29,7 @@ namespace Bot.Data
             {
                 if (e.Status == 404)
                 {
-                    return null;
+                    throw new TokenNotFoundException("No token has been found with id " + id);
                 }
 
                 throw;

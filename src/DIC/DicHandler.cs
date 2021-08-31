@@ -58,8 +58,7 @@ namespace Bot.DIC
             var isMaintainer = false;
             if (userProfile.DicToken != null)
             {
-                var tokenData = await _tokenRepository.ReadAsync(userProfile.DicTokenId!) ?? 
-                                throw new Exception("Token not found");
+                var tokenData = await _tokenRepository.ReadAsync(userProfile.DicTokenId!);
                 string dicToken = tokenData.Value;
                 var currentEmployee = await _dicService.GetCurrentEmployeeAsync(dicToken);
                 isMaintainer = currentEmployee.teams.Any(t => t.team.name == "Bot Maintainers");

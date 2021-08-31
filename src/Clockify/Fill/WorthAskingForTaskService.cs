@@ -23,8 +23,7 @@ namespace Bot.Clockify.Fill
 
         public async Task<bool> IsWorthAskingForTask(ProjectDtoImpl project, UserProfile userProfile)
         {
-            var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!) ??
-                            throw new Exception("Token not found");
+            var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
             string clockifyToken = tokenData.Value;
             string userId = userProfile.UserId ?? throw new ArgumentNullException(nameof(userProfile.UserId));
             var associatedTasks = await _clockifyService.GetTasksAsync(clockifyToken, project.WorkspaceId, project.Id);
