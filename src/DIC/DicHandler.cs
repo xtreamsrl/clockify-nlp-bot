@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Bot.Data;
@@ -103,7 +102,7 @@ namespace Bot.DIC
             UserProfile userProfile)
         {
             if (!userProfile.Experimental) return false;
-            if (userProfile.DicToken == null)
+            if (userProfile.DicTokenId == null)
             {
                 await _dicSetupDialog.RunAsync(turnContext, _dialogState, cancellationToken);
                 return true;
@@ -111,13 +110,10 @@ namespace Bot.DIC
 
             try
             {
-                await _dicService.GetCurrentEmployeeAsync(userProfile.DicToken);
-                // It will be removed when only DicTokenId will be used
-                if (userProfile.DicTokenId == null)
-                {
-                    var tokenData = await _tokenRepository.WriteAsync(userProfile.DicToken);
-                    userProfile.DicTokenId = tokenData.Id;
-                }
+                var tokenData = await _tokenRepository.ReadAsync(userProfile.DicTokenId);
+                await _dicService.GetCurrentEmployeeAsync(tokenData.Value);
+                // TODO Remove when porting will be completed
+                userProfile.DicToken = null;
             }
             catch (ErrorResponseException)
             {
