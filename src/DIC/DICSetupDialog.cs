@@ -63,7 +63,7 @@ namespace Bot.DIC
         {
             string? token = promptContext.Recognized.Value;
             
-            if (string.IsNullOrWhiteSpace(token) || token.Length > 100)
+            if (string.IsNullOrWhiteSpace(token) || token.Length > 200)
             {
                 return false;
             }
