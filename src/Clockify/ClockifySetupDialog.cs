@@ -80,6 +80,7 @@ namespace Bot.Clockify
                 string? userId = _clockifyService.GetCurrentUserAsync(token).Result.Id;
                 var tokenData = await _tokenRepository.WriteAsync(token, userProfile.ClockifyTokenId);
                 userProfile.ClockifyTokenId = tokenData.Id;
+                userProfile.ClockifyToken = null;
                 userProfile.UserId = userId;
                 
                 return true;
