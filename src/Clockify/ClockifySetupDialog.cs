@@ -78,12 +78,10 @@ namespace Bot.Clockify
                     .GetAsync(promptContext.Context, () => new UserProfile(), cancellationToken);
 
                 string? userId = _clockifyService.GetCurrentUserAsync(token).Result.Id;
-                
                 var tokenData = await _tokenRepository.WriteAsync(token, userProfile.ClockifyTokenId);
-                userProfile.ClockifyToken = tokenData.Value;
                 userProfile.ClockifyTokenId = tokenData.Id;
-                
                 userProfile.UserId = userId;
+                
                 return true;
             }
             catch (AggregateException ae)
