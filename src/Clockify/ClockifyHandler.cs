@@ -119,7 +119,7 @@ namespace Bot.Clockify
         private async Task<bool> RunClockifySetupIfNeeded(ITurnContext turnContext, CancellationToken cancellationToken,
             UserProfile userProfile)
         {
-            if (userProfile.ClockifyToken == null)
+            if (userProfile.ClockifyTokenId == null && userProfile.ClockifyToken == null)
             {
                 await _clockifySetupDialog.RunAsync(turnContext, _dialogState, cancellationToken);
                 return true;
@@ -127,17 +127,18 @@ namespace Bot.Clockify
 
             try
             {
-                await _clockifyService.GetCurrentUserAsync(userProfile.ClockifyToken);
                 // It will be removed when only ClockifyTokenId will be used
-                if (userProfile.ClockifyTokenId == null)
+                if (userProfile.ClockifyTokenId == null && userProfile.ClockifyToken != null)
                 {
+                    await _clockifyService.GetCurrentUserAsync(userProfile.ClockifyToken);
                     var tokenData = await _tokenRepository.WriteAsync(userProfile.ClockifyToken);
                     userProfile.ClockifyToken = null;
                     userProfile.ClockifyTokenId = tokenData.Id;
                 }
                 else
                 {
-                    var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId);
+                    // ClockifyTokenId can't be null.
+                    var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
                     await _clockifyService.GetCurrentUserAsync(tokenData!.Value);
                     userProfile.ClockifyToken = null;
                 }
