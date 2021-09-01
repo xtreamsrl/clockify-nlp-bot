@@ -26,6 +26,11 @@ namespace Bot.Clockify
         public string TaskSelectionQuestion => GetString(nameof(TaskSelectionQuestion));
         public string NewTask => GetString(nameof(NewTask));
         public string No => GetString(nameof(No));
+        public string ReportDateRangeError => GetString(nameof(ReportDateRangeError));
+        public string ReportWorkedPeriodUnrecognized => GetString(nameof(ReportWorkedPeriodUnrecognized));
+        public string ReportTotalHours => GetString(nameof(ReportTotalHours));
+        public string ReportNoWork => GetString(nameof(ReportNoWork));
+        public string ReportWork => GetString(nameof(ReportWork));
 
         private string GetString(string name) => _localizer[name];
     }

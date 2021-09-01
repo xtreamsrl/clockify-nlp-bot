@@ -7,9 +7,8 @@ namespace Bot.Clockify
         string SetupRequest { get; }
         string SetupFeedback { get; }
         string SetupReject { get; }
-        
+
         string TaskCreationError { get; }
-        
         string TaskUnrecognized { get; }
         string TaskCreation { get; }
         string TaskAbort { get; }
@@ -21,6 +20,11 @@ namespace Bot.Clockify
         string TaskSelectionQuestion { get; }
         string NewTask { get; }
         string No { get; }
+        
+        string ReportDateRangeError { get; }
+        string ReportWorkedPeriodUnrecognized { get; }
+        string ReportTotalHours { get; }
+        string ReportNoWork { get; }
+        string ReportWork { get; }
     }
-    
 }

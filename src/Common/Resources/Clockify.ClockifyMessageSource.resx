@@ -63,4 +63,19 @@
     <data name="NewTask" xml:space="preserve">
         <value>new task</value>
     </data>
+    <data name="ReportDateRangeError" xml:space="preserve">
+        <value>I get that you want a report, but I can't understand the period you requested 😕. Can you be more specific?</value>
+    </data>
+    <data name="ReportWorkedPeriodUnrecognized" xml:space="preserve">
+        <value>I can see you want to report some hours, but I really can't understand how many 😕</value>
+    </data>
+    <data name="ReportTotalHours" xml:space="preserve">
+        <value>You worked **{0}** in {1}</value>
+    </data>
+    <data name="ReportNoWork" xml:space="preserve">
+        <value>No work to report on workspace **{0}**</value>
+    </data>
+    <data name="ReportWork" xml:space="preserve">
+        <value>Work reported on workspace **{0}**:</value>
+    </data>
 </root>

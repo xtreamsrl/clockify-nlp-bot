@@ -1,6 +1,5 @@
 ﻿using Bot.Common;
 using Bot.Models;
-using Bot.Utils;
 using Luis;
 
 namespace Bot.Clockify.Reports
@@ -25,9 +24,7 @@ namespace Bot.Clockify.Reports
             var dateRange = TextToDateRangeService.Convert(timePeriodInstance, _dateTimeProvider.DateTimeNow());
             if (dateRange == null)
             {
-                throw new InvalidDateRangeException(
-                    "I get that you want a report, but I can't understand the period you requested 😕. " +
-                    "Can you be more specific?");
+                throw new InvalidDateRangeException($"Cannot parse {timePeriodInstance} date range.");
             }
 
             return dateRange.Value;

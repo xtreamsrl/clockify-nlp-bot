@@ -22,8 +22,7 @@ namespace Bot.Clockify.Fill
                 ex is InvalidOperationException
             )
             {
-                throw new InvalidWorkedPeriodInstanceException(
-                    "I can see you want to report some hours, but I really can't understand how many 😕");
+                throw new InvalidWorkedPeriodInstanceException("No worked period has been recognized");
             }
         }
     }
