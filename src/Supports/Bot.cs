@@ -42,18 +42,5 @@ namespace Bot.Supports
                     "that 😔... if you're stuck, just ask me for help"),
                 cancellationToken);
         }
-
-        protected override async Task OnMembersAddedAsync(IList<ChannelAccount> membersAdded,
-            ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
-        {
-            foreach (var member in membersAdded)
-            {
-                if (member.Id == turnContext.Activity.Recipient.Id) continue;
-                await turnContext.SendActivityAsync(MessageFactory.Text(
-                    $"Welcome {member.Name}! I assume you're quite familiar with my skills already, " +
-                    "but should you need any further info just ask for help 😉. I don't have any special requirement, " +
-                    "you just need to be a Clockify user for mw to crunch my work"), cancellationToken);
-            }
-        }
     }
 }
