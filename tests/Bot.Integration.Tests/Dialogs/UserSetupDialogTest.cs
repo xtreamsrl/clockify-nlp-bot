@@ -15,27 +15,35 @@ namespace Bot.Integration.Tests.Dialogs
 {
     public class UserSetupDialogTest
     {
+        private const string SetupRequest = "SetupRequest";
+        private const string SetupReject = "SetupReject";
+        private const string SetupFeedback = "SetupFeedback";
+        
         [Fact]
         private async void UserSetupDialogMainFlowTest()
         {
             var userState = new UserState(new MemoryStorage());
             var clockifyService = new ClockifyService(new ClockifyClientFactory());
-            var clockifyMessageSource = new TestClockifyMessageSource();
+            var clockifyMessageSource = new Mock<IClockifyMessageSource>();
+            clockifyMessageSource.Setup(c => c.SetupRequest).Returns(SetupRequest);
+            clockifyMessageSource.Setup(c => c.SetupReject).Returns(SetupReject);
+            clockifyMessageSource.Setup(c => c.SetupFeedback).Returns(SetupFeedback);
             var mockTokenRepository = new Mock<ITokenRepository>();
             mockTokenRepository.Setup(r => r.WriteAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new TokenData("id", ClockifyApiKey));
 
-            var dialog = new ClockifySetupDialog(userState, clockifyService, mockTokenRepository.Object, clockifyMessageSource);
+            var dialog = new ClockifySetupDialog(userState, clockifyService, mockTokenRepository.Object,
+                clockifyMessageSource.Object);
             var dialogTestClient = new DialogTestClient(Channels.Telegram, dialog);
 
             var reply = await dialogTestClient.SendActivityAsync<IMessageActivity>("ciao");
-            reply.Text.Should().Be(clockifyMessageSource.SetupRequest);
+            reply.Text.Should().Be(SetupRequest);
 
             reply = await dialogTestClient.SendActivityAsync<IMessageActivity>(InvalidApiKey);
-            reply.Text.Should().Be(clockifyMessageSource.SetupReject);
+            reply.Text.Should().Be(SetupReject);
 
             reply = await dialogTestClient.SendActivityAsync<IMessageActivity>(ClockifyApiKey);
-            reply.Text.Should().Be(clockifyMessageSource.SetupFeedback);
+            reply.Text.Should().Be(SetupFeedback);
 
             var userProfile = await userState.CreateProperty<UserProfile>("UserProfile")
                 .GetAsync(dialogTestClient.DialogContext.Context);
@@ -50,28 +58,24 @@ namespace Bot.Integration.Tests.Dialogs
         {
             var userState = new UserState(new MemoryStorage());
             var clockifyService = new Mock<IClockifyService>();
-            var clockifyMessageSource = new TestClockifyMessageSource();
             clockifyService
                 .Setup(service => service.GetCurrentUserAsync(It.IsAny<string>()))
                 .ThrowsAsync(new ErrorResponseException("unable to get current user"));
+            var clockifyMessageSource = new Mock<IClockifyMessageSource>();
+            clockifyMessageSource.Setup(c => c.SetupRequest).Returns(SetupRequest);
+            clockifyMessageSource.Setup(c => c.SetupReject).Returns(SetupReject);
             var mockTokenRepository = new Mock<ITokenRepository>();
 
-            var dialog = new ClockifySetupDialog(userState, clockifyService.Object, mockTokenRepository.Object, clockifyMessageSource);
+            var dialog = new ClockifySetupDialog(userState, clockifyService.Object, mockTokenRepository.Object,
+                clockifyMessageSource.Object);
             var dialogTestClient = new DialogTestClient(Channels.Telegram, dialog);
 
             var reply = await dialogTestClient.SendActivityAsync<IMessageActivity>("ciao");
-            reply.Text.Should().Be(clockifyMessageSource.SetupRequest);
+            reply.Text.Should().Be(SetupRequest);
 
             reply = await dialogTestClient.SendActivityAsync<IMessageActivity>(ClockifyApiKey);
 
-            reply.Text.Should().Be(clockifyMessageSource.SetupReject);
+            reply.Text.Should().Be(SetupReject);
         }
-    }
-
-    internal class TestClockifyMessageSource : IClockifyMessageSource
-    {
-        public string SetupRequest => nameof(SetupRequest);
-        public string SetupFeedback  => nameof(SetupFeedback);
-        public string SetupReject  => nameof(SetupReject);
     }
 }
