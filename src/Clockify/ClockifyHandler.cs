@@ -50,15 +50,9 @@ namespace Bot.Clockify
             UserProfile userProfile)
         {
             var dialogContext = await _dialogSet.CreateContextAsync(turnContext, cancellationToken);
-            bool anyActiveDialog = dialogContext.ActiveDialog != null;
-            if (anyActiveDialog)
-            {
-                await dialogContext.ContinueDialogAsync(cancellationToken);
-                return true;
-            }
 
             if (await RunClockifySetupIfNeeded(turnContext, cancellationToken, userProfile)) return true;
-            
+
             var (topIntent, entities) =
                 await _luisRecognizer.RecognizeAsyncIntent(turnContext, cancellationToken);
 
@@ -72,18 +66,6 @@ namespace Bot.Clockify
 
             switch (topIntent)
             {
-                case TimeSurveyBotLuis.Intent.Thanks:
-                {
-                    const string message = "You're welcome ❤";
-                    await turnContext.SendActivityAsync(MessageFactory.Text(message), cancellationToken);
-                    return true;
-                }
-                case TimeSurveyBotLuis.Intent.Insult:
-                {
-                    const string message = "Language, please...";
-                    await turnContext.SendActivityAsync(MessageFactory.Text(message), cancellationToken);
-                    return true;
-                }
                 case TimeSurveyBotLuis.Intent.Report:
                     await dialogContext.BeginDialogAsync(_reportDialog.Id, entities, cancellationToken);
                     return true;
@@ -91,31 +73,20 @@ namespace Bot.Clockify
                     await dialogContext.BeginDialogAsync(_fillDialog.Id, entities, cancellationToken);
                     return true;
                 case TimeSurveyBotLuis.Intent.FillAsYesterday:
-                    // Unused
-                    break;
-                case TimeSurveyBotLuis.Intent.None:
-                    break;
-                case TimeSurveyBotLuis.Intent.Utilities_Help:
-                {
-                    const string message = "I can sure help you. This is what I can do:\n" +
-                                           "- **reporting**: ask me to give you insight about a reporting period, and surprisingly enough I will! " +
-                                           "For example, ask me *how much did I work last week?' and I'll give you all needed info\n\n" +
-                                           "- **insertion**: feel like adding some entries? just tell me! For example, say to me *add 15 minutes on " +
-                                           "r&d* and I will add it to today's time sheet.\n\n\n" +
-                                           "Working with multiple workspaces? Don't worry, I got you covered";
-                    await turnContext.SendActivityAsync(MessageFactory.Text(message), cancellationToken);
-                    return true;
-                }
+                    return false;
                 case TimeSurveyBotLuis.Intent.Utilities_Stop:
                     await dialogContext.BeginDialogAsync(_stopReminderDialog.Id, entities, cancellationToken);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(topIntent), topIntent, null);
+                    return true;
+                default: 
+                    return false;
             }
-
-            return false;
         }
-        
+
+        public DialogSet GetDialogSet()
+        {
+            return _dialogSet;
+        }
+
         private async Task<bool> RunClockifySetupIfNeeded(ITurnContext turnContext, CancellationToken cancellationToken,
             UserProfile userProfile)
         {
@@ -142,6 +113,7 @@ namespace Bot.Clockify
                     await _clockifyService.GetCurrentUserAsync(tokenData!.Value);
                     userProfile.ClockifyToken = null;
                 }
+
                 return false;
             }
             catch (ErrorResponseException)
