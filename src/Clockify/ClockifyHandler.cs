@@ -106,7 +106,7 @@ namespace Bot.Clockify
                     if (user.Name != null)
                     {
                         userProfile.FirstName = user.Name.Split(" ")[0]; //TODO: this might be wrong, don't care
-                        userProfile.LastName = user.Name.Skip(userProfile.FirstName.Length + 1).ToString();
+                        userProfile.LastName = new string(user.Name.Skip(userProfile.FirstName.Length + 1).ToArray());
                         userProfile.Email = user.Email;
                     }
                 }
