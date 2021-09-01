@@ -97,6 +97,7 @@ namespace Bot
             services.AddSingleton<IUserProfilesProvider, UserProfilesProvider>();
 
             // Bot supports
+            services.AddSingleton<IBotHandler, UtilityHandler>();
             services.AddSingleton<IBotHandler, DicHandler>();
             services.AddSingleton<IBotHandler, ClockifyHandler>();
             services.AddSingleton<BotHandlerChain>();
