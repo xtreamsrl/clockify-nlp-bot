@@ -23,15 +23,6 @@ namespace Bot.Supports
         public async Task<bool> Handle(ITurnContext turnContext, CancellationToken cancellationToken,
             UserProfile userProfile)
         {
-            var dialogContext = await _dialogSet.CreateContextAsync(turnContext, cancellationToken);
-            bool anyActiveDialog = dialogContext.ActiveDialog != null;
-
-            if (anyActiveDialog)
-            {
-                await dialogContext.ContinueDialogAsync(cancellationToken);
-                return true;
-            }
-
             if (userProfile.ClockifyToken == null && userProfile.ClockifyTokenId == null)
             {
                 await ExplainBot(turnContext, cancellationToken);

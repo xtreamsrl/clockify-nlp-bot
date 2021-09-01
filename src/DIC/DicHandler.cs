@@ -45,13 +45,6 @@ namespace Bot.DIC
         public async Task<bool> Handle(ITurnContext turnContext, CancellationToken cancellationToken, UserProfile userProfile)
         {
             var dialogContext = await _dialogSet.CreateContextAsync(turnContext, cancellationToken);
-            bool anyActiveDialog = dialogContext.ActiveDialog != null;
-            if (anyActiveDialog)
-            {
-                await dialogContext.ContinueDialogAsync(cancellationToken);
-                return true;
-            }
-            
             if (await RunDICSetupIfNeeded(turnContext, cancellationToken, userProfile)) return true;
 
             var isMaintainer = false;
