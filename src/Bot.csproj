@@ -50,5 +50,19 @@
       <_ContentIncludedByDefault Remove="wwwroot\default.htm" />
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Update="Common\Resources\Clockify.ClockifyMessageSource.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Clockify.ClockifyMessageSource.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Common\Resources\Clockify.ClockifyMessageSource.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Clockify.ClockifyMessageSource.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+    
 </Project>

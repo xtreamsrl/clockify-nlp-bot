@@ -20,21 +20,22 @@ namespace Bot.Integration.Tests.Dialogs
         {
             var userState = new UserState(new MemoryStorage());
             var clockifyService = new ClockifyService(new ClockifyClientFactory());
+            var clockifyMessageSource = new TestClockifyMessageSource();
             var mockTokenRepository = new Mock<ITokenRepository>();
             mockTokenRepository.Setup(r => r.WriteAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new TokenData("id", ClockifyApiKey));
 
-            var dialog = new ClockifySetupDialog(userState, clockifyService, mockTokenRepository.Object);
+            var dialog = new ClockifySetupDialog(userState, clockifyService, mockTokenRepository.Object, clockifyMessageSource);
             var dialogTestClient = new DialogTestClient(Channels.Telegram, dialog);
 
             var reply = await dialogTestClient.SendActivityAsync<IMessageActivity>("ciao");
-            reply.Text.Should().Be(ClockifySetupDialog.Request);
+            reply.Text.Should().Be(clockifyMessageSource.SetupRequest);
 
             reply = await dialogTestClient.SendActivityAsync<IMessageActivity>(InvalidApiKey);
-            reply.Text.Should().Be(ClockifySetupDialog.Reject);
+            reply.Text.Should().Be(clockifyMessageSource.SetupReject);
 
             reply = await dialogTestClient.SendActivityAsync<IMessageActivity>(ClockifyApiKey);
-            reply.Text.Should().Be(ClockifySetupDialog.Feedback);
+            reply.Text.Should().Be(clockifyMessageSource.SetupFeedback);
 
             var userProfile = await userState.CreateProperty<UserProfile>("UserProfile")
                 .GetAsync(dialogTestClient.DialogContext.Context);
@@ -49,20 +50,28 @@ namespace Bot.Integration.Tests.Dialogs
         {
             var userState = new UserState(new MemoryStorage());
             var clockifyService = new Mock<IClockifyService>();
+            var clockifyMessageSource = new TestClockifyMessageSource();
             clockifyService
                 .Setup(service => service.GetCurrentUserAsync(It.IsAny<string>()))
-                .ThrowsAsync(new ErrorResponseException(ClockifySetupDialog.Reject));
+                .ThrowsAsync(new ErrorResponseException("unable to get current user"));
             var mockTokenRepository = new Mock<ITokenRepository>();
 
-            var dialog = new ClockifySetupDialog(userState, clockifyService.Object, mockTokenRepository.Object);
+            var dialog = new ClockifySetupDialog(userState, clockifyService.Object, mockTokenRepository.Object, clockifyMessageSource);
             var dialogTestClient = new DialogTestClient(Channels.Telegram, dialog);
 
             var reply = await dialogTestClient.SendActivityAsync<IMessageActivity>("ciao");
-            reply.Text.Should().Be(ClockifySetupDialog.Request);
+            reply.Text.Should().Be(clockifyMessageSource.SetupRequest);
 
             reply = await dialogTestClient.SendActivityAsync<IMessageActivity>(ClockifyApiKey);
 
-            reply.Text.Should().Be(ClockifySetupDialog.Reject);
+            reply.Text.Should().Be(clockifyMessageSource.SetupReject);
         }
+    }
+
+    internal class TestClockifyMessageSource : IClockifyMessageSource
+    {
+        public string SetupRequest => nameof(SetupRequest);
+        public string SetupFeedback  => nameof(SetupFeedback);
+        public string SetupReject  => nameof(SetupReject);
     }
 }
