@@ -64,10 +64,7 @@ namespace Bot.Supports
             }
         }
 
-        public DialogSet GetDialogSet()
-        {
-            return _dialogSet;
-        }
+        public DialogSet GetDialogSet() => _dialogSet;
 
         private static async Task ExplainBot(ITurnContext turnContext, CancellationToken cancellationToken)
         {
