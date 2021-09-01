@@ -97,10 +97,7 @@ namespace Bot.DIC
             }
         }
 
-        public DialogSet GetDialogSet()
-        {
-            return _dialogSet;
-        }
+        public DialogSet GetDialogSet() => _dialogSet;
 
         // ReSharper disable once InconsistentNaming
         private async Task<bool> RunDICSetupIfNeeded(ITurnContext turnContext, CancellationToken cancellationToken,

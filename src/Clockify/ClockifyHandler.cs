@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
 using Bot.Clockify.Fill;
@@ -82,10 +81,7 @@ namespace Bot.Clockify
             }
         }
 
-        public DialogSet GetDialogSet()
-        {
-            return _dialogSet;
-        }
+        public DialogSet GetDialogSet() => _dialogSet;
 
         private async Task<bool> RunClockifySetupIfNeeded(ITurnContext turnContext, CancellationToken cancellationToken,
             UserProfile userProfile)
