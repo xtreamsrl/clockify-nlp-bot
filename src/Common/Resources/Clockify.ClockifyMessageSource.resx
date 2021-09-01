@@ -27,4 +27,40 @@
     <data name="SetupFeedback" xml:space="preserve">
         <value>Thanks! We will use this token whenever establishing a Clockify connection from now on ⚙</value>
     </data>
+    <data name="TaskCreationError" xml:space="preserve">
+        <value>Sorry, it appears you can't create tasks</value>
+    </data>
+    <data name="TaskUnrecognized" xml:space="preserve">
+        <value>I can't get a matching task...</value>
+    </data>
+    <data name="TaskCreation" xml:space="preserve">
+        <value>What is the name of the task you want to create?</value>
+    </data>
+    <data name="TaskAbort" xml:space="preserve">
+        <value>Ok, as you wish</value>
+    </data>
+    <data name="AddEntryFeedback" xml:space="preserve">
+        <value>Ok, I added {0:0} minutes entry on {1}. In total you have now {2:0.00} hours filled</value>
+    </data>
+    <data name="EntryFillUnderstandingError" xml:space="preserve">
+        <value>Sorry, I can see you want to fill some entries, but I have troubles understanding how many and on which project... Can you try and be more specific?</value>
+    </data>
+    <data name="AmbiguousProjectError" xml:space="preserve">
+        <value>Sorry, but the project you mention is ambiguous, I can't choose between {0} and {1}</value>
+    </data>
+    <data name="ProjectUnrecognized" xml:space="preserve">
+        <value>Sorry, I don't find a project matching {0}</value>
+    </data>
+    <data name="TaskUnrecognizedRetry" xml:space="preserve">
+        <value>I can't get a matching task... can you be more specific?</value>
+    </data>
+    <data name="TaskSelectionQuestion" xml:space="preserve">
+        <value>Any task in particular?</value>
+    </data>
+    <data name="No" xml:space="preserve">
+        <value>no</value>
+    </data>
+    <data name="NewTask" xml:space="preserve">
+        <value>new task</value>
+    </data>
 </root>
