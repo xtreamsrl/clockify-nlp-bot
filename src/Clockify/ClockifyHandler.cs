@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
@@ -6,6 +7,7 @@ using Bot.Clockify.Reports;
 using Bot.Data;
 using Bot.States;
 using Bot.Supports;
+using Clockify.Net.Models.Users;
 using Luis;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
