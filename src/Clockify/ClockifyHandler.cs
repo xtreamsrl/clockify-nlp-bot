@@ -55,14 +55,6 @@ namespace Bot.Clockify
             var (topIntent, entities) =
                 await _luisRecognizer.RecognizeAsyncIntent(turnContext, cancellationToken);
 
-            // TODO add integration test and put this condition inside the appropriate switch
-            // Sometimes the intent is not recognized properly
-            if (entities.datetime != null && entities.WorkedEntity != null)
-            {
-                await dialogContext.BeginDialogAsync(_fillDialog.Id, entities, cancellationToken);
-                return true;
-            }
-
             switch (topIntent)
             {
                 case TimeSurveyBotLuis.Intent.Report:
