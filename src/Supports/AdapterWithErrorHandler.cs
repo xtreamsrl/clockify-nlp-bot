@@ -1,4 +1,5 @@
-﻿using Microsoft.Bot.Builder;
+﻿using Bot.Common;
+using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -9,8 +10,9 @@ namespace Bot.Supports
     public class AdapterWithErrorHandler : BotFrameworkHttpAdapter
     {
         public AdapterWithErrorHandler(IHostEnvironment environment, IConfiguration configuration,
-            ILogger<BotFrameworkHttpAdapter> logger) : base(configuration, logger)
+            ILogger<BotFrameworkHttpAdapter> logger, ICommonMessageSource messageSource) : base(configuration, logger)
         {
+
             OnTurnError = async (turnContext, exception) =>
             {
                 if (environment.IsDevelopment())
@@ -21,7 +23,7 @@ namespace Bot.Supports
                 }
                 else
                 {
-                    await turnContext.SendActivityAsync(MessageFactory.Text("An error occurred... sorry for that"));
+                    await turnContext.SendActivityAsync(MessageFactory.Text(messageSource.GenericError));
                 }
             };
         }

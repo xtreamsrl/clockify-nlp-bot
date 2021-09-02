@@ -41,6 +41,7 @@ namespace Bot
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers().AddNewtonsoftJson();
+            ConfigureLocalization(services);
 
             var clockifyService = new ClockifyService(new ClockifyClientFactory());
             var dicService = new DipendentiInCloudService(new DipendentiInCloudClient());
@@ -105,6 +106,14 @@ namespace Bot
             // Security
             services.AddSingleton<IProactiveApiKeyProvider, ProactiveApiKeyProvider>();
             services.AddSingleton<IProactiveBotApiKeyValidator, ProactiveBotApiKeyValidator>();
+        }
+
+        private static void ConfigureLocalization(IServiceCollection services)
+        {
+            services.AddLocalization(o => { o.ResourcesPath = "Common/Resources"; });
+            services.AddSingleton<IClockifyMessageSource, ClockifyMessageSource>();
+            services.AddSingleton<IDicMessageSource, DicMessageSource>();
+            services.AddSingleton<ICommonMessageSource, CommonMessageSource>();
         }
 
         private static void ConfigureAzureKeyVault(IServiceCollection services, string keyVaultName)

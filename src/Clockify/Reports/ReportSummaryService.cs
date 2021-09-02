@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
-using Bot.Common;
 using Bot.Data;
 using Bot.States;
 
@@ -13,11 +12,14 @@ namespace Bot.Clockify.Reports
     {
         private readonly IClockifyService _clockifyService;
         private readonly ITokenRepository _tokenRepository;
+        private readonly IClockifyMessageSource _messageSource;
 
-        public ReportSummaryService(IClockifyService clockifyService, ITokenRepository tokenRepository)
+        public ReportSummaryService(IClockifyService clockifyService, ITokenRepository tokenRepository,
+            IClockifyMessageSource messageSource)
         {
             _clockifyService = clockifyService;
             _tokenRepository = tokenRepository;
+            _messageSource = messageSource;
         }
 
         public async Task<string> Summary(UserProfile userProfile, DateRange dateRange)
@@ -45,7 +47,8 @@ namespace Bot.Clockify.Reports
 
                 if (numOfWorkspaces > 1)
                 {
-                    workspaceBuilder.Append($"\n\nWork reported on workspace **{workspace.Name}**:");
+                    workspaceBuilder.Append("\n\n");
+                    workspaceBuilder.Append(string.Format(_messageSource.ReportWork, workspace.Name));
                 }
 
                 if (reportEntries.Count > 0)
@@ -55,14 +58,17 @@ namespace Bot.Clockify.Reports
                 }
                 else
                 {
-                    fullSummary.Append($"\n\nNo work to report on workspace **{workspace.Name}**\n\n");
+                    fullSummary.Append("\n\n");
+                    fullSummary.Append(string.Format(_messageSource.ReportNoWork, workspace.Name));
+                    fullSummary.Append("\n\n");
                 }
             }
 
             if (totalHours > 0)
             {
-                string intro = $"You worked **{ReportUtil.FormatDuration(totalHours)}** in {dateRange.ToString()}\n\n";
-                return intro + fullSummary;
+                string intro = string.Format(_messageSource.ReportTotalHours, ReportUtil.FormatDuration(totalHours),
+                    dateRange.ToString());
+                return intro + "\n\n" + fullSummary;
             }
 
             return fullSummary.ToString();

@@ -18,24 +18,18 @@ namespace Bot.Clockify
         private const string TokenWaterfall = "TokenWaterfall";
         private const string AskForTokenStep = "AskForToken";
 
-        public const string Feedback = "Thanks! We will use this token whenever establishing a " +
-                                       "Clockify connection from now on ⚙";
-
-        public const string Request = "Please enter your Clockify API token. If you have no idea what that is, " +
-                                      "don't worry, just look for it in [this page](https://clockify.me/user/settings)";
-
-        public const string Reject = "Sorry, but this token is not valid. Please give me a proper one to continue";
-
         private readonly IClockifyService _clockifyService;
         private readonly UserState _userState;
         private readonly ITokenRepository _tokenRepository;
+        private readonly IClockifyMessageSource _messageSource;
 
         public ClockifySetupDialog(UserState userState, IClockifyService clockifyService,
-            ITokenRepository tokenRepository) : base(nameof(ClockifySetupDialog))
+            ITokenRepository tokenRepository, IClockifyMessageSource messageSource) : base(nameof(ClockifySetupDialog))
         {
             _userState = userState;
             _clockifyService = clockifyService;
             _tokenRepository = tokenRepository;
+            _messageSource = messageSource;
 
             AddDialog(new WaterfallDialog(TokenWaterfall, new List<WaterfallStep>
             {
@@ -46,21 +40,21 @@ namespace Bot.Clockify
             InitialDialogId = TokenWaterfall;
         }
 
-        private static async Task<DialogTurnResult> PromptForTokenAsync(WaterfallStepContext stepContext,
+        private async Task<DialogTurnResult> PromptForTokenAsync(WaterfallStepContext stepContext,
             CancellationToken cancellationToken)
         {
             return await stepContext.PromptAsync(AskForTokenStep,
                 new PromptOptions
                 {
-                    Prompt = MessageFactory.Text(Request),
-                    RetryPrompt = MessageFactory.Text(Reject)
+                    Prompt = MessageFactory.Text(_messageSource.SetupRequest),
+                    RetryPrompt = MessageFactory.Text(_messageSource.SetupReject)
                 }, cancellationToken);
         }
 
         private async Task<DialogTurnResult> FeedbackAndExitAsync(WaterfallStepContext stepContext,
             CancellationToken cancellationToken)
         {
-            await stepContext.Context.SendActivityAsync(MessageFactory.Text(Feedback), cancellationToken);
+            await stepContext.Context.SendActivityAsync(MessageFactory.Text(_messageSource.SetupFeedback), cancellationToken);
             return await stepContext.EndDialogAsync(null, cancellationToken);
         }
 

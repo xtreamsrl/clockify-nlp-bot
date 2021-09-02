@@ -49,6 +49,5 @@
     <ItemGroup>
       <_ContentIncludedByDefault Remove="wwwroot\default.htm" />
     </ItemGroup>
-
-
+    
 </Project>

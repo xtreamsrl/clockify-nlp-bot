@@ -18,21 +18,19 @@ namespace Bot.DIC
     {
         private const string RemoteWaterfall = "RemoteWaterfall";
         private const string AskForRemoteDays = "AskForRemoteDays";
-        private const string Feedback = "Ok, that's nice. Thanks for planning in advance, much appreciated!";
-
-        private const string NeedForPermissionFeedback = "Ok, got it. {0} days a week from home is a lot, " +
-                                                         "so make sure your team is ok with that";
 
         private readonly IDipendentiInCloudService _dicService;
         private readonly UserState _userState;
         private readonly ITokenRepository _tokenRepository;
+        private readonly IDicMessageSource _messageSource;
 
         public LongTermRemoteWorkingDialog(UserState userState, IDipendentiInCloudService clockifyService,
-            ITokenRepository tokenRepository) : base(nameof(LongTermRemoteWorkingDialog))
+            ITokenRepository tokenRepository, IDicMessageSource messageSource) : base(nameof(LongTermRemoteWorkingDialog))
         {
             _userState = userState;
             _dicService = clockifyService;
             _tokenRepository = tokenRepository;
+            _messageSource = messageSource;
 
             AddDialog(new WaterfallDialog(RemoteWaterfall, new List<WaterfallStep>
             {
@@ -43,7 +41,7 @@ namespace Bot.DIC
             InitialDialogId = RemoteWaterfall;
         }
 
-        private static async Task<DialogTurnResult> PromptForDaysAsync(WaterfallStepContext stepContext,
+        private async Task<DialogTurnResult> PromptForDaysAsync(WaterfallStepContext stepContext,
             CancellationToken cancellationToken)
         {
             var pickerId = Guid.NewGuid().ToString();
@@ -55,7 +53,7 @@ namespace Bot.DIC
                     Attachments = new List<Attachment> {CreateCard()},
                     Type = ActivityTypes.Message,
                 },
-                RetryPrompt = MessageFactory.Text("Can you retry?"),
+                RetryPrompt = MessageFactory.Text(_messageSource.LongTermDayRetry),
             };
             stepContext.Values.Add("PickerID", pickerId);
             return await stepContext.PromptAsync(AskForRemoteDays, opts, cancellationToken);
@@ -96,13 +94,13 @@ namespace Bot.DIC
                 int remoteFrequency = remotePlan.Count(kvp => bool.Parse(kvp.Value));
                 if (remoteFrequency <= 3)
                 {
-                    await context.SendActivityAsync(MessageFactory.Text(string.Format(Feedback)),
+                    await context.SendActivityAsync(MessageFactory.Text(string.Format(_messageSource.LongTermFeedback)),
                         cancellationToken);
                 }
                 else
                 {
                     await context.SendActivityAsync(
-                        MessageFactory.Text(string.Format(NeedForPermissionFeedback, remoteFrequency)),
+                        MessageFactory.Text(string.Format(_messageSource.LongTermNeedForPermission, remoteFrequency)),
                         cancellationToken);
                 }
 
@@ -120,6 +118,7 @@ namespace Bot.DIC
             }
             catch (Exception e)
             {
+                // TODO Choose an appropriate message
                 await context.SendActivityAsync(MessageFactory.Text(string.Format(e.Message)), cancellationToken);
                 return await stepContext.EndDialogAsync(null, cancellationToken);
             }
@@ -136,7 +135,7 @@ namespace Bot.DIC
             return Task.FromResult(true);
         }
 
-        private static Attachment CreateCard()
+        private Attachment CreateCard()
         {
             var toggles = new[] {1, 2, 3, 4, 5}.ToList()
                 .Select(i => CultureInfo.CurrentCulture.DateTimeFormat.DayNames[i])
@@ -160,7 +159,7 @@ namespace Bot.DIC
                 {
                     new AdaptiveTextBlock
                     {
-                        Text = "Set up your remote working schedule",
+                        Text = _messageSource.LongTermRemoteSchedule,
                         Color = AdaptiveTextColor.Accent,
                         Weight = AdaptiveTextWeight.Bolder,
                         Size = AdaptiveTextSize.Medium,

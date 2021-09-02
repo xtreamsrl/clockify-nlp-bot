@@ -7,7 +7,6 @@ using Bot.Clockify.Client;
 using Bot.Common;
 using Bot.Data;
 using Bot.States;
-using Bot.Utils;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.Tasks;
 using Luis;
@@ -26,15 +25,21 @@ namespace Bot.Clockify.Fill
         private readonly ITimeEntryStoreService _timeEntryStoreService;
         private readonly WorthAskingForTaskService _worthAskingForTask;
         private readonly UserState _userState;
+        private readonly IClockifyMessageSource _messageSource;
 
 
         private const string TaskWaterfall = "TaskWaterfall";
         private const string AskForTaskStep = "AskForTask";
         private const string AskForNewTaskNameStep = "AskForNewTaskNameStep";
 
+        private const string No = "no";
+        private const string NewTask = "new task";
+        private const string Abort = "abort";
+
         public EntryFillDialog(ClockifyEntityRecognizer clockifyWorkableRecognizer,
             ITimeEntryStoreService timeEntryStoreService, WorthAskingForTaskService worthAskingForTask,
-            UserState userState, IClockifyService clockifyService, ITokenRepository tokenRepository)
+            UserState userState, IClockifyService clockifyService, ITokenRepository tokenRepository,
+            IClockifyMessageSource messageSource)
         {
             _clockifyWorkableRecognizer = clockifyWorkableRecognizer;
             _timeEntryStoreService = timeEntryStoreService;
@@ -42,6 +47,7 @@ namespace Bot.Clockify.Fill
             _userState = userState;
             _clockifyService = clockifyService;
             _tokenRepository = tokenRepository;
+            _messageSource = messageSource;
             AddDialog(new WaterfallDialog(TaskWaterfall, new List<WaterfallStep>
             {
                 PromptForTaskAsync,
@@ -61,7 +67,7 @@ namespace Bot.Clockify.Fill
             var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
             string clockifyToken = tokenData.Value;
             stepContext.Values["Token"] = clockifyToken;
-            var entities = (TimeSurveyBotLuis._Entities._Instance) stepContext.Options;
+            var entities = (TimeSurveyBotLuis._Entities._Instance)stepContext.Options;
 
             try
             {
@@ -88,20 +94,22 @@ namespace Bot.Clockify.Fill
                     suggestions.Add(
                         new CardAction
                         {
-                            Title = "no", Type = ActionTypes.MessageBack, Text = "no", Value = "no", DisplayText = "no"
+                            Title = _messageSource.No, Type = ActionTypes.MessageBack, Text = No, Value = No,
+                            DisplayText = _messageSource.No
                         });
                     suggestions.Add(
                         new CardAction
                         {
-                            Title = "new task", Type = ActionTypes.MessageBack, Text = "new task", Value = "new task",
-                            DisplayText = "new task"
+                            Title = _messageSource.NewTask, Type = ActionTypes.MessageBack, Text = NewTask,
+                            Value = NewTask,
+                            DisplayText = _messageSource.NewTask
                         });
-                    var activity = MessageFactory.Text("Any task in particular?");
-                    activity.SuggestedActions = new SuggestedActions {Actions = suggestions};
+                    var activity = MessageFactory.Text(_messageSource.TaskSelectionQuestion);
+                    activity.SuggestedActions = new SuggestedActions { Actions = suggestions };
                     return await stepContext.PromptAsync(AskForTaskStep, new PromptOptions
                     {
                         Prompt = activity,
-                        RetryPrompt = MessageFactory.Text("I can't get a matching task... can you be more specific?"),
+                        RetryPrompt = MessageFactory.Text(_messageSource.TaskUnrecognizedRetry),
                         Validations = new ClockifyTaskValidatorOptions(recognizedProject, clockifyToken)
                     }, cancellationToken);
                 }
@@ -112,25 +120,21 @@ namespace Bot.Clockify.Fill
             catch (CannotRecognizeProjectException e)
             {
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text(
-                    $"Sorry, I don't find a project matching {e.Unmatchable}"), cancellationToken);
+                    string.Format(_messageSource.ProjectUnrecognized, e.Unmatchable)), cancellationToken);
                 return await stepContext.EndDialogAsync(null, cancellationToken);
             }
             catch (AmbiguousRecognizableProjectException e)
             {
-                await stepContext.Context.SendActivityAsync(MessageFactory.Text(
-                        "Sorry, but the project you mention is ambiguous, I can't choose between " +
-                        $"{e.Option1.Name} and {e.Option2.Name}"),
-                    cancellationToken);
+                await stepContext.Context.SendActivityAsync(
+                    MessageFactory.Text(string.Format(_messageSource.AmbiguousProjectError, e.Option1.Name,
+                        e.Option2.Name)), cancellationToken);
                 return await stepContext.EndDialogAsync(null, cancellationToken);
             }
             catch (Exception e) when (e is InvalidWorkedPeriodInstanceException ||
                                       e is InvalidWorkedEntityException)
             {
-                await stepContext.Context.SendActivityAsync(MessageFactory.Text(
-                        "Sorry, I can see you want to fill some " +
-                        "entries, but I have troubles understanding " +
-                        "how many and on which project... " +
-                        "Can you try and be more specific?"),
+                await stepContext.Context.SendActivityAsync(
+                    MessageFactory.Text(_messageSource.EntryFillUnderstandingError),
                     cancellationToken);
                 return await stepContext.EndDialogAsync(null, cancellationToken);
             }
@@ -139,24 +143,25 @@ namespace Bot.Clockify.Fill
         private async Task<DialogTurnResult> CreateWithTaskOrAskForNewTaskAsync(WaterfallStepContext stepContext,
             CancellationToken cancellationToken)
         {
-            var token = (string) stepContext.Values["Token"];
-            var project = (ProjectDtoImpl) stepContext.Values["Project"];
-            var minutes = (double) stepContext.Values["Minutes"];
+            var token = (string)stepContext.Values["Token"];
+            var project = (ProjectDtoImpl)stepContext.Values["Project"];
+            var minutes = (double)stepContext.Values["Minutes"];
             TaskDto? recognizedTask = null;
             var requestedTask = stepContext.Result.ToString();
-            var fullEntity = (string) stepContext.Values["FullEntity"];
+            var fullEntity = (string)stepContext.Values["FullEntity"];
             switch (requestedTask?.ToLower())
             {
-                case "new task":
+                case NewTask:
                     return await stepContext.PromptAsync(AskForNewTaskNameStep, new PromptOptions
                     {
-                        Prompt = MessageFactory.Text("What is the name of the task you want to create?")
+                        Prompt = MessageFactory.Text(_messageSource.TaskCreation)
                     }, cancellationToken);
-                case "no":
+                case No:
                     return await AddEntryAndExit(stepContext, cancellationToken, token,
                         project, minutes, fullEntity, recognizedTask);
-                case "abort":
-                    await stepContext.Context.SendActivityAsync(MessageFactory.Text("Ok, as you wish"), cancellationToken);
+                case Abort:
+                    await stepContext.Context.SendActivityAsync(MessageFactory.Text(_messageSource.TaskAbort),
+                        cancellationToken);
                     return await stepContext.EndDialogAsync(null, cancellationToken);
                 default:
                     try
@@ -167,8 +172,7 @@ namespace Bot.Clockify.Fill
                     catch (CannotRecognizeProjectException)
                     {
                         await stepContext.Context.SendActivityAsync(
-                            MessageFactory.Text("I can't get a matching task..."),
-                            cancellationToken);
+                            MessageFactory.Text(_messageSource.TaskUnrecognized), cancellationToken);
                         return await stepContext.EndDialogAsync(null, cancellationToken);
                     }
 
@@ -177,34 +181,36 @@ namespace Bot.Clockify.Fill
             }
         }
 
-        private async Task<DialogTurnResult> FeedbackAndExit(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        private async Task<DialogTurnResult> FeedbackAndExit(WaterfallStepContext stepContext,
+            CancellationToken cancellationToken)
         {
-            var token = (string) stepContext.Values["Token"];
-            var project = (ProjectDtoImpl) stepContext.Values["Project"];
-            var minutes = (double) stepContext.Values["Minutes"];
+            var token = (string)stepContext.Values["Token"];
+            var project = (ProjectDtoImpl)stepContext.Values["Project"];
+            var minutes = (double)stepContext.Values["Minutes"];
             var newTaskName = stepContext.Result.ToString();
-            var fullEntity = (string) stepContext.Values["FullEntity"];
+            var fullEntity = (string)stepContext.Values["FullEntity"];
             try
             {
-                var createdTask = await _clockifyService.CreateTaskAsync(token, newTaskName!, project.Id, project.WorkspaceId);
+                var createdTask =
+                    await _clockifyService.CreateTaskAsync(token, newTaskName!, project.Id, project.WorkspaceId);
                 fullEntity += " - " + createdTask.Name;
-                return await AddEntryAndExit(stepContext, cancellationToken, token, project, minutes, fullEntity, createdTask);
+                return await AddEntryAndExit(stepContext, cancellationToken, token, project, minutes, fullEntity,
+                    createdTask);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 await stepContext.Context.SendActivityAsync(
-                    MessageFactory.Text("Sorry, it appears you can't create tasks"), cancellationToken);
+                    MessageFactory.Text(_messageSource.TaskCreationError), cancellationToken);
                 return await AddEntryAndExit(stepContext, cancellationToken, token, project, minutes, fullEntity, null);
             }
-            
         }
 
         private async Task<bool> ClockifyTaskValidatorAsync(PromptValidatorContext<string> promptContext,
             CancellationToken cancellationToken)
         {
             string? requestedTask = promptContext.Recognized.Value;
-            var options = (ClockifyTaskValidatorOptions) promptContext.Options.Validations;
-            var specialAnswers = new[] {"no", "new task", "abort"};
+            var options = (ClockifyTaskValidatorOptions)promptContext.Options.Validations;
+            var specialAnswers = new[] { No, NewTask, Abort };
             if (specialAnswers.Contains(requestedTask?.ToLower())) return true;
             try
             {
@@ -223,10 +229,10 @@ namespace Bot.Clockify.Fill
         {
             double current =
                 await _timeEntryStoreService.AddTimeEntries(clockifyToken, recognizedProject, task, minutes);
-            var feedback = MessageFactory.Text(
-                $"Ok, I added {minutes:0} minutes entry on {fullEntity}. " +
-                $"In total you have now {current:0.00} hours filled");
-            feedback.SuggestedActions = new SuggestedActions {Actions = new List<CardAction>()};
+
+            var feedback =
+                MessageFactory.Text(string.Format(_messageSource.AddEntryFeedback, minutes, fullEntity, current));
+            feedback.SuggestedActions = new SuggestedActions { Actions = new List<CardAction>() };
             await stepContext.Context.SendActivityAsync(feedback, cancellationToken);
             return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
         }
@@ -240,7 +246,7 @@ namespace Bot.Clockify.Fill
             Token = token;
         }
 
-        public ProjectDtoImpl Project { get; set; }
-        public string Token { get; set; }
+        public ProjectDtoImpl Project { get; }
+        public string Token { get; }
     }
 }

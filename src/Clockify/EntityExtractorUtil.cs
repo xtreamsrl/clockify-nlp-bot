@@ -1,9 +1,8 @@
 ﻿using System.Linq;
-using Bot.Clockify;
 using Bot.Clockify.Fill;
 using Luis;
 
-namespace Bot.Utils
+namespace Bot.Clockify
 {
     public static class EntityExtractorUtil
     {
@@ -16,8 +15,7 @@ namespace Bot.Utils
                 workedEntityInstances.First().Text == null
             )
             {
-                throw new InvalidWorkedEntityException(
-                    "I can see you want to report some hours, but I really can't understand on what 😕");
+                throw new InvalidWorkedEntityException("No worked entity has been recognized");
             }
 
             return workedEntityInstances.First().Text;
@@ -31,8 +29,7 @@ namespace Bot.Utils
                 workedPeriodInstances.Length == 0 ||
                 workedPeriodInstances.First().Text == null)
             {
-                throw new InvalidWorkedPeriodInstanceException(
-                    "I can see you want to report some hours, but I really can't understand how many 😕");
+                throw new InvalidWorkedPeriodInstanceException("No worked period has been recognized");
             }
 
             return workedPeriodInstances.First().Text;

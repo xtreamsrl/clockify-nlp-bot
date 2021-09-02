@@ -63,15 +63,15 @@ namespace Bot.Tests.Clockify.Reports
 
             Func<string> getDateTimeWithNullDateTimeEntities = () =>  reportExtractor.GetDateTimeInstance(nullDateTimeEntities);
             getDateTimeWithNullDateTimeEntities.Should().ThrowExactly<InvalidWorkedPeriodInstanceException>()
-                .WithMessage("I can see you want to report some hours, but I really can't understand how many 😕");
+                .WithMessage("No worked period has been recognized");
             
             Func<string> getDateTimeWithEmptyEntities = () =>  reportExtractor.GetDateTimeInstance(new TimeSurveyBotLuis._Entities._Instance());
             getDateTimeWithEmptyEntities.Should().ThrowExactly<InvalidWorkedPeriodInstanceException>()
-                .WithMessage("I can see you want to report some hours, but I really can't understand how many 😕");
+                .WithMessage("No worked period has been recognized");
             
             Func<string> getDateTimeWithNullDateTimeText = () =>  reportExtractor.GetDateTimeInstance(emptyDateTimeTextEntities);
             getDateTimeWithNullDateTimeText.Should().ThrowExactly<InvalidWorkedPeriodInstanceException>()
-                .WithMessage("I can see you want to report some hours, but I really can't understand how many 😕");
+                .WithMessage("No worked period has been recognized");
         }
         
         [Fact]
@@ -102,8 +102,7 @@ namespace Bot.Tests.Clockify.Reports
             Func<DateRange> action = () => reportExtractor.GetDateRangeFromTimePeriod(timePeriod);
 
             action.Should().ThrowExactly<InvalidDateRangeException>().WithMessage(
-                "I get that you want a report, but I can't understand the period you requested 😕. " +
-                "Can you be more specific?");
+                "Cannot parse invalid time period date range.");
         }
     }
 }
