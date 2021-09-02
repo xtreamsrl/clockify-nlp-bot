@@ -113,6 +113,7 @@ namespace Bot
             services.AddLocalization(o => { o.ResourcesPath = "Common/Resources"; });
             services.AddSingleton<IClockifyMessageSource, ClockifyMessageSource>();
             services.AddSingleton<IDicMessageSource, DicMessageSource>();
+            services.AddSingleton<ICommonMessageSource, CommonMessageSource>();
         }
 
         private static void ConfigureAzureKeyVault(IServiceCollection services, string keyVaultName)
