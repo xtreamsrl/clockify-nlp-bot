@@ -18,21 +18,19 @@ namespace Bot.DIC
     {
         private const string RemoteWaterfall = "RemoteWaterfall";
         private const string AskForRemoteDays = "AskForRemoteDays";
-        private const string Feedback = "Ok, that's nice. Enjoy your {0} days home then!";
-
-        private const string NeedForPermissionFeedback = "Ok, got it. {0} days from home is a lot, " +
-                                                         "so make sure to ask explicitely for consent";
 
         private readonly IDipendentiInCloudService _dicService;
         private readonly UserState _userState;
         private readonly ITokenRepository _tokenRepository;
+        private readonly IDicMessageSource _messageSource;
 
         public NextWeekRemoteWorkingDialog(UserState userState, IDipendentiInCloudService clockifyService,
-            ITokenRepository tokenRepository) : base(nameof(NextWeekRemoteWorkingDialog))
+            ITokenRepository tokenRepository, IDicMessageSource messageSource) : base(nameof(NextWeekRemoteWorkingDialog))
         {
             _userState = userState;
             _dicService = clockifyService;
             _tokenRepository = tokenRepository;
+            _messageSource = messageSource;
 
             AddDialog(new WaterfallDialog(RemoteWaterfall, new List<WaterfallStep>
             {
@@ -43,7 +41,7 @@ namespace Bot.DIC
             InitialDialogId = RemoteWaterfall;
         }
 
-        private static async Task<DialogTurnResult> PromptForDaysAsync(WaterfallStepContext stepContext,
+        private async Task<DialogTurnResult> PromptForDaysAsync(WaterfallStepContext stepContext,
             CancellationToken cancellationToken)
         {
             var pickerId = Guid.NewGuid().ToString();
@@ -55,7 +53,7 @@ namespace Bot.DIC
                     Attachments = new List<Attachment> {CreateCard()},
                     Type = ActivityTypes.Message,
                 },
-                RetryPrompt = MessageFactory.Text("Can you retry?"),
+                RetryPrompt = MessageFactory.Text(_messageSource.NextWeekDayRetry),
             };
             stepContext.Values.Add("PickerID", pickerId);
             return await stepContext.PromptAsync(AskForRemoteDays, opts, cancellationToken);
@@ -92,13 +90,13 @@ namespace Bot.DIC
                 int remoteDays = remotePlan.Count(kvp => kvp.Value);
                 if (remoteDays <= 3)
                 {
-                    await context.SendActivityAsync(MessageFactory.Text(string.Format(Feedback, remoteDays)),
+                    await context.SendActivityAsync(MessageFactory.Text(string.Format(_messageSource.NextWeekFeedback, remoteDays)),
                         cancellationToken);
                 }
                 else
                 {
                     await context.SendActivityAsync(
-                        MessageFactory.Text(string.Format(NeedForPermissionFeedback, remoteDays)),
+                        MessageFactory.Text(string.Format(_messageSource.NextWeekNeedForPermission, remoteDays)),
                         cancellationToken);
                 }
 
@@ -116,18 +114,19 @@ namespace Bot.DIC
             }
             catch (Exception e)
             {
+                // TODO Choose an appropriate message
                 await context.SendActivityAsync(MessageFactory.Text(string.Format(e.Message)), cancellationToken);
                 return await stepContext.EndDialogAsync(null, cancellationToken);
             }
         }
 
-        private Task<bool> AlwaysValid(PromptValidatorContext<string> promptContext,
+        private static Task<bool> AlwaysValid(PromptValidatorContext<string> promptContext,
             CancellationToken cancellationToken)
         {
             return Task.FromResult(true);
         }
 
-        private static Attachment CreateCard()
+        private Attachment CreateCard()
         {
             var toggles = new[] {1, 2, 3, 4, 5}.ToList()
                 .Select(i => CultureInfo.CurrentCulture.DateTimeFormat.DayNames[i])
@@ -145,7 +144,7 @@ namespace Bot.DIC
                 {
                     new AdaptiveTextBlock
                     {
-                        Text = "When are you working from home next week?",
+                        Text = _messageSource.NextWeekDaySelection,
                         Color = AdaptiveTextColor.Accent,
                         Weight = AdaptiveTextWeight.Bolder,
                         Size = AdaptiveTextSize.Medium,

@@ -15,17 +15,17 @@ namespace Bot.DIC
     {
         private const string TaskWaterfall = "NotificationWaterfall";
         private const string AskForNotification = "AskForNotification";
-        private const string NotificationSent = "Notification sent to {0} users";
         private readonly IUserProfilesProvider _userProfilesProvider;
         private readonly IBotFrameworkHttpAdapter _adapter;
         private readonly string _appId;
-
+        private readonly IDicMessageSource _messageSource;
 
         public NotifyUsersDialog(IUserProfilesProvider userProfilesProvider, IBotFrameworkHttpAdapter adapter, 
-            IConfiguration configuration)
+            IConfiguration configuration, IDicMessageSource messageSource)
         {
             _userProfilesProvider = userProfilesProvider;
             _adapter = adapter;
+            _messageSource = messageSource;
             AddDialog(new WaterfallDialog(TaskWaterfall, new List<WaterfallStep>
             {
                 PromptForNotificationAsync,
@@ -56,7 +56,7 @@ namespace Bot.DIC
                     ((BotAdapter) _adapter).ContinueConversationAsync(
                         _appId,
                         userProfile!.ConversationReference,
-                        SendAcivity(notificationToSend),
+                        SendActivity(notificationToSend),
                         default).Wait(1000);
                     reminderCounter++;
                 }
@@ -66,21 +66,21 @@ namespace Bot.DIC
                 }
             }
             await stepContext.Context.SendActivityAsync(
-                MessageFactory.Text(string.Format(NotificationSent, reminderCounter)), cancellationToken);
+                MessageFactory.Text(string.Format(_messageSource.NotificationSent, reminderCounter)), cancellationToken);
             return await stepContext.EndDialogAsync(null, cancellationToken);
         }
 
-        private BotCallbackHandler SendAcivity(IActivity notification)
+        private static BotCallbackHandler SendActivity(IActivity notification)
         {
             return (turn, token) => turn.SendActivityAsync(notification, token);
         }
 
-        private static async Task<DialogTurnResult> PromptForNotificationAsync(WaterfallStepContext stepContext,
+        private async Task<DialogTurnResult> PromptForNotificationAsync(WaterfallStepContext stepContext,
             CancellationToken cancellationToken)
         {
             return await stepContext.PromptAsync(AskForNotification, new PromptOptions
             {
-                Prompt = MessageFactory.Text("What's the notification you want to send?"),
+                Prompt = MessageFactory.Text(_messageSource.NotificationQuestion),
             }, cancellationToken);
         }
     }

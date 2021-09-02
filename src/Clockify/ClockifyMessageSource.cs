@@ -14,6 +14,7 @@ namespace Bot.Clockify
         public string SetupRequest => GetString(nameof(SetupRequest));
         public string SetupFeedback => GetString(nameof(SetupFeedback));
         public string SetupReject => GetString(nameof(SetupReject));
+        
         public string TaskCreationError => GetString(nameof(TaskCreationError));
         public string TaskUnrecognized => GetString(nameof(TaskUnrecognized));
         public string TaskCreation => GetString(nameof(TaskCreation));
@@ -26,6 +27,7 @@ namespace Bot.Clockify
         public string TaskSelectionQuestion => GetString(nameof(TaskSelectionQuestion));
         public string NewTask => GetString(nameof(NewTask));
         public string No => GetString(nameof(No));
+        
         public string ReportDateRangeError => GetString(nameof(ReportDateRangeError));
         public string ReportWorkedPeriodUnrecognized => GetString(nameof(ReportWorkedPeriodUnrecognized));
         public string ReportTotalHours => GetString(nameof(ReportTotalHours));
