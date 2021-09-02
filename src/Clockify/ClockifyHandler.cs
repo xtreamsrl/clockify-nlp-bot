@@ -88,7 +88,7 @@ namespace Bot.Clockify
 
             try
             {
-                // It will be removed when only ClockifyTokenId will be used
+                // TODO: it will be removed when only ClockifyTokenId will be used
                 if (userProfile.ClockifyTokenId == null && userProfile.ClockifyToken != null)
                 {
                     await _clockifyService.GetCurrentUserAsync(userProfile.ClockifyToken);
