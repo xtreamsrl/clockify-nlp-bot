@@ -78,4 +78,8 @@
     <data name="ReportWork" xml:space="preserve">
         <value>Work reported on workspace **{0}**:</value>
     </data>
+    <data name="RemindEntryFill" xml:space="preserve">
+        <value>Hey! I can see you have not filled up entirely your time sheet for the day. Remember, fill in earlier to make the entries really reflect what you did. I'll keep reminding you until you comply 🙃, if I become too annoying just ask me to stop.
+</value>
+    </data>
 </root>

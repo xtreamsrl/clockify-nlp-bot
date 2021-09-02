@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Bot.Common;
 using Bot.Remind;
 using Bot.States;
 using Microsoft.Bot.Builder;
@@ -10,18 +8,15 @@ namespace Bot.Clockify
 {
     public class EntryFillRemindService : GenericRemindService
     {
-        private static async Task BotCallback(ITurnContext turnContext, CancellationToken cancellationToken)
+        private static BotCallbackHandler BotCallbackMaker(string text)
         {
-            const string text = "Hey! I can see you have not filled up entirely your time sheet for the day. " +
-                                "Remember, fill in earlier to make the entries really reflect what you did. " +
-                                "I'll keep reminding you until you comply 🙃, if I become too annoying just ask me to stop.";
-
-            await turnContext.SendActivityAsync(text, cancellationToken: cancellationToken);
+            return async (turn, token) => await turn.SendActivityAsync(text, cancellationToken: token);
         }
 
         public EntryFillRemindService(IUserProfilesProvider userProfilesProvider, IConfiguration configuration,
-            ICompositeNeedReminderService compositeNeedRemindService) :
-            base(userProfilesProvider, configuration, compositeNeedRemindService, BotCallback)
+            ICompositeNeedReminderService compositeNeedRemindService, ICommonMessageSource messageSource) :
+            base(userProfilesProvider, configuration, compositeNeedRemindService,
+                BotCallbackMaker(messageSource.RemindEntryFill))
         {
         }
     }
