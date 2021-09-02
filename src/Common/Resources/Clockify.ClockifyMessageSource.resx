@@ -82,4 +82,10 @@
         <value>Hey! I can see you have not filled up entirely your time sheet for the day. Remember, fill in earlier to make the entries really reflect what you did. I'll keep reminding you until you comply 🙃, if I become too annoying just ask me to stop.
 </value>
     </data>
+    <data name="RemindStoppedAlready" xml:space="preserve">
+        <value>You already told me to stop sending you reminders for the day, there's no need to insist</value>
+    </data>
+    <data name="RemindStopAnswer" xml:space="preserve">
+        <value>Ok, no more reminders for today, you have my word 🤙</value>
+    </data>
 </root>

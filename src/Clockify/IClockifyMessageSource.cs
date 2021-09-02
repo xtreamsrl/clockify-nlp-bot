@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Bot.Clockify
+﻿namespace Bot.Clockify
 {
     public interface IClockifyMessageSource
     {
@@ -26,5 +24,8 @@ namespace Bot.Clockify
         string ReportTotalHours { get; }
         string ReportNoWork { get; }
         string ReportWork { get; }
+        
+        string RemindStoppedAlready { get; }
+        string RemindStopAnswer { get; }
     }
 }
