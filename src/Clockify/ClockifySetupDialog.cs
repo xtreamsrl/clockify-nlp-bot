@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
 using Bot.Data;
 using Bot.States;
+using Clockify.Net.Models.Users;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
@@ -77,26 +79,23 @@ namespace Bot.Clockify
                 var userProfile = await _userState.CreateProperty<UserProfile>("UserProfile")
                     .GetAsync(promptContext.Context, () => new UserProfile(), cancellationToken);
 
-                string? userId = _clockifyService.GetCurrentUserAsync(token).Result.Id;
+                CurrentUserDto currentUser = await _clockifyService.GetCurrentUserAsync(token);
                 var tokenData = await _tokenRepository.WriteAsync(token, userProfile.ClockifyTokenId);
                 userProfile.ClockifyTokenId = tokenData.Id;
                 userProfile.ClockifyToken = null;
-                userProfile.UserId = userId;
-                
-                return true;
-            }
-            catch (AggregateException ae)
-            {
-                foreach (var e in ae.InnerExceptions)
+                userProfile.UserId = currentUser.Id;
+                if (currentUser.Name != null)
                 {
-                    if (e is ErrorResponseException)
-                    {
-                        return false;
-                    }
+                    userProfile.FirstName = currentUser.Name.Split(" ")[0]; //TODO: this might be wrong
+                    userProfile.LastName = new string(currentUser.Name.Skip(userProfile.FirstName.Length + 1).ToArray());
+                    userProfile.Email = currentUser.Email;
                 }
 
-                // Unexpected exception occurred
-                throw;
+                return true;
+            }
+            catch (ErrorResponseException)
+            {
+                return false;
             }
         }
     }

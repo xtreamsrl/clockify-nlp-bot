@@ -1,4 +1,5 @@
-﻿using System.Threading;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
 using Bot.Clockify.Fill;
@@ -6,6 +7,7 @@ using Bot.Clockify.Reports;
 using Bot.Data;
 using Bot.States;
 using Bot.Supports;
+using Clockify.Net.Models.Users;
 using Luis;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
@@ -86,7 +88,7 @@ namespace Bot.Clockify
 
             try
             {
-                // It will be removed when only ClockifyTokenId will be used
+                // TODO: it will be removed when only ClockifyTokenId will be used
                 if (userProfile.ClockifyTokenId == null && userProfile.ClockifyToken != null)
                 {
                     await _clockifyService.GetCurrentUserAsync(userProfile.ClockifyToken);
@@ -98,8 +100,15 @@ namespace Bot.Clockify
                 {
                     // ClockifyTokenId can't be null.
                     var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
-                    await _clockifyService.GetCurrentUserAsync(tokenData!.Value);
+                    CurrentUserDto user = await _clockifyService.GetCurrentUserAsync(tokenData.Value);
                     userProfile.ClockifyToken = null;
+                    // This can be removed in future, it serves the purpose of aligning old users
+                    if (user.Name != null)
+                    {
+                        userProfile.FirstName = user.Name.Split(" ")[0]; //TODO: this might be wrong, don't care
+                        userProfile.LastName = new string(user.Name.Skip(userProfile.FirstName.Length + 1).ToArray());
+                        userProfile.Email = user.Email;
+                    }
                 }
 
                 return false;
