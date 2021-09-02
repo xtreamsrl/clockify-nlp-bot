@@ -10,6 +10,9 @@ using Clockify.Net.Models.Tasks;
 using Clockify.Net.Models.TimeEntries;
 using Clockify.Net.Models.Workspaces;
 using FluentAssertions;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -24,7 +27,7 @@ namespace Bot.Tests.Clockify.Reports
             // Stub
             var mockClockifyService = new Mock<IClockifyService>();
             var mockTokenRepository = new Mock<ITokenRepository>();
-            
+
             mockTokenRepository.Setup(r => r.ReadAsync(It.IsAny<string>()))
                 .ReturnsAsync(new TokenData("id", "clockifyToken"));
             var workspaces = new List<WorkspaceDto>
@@ -55,7 +58,8 @@ namespace Bot.Tests.Clockify.Reports
                 new DateTime(2020, 1, 1, 0, 0, 0),
                 new DateTime(2020, 3, 1, 0, 0, 0)
             );
-            var reportSummaryService = new ReportSummaryService(mockClockifyService.Object, mockTokenRepository.Object);
+            var reportSummaryService = new ReportSummaryService(mockClockifyService.Object, mockTokenRepository.Object,
+                TestClockifyUtils.ClockifyMessageSource());
 
             // Act
             string summary = await reportSummaryService.Summary(userProfile, dateRange);
@@ -77,7 +81,7 @@ namespace Bot.Tests.Clockify.Reports
             // Stub
             var mockClockifyService = new Mock<IClockifyService>();
             var mockTokenRepository = new Mock<ITokenRepository>();
-            
+
             mockTokenRepository.Setup(r => r.ReadAsync(It.IsAny<string>()))
                 .ReturnsAsync(new TokenData("id", "clockifyToken"));
             var workspaces = new List<WorkspaceDto>
@@ -103,7 +107,8 @@ namespace Bot.Tests.Clockify.Reports
                 new DateTime(2020, 1, 1, 0, 0, 0),
                 new DateTime(2020, 3, 1, 0, 0, 0)
             );
-            var reportSummaryService = new ReportSummaryService(mockClockifyService.Object, mockTokenRepository.Object);
+            var reportSummaryService = new ReportSummaryService(mockClockifyService.Object, mockTokenRepository.Object,
+                TestClockifyUtils.ClockifyMessageSource());
 
             // Act
             string summary = await reportSummaryService.Summary(userProfile, dateRange);
@@ -121,7 +126,7 @@ namespace Bot.Tests.Clockify.Reports
             // Stub
             var mockClockifyService = new Mock<IClockifyService>();
             var mockTokenRepository = new Mock<ITokenRepository>();
-            
+
             mockTokenRepository.Setup(r => r.ReadAsync(It.IsAny<string>()))
                 .ReturnsAsync(new TokenData("id", "clockifyToken"));
             var workspaces = new List<WorkspaceDto>
@@ -149,7 +154,8 @@ namespace Bot.Tests.Clockify.Reports
                 new DateTime(2020, 1, 1, 0, 0, 0),
                 new DateTime(2020, 3, 1, 0, 0, 0)
             );
-            var reportSummaryService = new ReportSummaryService(mockClockifyService.Object, mockTokenRepository.Object);
+            var reportSummaryService = new ReportSummaryService(mockClockifyService.Object, mockTokenRepository.Object,
+                TestClockifyUtils.ClockifyMessageSource());
 
             // Act
             string summary = await reportSummaryService.Summary(userProfile, dateRange);
@@ -167,28 +173,28 @@ namespace Bot.Tests.Clockify.Reports
 
         private static WorkspaceDto Workspace1()
         {
-            return new WorkspaceDto {Id = "id1", Name = "workspace1"};
+            return new WorkspaceDto { Id = "id1", Name = "workspace1" };
         }
 
         private static WorkspaceDto Workspace2()
         {
-            return new WorkspaceDto {Id = "id2", Name = "workspace2"};
+            return new WorkspaceDto { Id = "id2", Name = "workspace2" };
         }
 
 
         private static ProjectDtoImpl ProjectRd()
         {
-            return new ProjectDtoImpl {Name = "r&d"};
+            return new ProjectDtoImpl { Name = "r&d" };
         }
 
         private static ProjectDtoImpl ProjectForecasting()
         {
-            return new ProjectDtoImpl {Name = "forecasting"};
+            return new ProjectDtoImpl { Name = "forecasting" };
         }
 
         private static TaskDto TaskBlockchain()
         {
-            return new TaskDto {Name = "blockchain"};
+            return new TaskDto { Name = "blockchain" };
         }
 
         private static List<HydratedTimeEntryDtoImpl> TimeEntriesWorkspace1()
@@ -233,8 +239,8 @@ namespace Bot.Tests.Clockify.Reports
             {
                 new HydratedTimeEntryDtoImpl
                 {
-                    Project = new ProjectDtoImpl {Name = "operations"},
-                    Task = new TaskDto {Name = "management"},
+                    Project = new ProjectDtoImpl { Name = "operations" },
+                    Task = new TaskDto { Name = "management" },
                     TimeInterval = new TimeIntervalDto
                     {
                         Start = new DateTimeOffset(2020, 2, 3, 15, 0, 0, TimeSpan.Zero),
