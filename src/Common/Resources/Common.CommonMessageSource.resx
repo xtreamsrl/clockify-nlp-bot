@@ -36,4 +36,7 @@
     <data name="HelpSecurityInfo" xml:space="preserve">
         <value>I was built for people who needed me, nothing more. I don't store any of your data, only your access token for Clockify, which you can revoke or change with a click. And because I value your trust, I store it securely on Microsoft Azure dedicated Key Vault. Don't just take my word for granted, you can check my [source code](https://github.com/xtreamsrl/clockify-nlp-bot) as well, it's open and public! That being said, enjoy chatting with me, and I hope I'll help: for any trouble, open an [issue](https://github.com/xtreamsrl/clockify-nlp-bot/issues) on GitHub, or if you're not of the geeky persuasion just write my creators at oss@xtreamers.io</value>
     </data>
+    <data name="MessageUnhandled" xml:space="preserve">
+        <value>mmm, I don't know exactly how to respond to that 😔... if you're stuck, just ask me for help</value>
+    </data>
 </root>

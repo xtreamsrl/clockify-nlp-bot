@@ -10,5 +10,6 @@ namespace Bot.Common
         string HelpDescription { get; }
         string HelpLanguage { get; }
         string HelpSecurityInfo { get; }
+        string MessageUnhandled { get; }
     }
 }

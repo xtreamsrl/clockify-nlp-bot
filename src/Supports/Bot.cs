@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using Bot.Common;
 using Bot.States;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Schema;
@@ -12,12 +12,15 @@ namespace Bot.Supports
         private readonly ConversationState _conversationState;
         private readonly UserState _userState;
         private readonly BotHandlerChain _botHandlerChain;
+        private readonly ICommonMessageSource _messageSource;
 
-        public Bot(ConversationState conversationState, UserState userState, BotHandlerChain botHandlerChain)
+        public Bot(ConversationState conversationState, UserState userState, BotHandlerChain botHandlerChain,
+            ICommonMessageSource messageSource)
         {
             _conversationState = conversationState;
             _userState = userState;
             _botHandlerChain = botHandlerChain;
+            _messageSource = messageSource;
         }
 
         public override async Task OnTurnAsync(ITurnContext turnContext,
@@ -37,10 +40,7 @@ namespace Bot.Supports
 
             if (await _botHandlerChain.Handle(turnContext, cancellationToken, userProfile)) return;
 
-            await turnContext.SendActivityAsync(MessageFactory.Text(
-                    "mmm, I don't know exactly how to respond to " +
-                    "that 😔... if you're stuck, just ask me for help"),
-                cancellationToken);
+            await turnContext.SendActivityAsync(MessageFactory.Text(_messageSource.MessageUnhandled), cancellationToken);
         }
     }
 }
