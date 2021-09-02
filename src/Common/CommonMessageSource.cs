@@ -18,6 +18,7 @@ namespace Bot.Common
         public string HelpLanguage => GetString(nameof(HelpLanguage));
         public string HelpSecurityInfo => GetString(nameof(HelpSecurityInfo));
         public string MessageUnhandled => GetString(nameof(MessageUnhandled));
+        public string GenericError => GetString(nameof(GenericError));
 
         private string GetString(string name) => _localizer[name];
     }

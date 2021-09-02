@@ -39,4 +39,7 @@
     <data name="MessageUnhandled" xml:space="preserve">
         <value>mmm, I don't know exactly how to respond to that 😔... if you're stuck, just ask me for help</value>
     </data>
+    <data name="GenericError" xml:space="preserve">
+        <value>An error occurred... sorry for that</value>
+    </data>
 </root>
