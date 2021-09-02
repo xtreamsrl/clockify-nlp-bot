@@ -93,18 +93,9 @@ namespace Bot.Clockify
 
                 return true;
             }
-            catch (AggregateException ae)
+            catch (ErrorResponseException)
             {
-                foreach (var e in ae.InnerExceptions)
-                {
-                    if (e is ErrorResponseException)
-                    {
-                        return false;
-                    }
-                }
-
-                // Unexpected exception occurred
-                throw;
+                return false;
             }
         }
     }
