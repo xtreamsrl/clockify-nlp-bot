@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Bot.Clockify.Client;
 using Bot.Clockify.Fill;
 using Bot.Clockify.Models;
-using Clockify.Net.Models.Workspaces;
 using F23.StringSimilarity;
 using FluentAssertions;
 using Moq;
@@ -37,7 +36,7 @@ namespace Bot.Tests.Clockify
         [Fact]
         public async void RecognizeProject_OneRecognizableProjectFound_ReturnsRecognizedProject()
         {
-            var recognizableProject = new ProjectDo {Name = "abec_bundle_sales_forecast"};
+            var recognizableProject = new ProjectDo { Name = "abec_bundle_sales_forecast" };
             var input = "sales forecast";
             var expected = recognizableProject.Name;
 
@@ -45,7 +44,7 @@ namespace Bot.Tests.Clockify
             clockifyServiceMock.Setup(c => c.GetWorkspacesAsync(It.IsAny<string>()))
                 .ReturnsAsync(Workspaces);
             clockifyServiceMock.Setup(c => c.GetProjectsAsync(It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(new List<ProjectDo> {recognizableProject});
+                .ReturnsAsync(new List<ProjectDo> { recognizableProject });
             var distanceAlgorithm = new ClockifyEntityDistance(new MetricLCS());
 
             var result = await new ClockifyEntityRecognizer(distanceAlgorithm, clockifyServiceMock.Object)
@@ -102,8 +101,8 @@ namespace Bot.Tests.Clockify
             var input = "abcdf";
             var ambiguousProjects = new List<ProjectDo>
             {
-                new ProjectDo {Name = "abcdf_right"},
-                new ProjectDo {Name = "abcdf_left"},
+                new ProjectDo { Name = "abcdf_right" },
+                new ProjectDo { Name = "abcdf_left" },
             };
 
             var distanceAlgorithm = new ClockifyEntityDistance(new MetricLCS());
@@ -122,19 +121,19 @@ namespace Bot.Tests.Clockify
             await action.Should().ThrowAsync<AmbiguousRecognizableProjectException>();
         }
 
-        private static List<WorkspaceDto> Workspaces()
+        private static List<WorkspaceDo> Workspaces()
         {
-            return new List<WorkspaceDto> {new WorkspaceDto {Id = "id1", Name = "workspace1"}};
+            return new List<WorkspaceDo> { new WorkspaceDo("id1", "workspace1") };
         }
 
         private static List<ProjectDo> Projects()
         {
             return new List<ProjectDo>
             {
-                new ProjectDo {Name = "abec_bundle_sales_forecast"},
-                new ProjectDo {Name = "xkfc_middle_fo"},
-                new ProjectDo {Name = "abcdf_right"},
-                new ProjectDo {Name = "exactMatch"}
+                new ProjectDo { Name = "abec_bundle_sales_forecast" },
+                new ProjectDo { Name = "xkfc_middle_fo" },
+                new ProjectDo { Name = "abcdf_right" },
+                new ProjectDo { Name = "exactMatch" }
             };
         }
     }

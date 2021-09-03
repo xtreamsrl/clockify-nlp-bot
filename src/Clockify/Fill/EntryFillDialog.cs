@@ -7,13 +7,10 @@ using Bot.Clockify.Client;
 using Bot.Clockify.Models;
 using Bot.Data;
 using Bot.States;
-using Clockify.Net.Models.Projects;
-using Clockify.Net.Models.Tasks;
 using Luis;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
-using TaskStatus = Clockify.Net.Models.Tasks.TaskStatus;
 
 namespace Bot.Clockify.Fill
 {
@@ -85,7 +82,7 @@ namespace Bot.Clockify.Fill
                         await _clockifyService.GetTasksAsync(clockifyToken, recognizedProject.WorkspaceId,
                             recognizedProject.Id);
                     var suggestions = suggestedTasks
-                        .Where(t => t.Status == TaskStatus.Active)
+                        .Where(t => t.Status == TaskStatusDo.Active)
                         .Select(t => new CardAction
                         {
                             Title = t.Name, Type = ActionTypes.MessageBack, Value = t.Name, Text = t.Name,
@@ -146,7 +143,7 @@ namespace Bot.Clockify.Fill
             var token = (string)stepContext.Values["Token"];
             var project = (ProjectDo)stepContext.Values["Project"];
             var minutes = (double)stepContext.Values["Minutes"];
-            TaskDto? recognizedTask = null;
+            TaskDo? recognizedTask = null;
             var requestedTask = stepContext.Result.ToString();
             var fullEntity = (string)stepContext.Values["FullEntity"];
             switch (requestedTask?.ToLower())
@@ -225,7 +222,7 @@ namespace Bot.Clockify.Fill
 
         private async Task<DialogTurnResult> AddEntryAndExit(DialogContext stepContext,
             CancellationToken cancellationToken,
-            string clockifyToken, ProjectDo recognizedProject, double minutes, string fullEntity, TaskDto? task)
+            string clockifyToken, ProjectDo recognizedProject, double minutes, string fullEntity, TaskDo? task)
         {
             double current =
                 await _timeEntryStoreService.AddTimeEntries(clockifyToken, recognizedProject, task, minutes);

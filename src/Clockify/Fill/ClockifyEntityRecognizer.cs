@@ -67,19 +67,19 @@ namespace Bot.Clockify.Fill
         {
             var workspaces = await _clockifyService.GetWorkspacesAsync(apiKey);
 
-            async Task<List<ProjectDo>> ProjectsFromWs(WorkspaceDto w) =>
+            async Task<List<ProjectDo>> ProjectsFromWs(WorkspaceDo w) =>
                 await _clockifyService.GetProjectsAsync(apiKey, w.Id);
 
             var possibleProjects = (await Task.WhenAll(workspaces.Select(ProjectsFromWs))).SelectMany(p => p);
             return possibleProjects;
         }
 
-        private async Task<IEnumerable<TaskDto>> GetAllPossibleTasks(string apiKey, ProjectDo project)
+        private async Task<IEnumerable<TaskDo>> GetAllPossibleTasks(string apiKey, ProjectDo project)
         {
             return await _clockifyService.GetTasksAsync(apiKey, project.WorkspaceId, project.Id);
         }
 
-        public async Task<TaskDto> RecognizeTask(string? workedEntity, string apiKey, ProjectDo project)
+        public async Task<TaskDo> RecognizeTask(string? workedEntity, string apiKey, ProjectDo project)
         {
             var possibleTasks = (await GetAllPossibleTasks(apiKey, project)).ToList();
 

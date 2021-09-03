@@ -2,9 +2,6 @@
 using System.Linq;
 using Bot.Clockify.Models;
 using Bot.Clockify.Reports;
-using Clockify.Net.Models.Projects;
-using Clockify.Net.Models.Tasks;
-using Clockify.Net.Models.TimeEntries;
 using FluentAssertions;
 using Xunit;
 
@@ -17,31 +14,31 @@ namespace Bot.Tests.Clockify.Reports
         {
             var hydratedTimeEntries = new[]
             {
-                new HydratedTimeEntryDtoImpl
+                new HydratedTimeEntryDo
                 {
                     Project = ProjectRd(),
                     Task = TaskBlockchain(),
-                    TimeInterval = new TimeIntervalDto
+                    TimeInterval = new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 7, 6, 7, 0, 0, TimeSpan.Zero),
                         End = new DateTimeOffset(2020, 7, 6, 15, 0, 0, TimeSpan.Zero)
                     }
                 },
-                new HydratedTimeEntryDtoImpl
+                new HydratedTimeEntryDo
                 {
                     Project = ProjectRd(),
                     Task = TaskBlockchain(),
-                    TimeInterval = new TimeIntervalDto
+                    TimeInterval = new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 7, 7, 7, 0, 0, TimeSpan.Zero),
                         End = new DateTimeOffset(2020, 7, 7, 14, 15, 0, TimeSpan.Zero)
                     }
                 },
-                new HydratedTimeEntryDtoImpl
+                new HydratedTimeEntryDo
                 {
                     Project = ProjectForecasting(),
                     Task = null,
-                    TimeInterval = new TimeIntervalDto
+                    TimeInterval = new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 7, 8, 7, 0, 0, TimeSpan.Zero),
                         End = new DateTimeOffset(2020, 7, 8, 14, 30, 0, TimeSpan.Zero)
@@ -82,11 +79,11 @@ namespace Bot.Tests.Clockify.Reports
         {
             var hydratedTimeEntries = new[]
             {
-                new HydratedTimeEntryDtoImpl
+                new HydratedTimeEntryDo
                 {
                     Project = ProjectForecasting(),
                     Task = null,
-                    TimeInterval = new TimeIntervalDto
+                    TimeInterval = new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 7, 8, 7, 0, 0, TimeSpan.Zero),
                     }
@@ -108,9 +105,9 @@ namespace Bot.Tests.Clockify.Reports
             return new ProjectDo {Name = "forecasting"};
         }
 
-        private static TaskDto TaskBlockchain()
+        private static TaskDo TaskBlockchain()
         {
-            return new TaskDto {Name = "blockchain"};
+            return new TaskDo {Name = "blockchain"};
         }
 
     }

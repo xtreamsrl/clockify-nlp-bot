@@ -6,6 +6,6 @@ namespace Bot.Clockify.Fill
 {
     public interface ITimeEntryStoreService
     {
-        public Task<double> AddTimeEntries(string clockifyToken, ProjectDo project, TaskDto? task, double minutes);
+        public Task<double> AddTimeEntries(string clockifyToken, ProjectDo project, TaskDo? task, double minutes);
     }
 }

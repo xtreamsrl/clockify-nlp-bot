@@ -6,7 +6,6 @@ using Bot.Clockify.Client;
 using Bot.Clockify.Models;
 using Bot.Data;
 using Bot.States;
-using Clockify.Net.Models.TimeEntries;
 
 namespace Bot.Clockify.Fill
 {
@@ -30,13 +29,13 @@ namespace Bot.Clockify.Fill
             if (!associatedTasks.Any()) return false;
             var end = DateTimeOffset.Now;
             var start = end.AddDays(-90);
-            List<HydratedTimeEntryDtoImpl> history = await _clockifyService.GetHydratedTimeEntriesAsync(
+            List<HydratedTimeEntryDo> history = await _clockifyService.GetHydratedTimeEntriesAsync(
                 clockifyToken,
                 project.WorkspaceId,
                 userId,
                 start,
                 end);
-            history = history.Where(e => e.ProjectId == project.Id).ToList();
+            history = history.Where(e => e.Project.Id == project.Id).ToList();
             int totalHistorySize = history.Count;
             int historySizeWithTaskPopulated = history.Count(e => e.Task != null);
             bool thereIsEnoughHistory = totalHistorySize > 5;
