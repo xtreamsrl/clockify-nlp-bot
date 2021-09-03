@@ -2,17 +2,14 @@
 using System.Collections.Generic;
 using Bot.Clockify;
 using Bot.Clockify.Client;
+using Bot.Clockify.Models;
 using Bot.Clockify.Reports;
 using Bot.Data;
 using Bot.States;
-using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.Tasks;
 using Clockify.Net.Models.TimeEntries;
 using Clockify.Net.Models.Workspaces;
 using FluentAssertions;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -182,14 +179,14 @@ namespace Bot.Tests.Clockify.Reports
         }
 
 
-        private static ProjectDtoImpl ProjectRd()
+        private static ProjectDo ProjectRd()
         {
-            return new ProjectDtoImpl { Name = "r&d" };
+            return new ProjectDo { Name = "r&d" };
         }
 
-        private static ProjectDtoImpl ProjectForecasting()
+        private static ProjectDo ProjectForecasting()
         {
-            return new ProjectDtoImpl { Name = "forecasting" };
+            return new ProjectDo { Name = "forecasting" };
         }
 
         private static TaskDto TaskBlockchain()
@@ -239,7 +236,7 @@ namespace Bot.Tests.Clockify.Reports
             {
                 new HydratedTimeEntryDtoImpl
                 {
-                    Project = new ProjectDtoImpl { Name = "operations" },
+                    Project = new ProjectDo { Name = "operations" },
                     Task = new TaskDto { Name = "management" },
                     TimeInterval = new TimeIntervalDto
                     {

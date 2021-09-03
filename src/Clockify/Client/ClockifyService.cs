@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Bot.Clockify.Models;
 using Clockify.Net.Models.Clients;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.Tasks;
@@ -53,7 +55,7 @@ namespace Bot.Clockify.Client
             return response.Data;
         }
 
-        public async Task<List<ProjectDtoImpl>> GetProjectsAsync(string apiKey,
+        public async Task<List<ProjectDo>> GetProjectsAsync(string apiKey,
             string workspaceId)
         {
             var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
@@ -62,10 +64,10 @@ namespace Bot.Clockify.Client
             if (!response.IsSuccessful)
                 throw new ErrorResponseException($"Unable to get projects for workspaceId {workspaceId}");
 
-            return response.Data;
+            return response.Data.Select(ClockifyModelFactory.ToProjectDo).ToList();
         }
 
-        public async Task<List<ProjectDtoImpl>> GetProjectsByClientsAsync(string apiKey,
+        public async Task<List<ProjectDo>> GetProjectsByClientsAsync(string apiKey,
             string workspaceId, IEnumerable<string> clients)
         {
             var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
@@ -76,7 +78,7 @@ namespace Bot.Clockify.Client
                     $"Unable to get projects for workspaceId {workspaceId} and clients {clients}"
                 );
 
-            return response.Data;
+            return response.Data.Select(ClockifyModelFactory.ToProjectDo).ToList();
         }
 
         public async Task<List<TaskDto>> GetTasksAsync(string apiKey, string workspaceId,

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Bot.Clockify.Models;
 using Bot.Clockify.Reports;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.Tasks;
@@ -97,14 +98,14 @@ namespace Bot.Tests.Clockify.Reports
             reportEntries.First().Hours.Should().Be(0);
         }
         
-        private static ProjectDtoImpl ProjectRd()
+        private static ProjectDo ProjectRd()
         {
-            return new ProjectDtoImpl {Name = "r&d"};
+            return new ProjectDo {Name = "r&d"};
         }
         
-        private static ProjectDtoImpl ProjectForecasting()
+        private static ProjectDo ProjectForecasting()
         {
-            return new ProjectDtoImpl {Name = "forecasting"};
+            return new ProjectDo {Name = "forecasting"};
         }
 
         private static TaskDto TaskBlockchain()

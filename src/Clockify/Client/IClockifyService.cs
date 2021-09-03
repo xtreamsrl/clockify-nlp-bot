@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Bot.Clockify.Models;
 using Clockify.Net.Models.Clients;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.Tasks;
@@ -18,9 +19,9 @@ namespace Bot.Clockify.Client
 
         public Task<List<ClientDto>> GetClientsAsync(string apiKey, string workspaceId);
 
-        public Task<List<ProjectDtoImpl>> GetProjectsAsync(string apiKey, string workspaceId);
+        public Task<List<ProjectDo>> GetProjectsAsync(string apiKey, string workspaceId);
 
-        public Task<List<ProjectDtoImpl>> GetProjectsByClientsAsync(string apiKey,
+        public Task<List<ProjectDo>> GetProjectsByClientsAsync(string apiKey,
             string workspaceId, IEnumerable<string> clients);
 
         public Task<List<TaskDto>> GetTasksAsync(string apiKey, string workspaceId,

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
-using Clockify.Net.Models.Projects;
+using Bot.Clockify.Models;
 using Clockify.Net.Models.Tasks;
 using Clockify.Net.Models.TimeEntries;
 using Microsoft.Extensions.Configuration;
@@ -21,7 +21,7 @@ namespace Bot.Clockify.Fill
             _tagName = configuration["Tag"];
         }
 
-        public async Task<double> AddTimeEntries(string clockifyToken, ProjectDtoImpl project, TaskDto? task, double minutes)
+        public async Task<double> AddTimeEntries(string clockifyToken, ProjectDo project, TaskDto? task, double minutes)
         {
             string? tagId = await _clockifyService.GetTagAsync(clockifyToken, project.WorkspaceId, _tagName);
             string userId = (await _clockifyService.GetCurrentUserAsync(clockifyToken)).Id;

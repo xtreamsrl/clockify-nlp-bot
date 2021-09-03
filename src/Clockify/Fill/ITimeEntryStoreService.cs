@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Clockify.Net.Models.Projects;
+using Bot.Clockify.Models;
 using Clockify.Net.Models.Tasks;
 
 namespace Bot.Clockify.Fill
 {
     public interface ITimeEntryStoreService
     {
-        public Task<double> AddTimeEntries(string clockifyToken, ProjectDtoImpl project, TaskDto? task, double minutes);
+        public Task<double> AddTimeEntries(string clockifyToken, ProjectDo project, TaskDto? task, double minutes);
     }
 }

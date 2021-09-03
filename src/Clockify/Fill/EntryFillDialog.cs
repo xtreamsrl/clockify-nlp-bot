@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
-using Bot.Common;
+using Bot.Clockify.Models;
 using Bot.Data;
 using Bot.States;
 using Clockify.Net.Models.Projects;
@@ -144,7 +144,7 @@ namespace Bot.Clockify.Fill
             CancellationToken cancellationToken)
         {
             var token = (string)stepContext.Values["Token"];
-            var project = (ProjectDtoImpl)stepContext.Values["Project"];
+            var project = (ProjectDo)stepContext.Values["Project"];
             var minutes = (double)stepContext.Values["Minutes"];
             TaskDto? recognizedTask = null;
             var requestedTask = stepContext.Result.ToString();
@@ -185,7 +185,7 @@ namespace Bot.Clockify.Fill
             CancellationToken cancellationToken)
         {
             var token = (string)stepContext.Values["Token"];
-            var project = (ProjectDtoImpl)stepContext.Values["Project"];
+            var project = (ProjectDo)stepContext.Values["Project"];
             var minutes = (double)stepContext.Values["Minutes"];
             var newTaskName = stepContext.Result.ToString();
             var fullEntity = (string)stepContext.Values["FullEntity"];
@@ -225,7 +225,7 @@ namespace Bot.Clockify.Fill
 
         private async Task<DialogTurnResult> AddEntryAndExit(DialogContext stepContext,
             CancellationToken cancellationToken,
-            string clockifyToken, ProjectDtoImpl recognizedProject, double minutes, string fullEntity, TaskDto? task)
+            string clockifyToken, ProjectDo recognizedProject, double minutes, string fullEntity, TaskDto? task)
         {
             double current =
                 await _timeEntryStoreService.AddTimeEntries(clockifyToken, recognizedProject, task, minutes);
@@ -240,13 +240,13 @@ namespace Bot.Clockify.Fill
 
     internal class ClockifyTaskValidatorOptions
     {
-        public ClockifyTaskValidatorOptions(ProjectDtoImpl project, string token)
+        public ClockifyTaskValidatorOptions(ProjectDo project, string token)
         {
             Project = project;
             Token = token;
         }
 
-        public ProjectDtoImpl Project { get; }
+        public ProjectDo Project { get; }
         public string Token { get; }
     }
 }
