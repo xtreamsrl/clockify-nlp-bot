@@ -22,8 +22,7 @@ namespace Bot.Integration.Tests.Clockify
 
             Func<Task> action = () => clockifyService.GetClientsAsync(InvalidApiKey, ClockifyWorkspaceId);
 
-            await action.Should().ThrowExactlyAsync<ErrorResponseException>()
-                .WithMessage($"Unable to get clients for workspaceId {ClockifyWorkspaceId}");
+            await action.Should().ThrowExactlyAsync<UnauthorizedAccessException>();
         }
 
         [Fact]
@@ -54,7 +53,7 @@ namespace Bot.Integration.Tests.Clockify
 
             Func<Task> action = () => clockifyService.GetTagAsync(InvalidApiKey, ClockifyApiKey, "bot");
 
-            await action.Should().ThrowExactlyAsync<ErrorResponseException>().WithMessage("Unable to get tag");
+            await action.Should().ThrowExactlyAsync<UnauthorizedAccessException>();
         }
 
         [Fact]
@@ -76,7 +75,7 @@ namespace Bot.Integration.Tests.Clockify
             Func<Task> action = () =>
                 clockifyService.GetHydratedTimeEntriesAsync(InvalidApiKey, ClockifyWorkspaceId, "invalid");
 
-            await action.Should().ThrowExactlyAsync<ErrorResponseException>(
+            await action.Should().ThrowExactlyAsync<UnauthorizedAccessException>(
                 $"Unable to get time entries for workspaceId {ClockifyWorkspaceId} for user invalid");
         }
 
@@ -102,8 +101,7 @@ namespace Bot.Integration.Tests.Clockify
 
             Func<Task> action = () => clockifyService.GetProjectsAsync(InvalidApiKey, ClockifyWorkspaceId);
 
-            await action.Should().ThrowExactlyAsync<ErrorResponseException>()
-                .WithMessage($"Unable to get projects for workspaceId {ClockifyWorkspaceId}");
+            await action.Should().ThrowExactlyAsync<UnauthorizedAccessException>();
         }
 
         [Fact]
@@ -212,8 +210,7 @@ namespace Bot.Integration.Tests.Clockify
 
             Func<Task> action = () => clockifyService.GetCurrentUserAsync(InvalidApiKey);
 
-            await action.Should().ThrowExactlyAsync<ErrorResponseException>()
-                .WithMessage("Unable to get current user");
+            await action.Should().ThrowExactlyAsync<UnauthorizedAccessException>();
         }
 
         [Fact]
@@ -236,7 +233,7 @@ namespace Bot.Integration.Tests.Clockify
             Func<Task> action = async () => await clockifyService.GetWorkspacesAsync(InvalidApiKey);
 
             // assert
-            action.Should().ThrowExactly<ErrorResponseException>().WithMessage("Unable to get workspaces");
+            action.Should().ThrowExactly<UnauthorizedAccessException>();
         }
 
         [Fact]
