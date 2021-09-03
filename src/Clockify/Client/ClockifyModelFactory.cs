@@ -4,6 +4,7 @@ using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.Tags;
 using Clockify.Net.Models.Tasks;
 using Clockify.Net.Models.TimeEntries;
+using Clockify.Net.Models.Users;
 using Clockify.Net.Models.Workspaces;
 
 namespace Bot.Clockify.Client
@@ -92,6 +93,18 @@ namespace Bot.Clockify.Client
                 TagIds = entry.TagIds,
                 Start = entry.TimeInterval.Start,
                 End = entry.TimeInterval.End
+            };
+        }
+
+        public static UserDo ToUserDo(CurrentUserDto u)
+        {
+            return new UserDo
+            {
+                Id = u.Id,
+                Name = u.Name,
+                Email = u.Email,
+                ActiveWorkspace = u.ActiveWorkspace,
+                DefaultWorkspace = u.DefaultWorkspace
             };
         }
     }

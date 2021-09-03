@@ -9,7 +9,7 @@ namespace Bot.Clockify.Client
 {
     public interface IClockifyService
     {
-        public Task<CurrentUserDto> GetCurrentUserAsync(string apiKey);
+        public Task<UserDo> GetCurrentUserAsync(string apiKey);
 
         public Task<List<WorkspaceDo>> GetWorkspacesAsync(string apiKey);
 

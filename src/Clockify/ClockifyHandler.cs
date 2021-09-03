@@ -3,11 +3,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
 using Bot.Clockify.Fill;
+using Bot.Clockify.Models;
 using Bot.Clockify.Reports;
 using Bot.Data;
 using Bot.States;
 using Bot.Supports;
-using Clockify.Net.Models.Users;
 using Luis;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
@@ -100,7 +100,7 @@ namespace Bot.Clockify
                 {
                     // ClockifyTokenId can't be null.
                     var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
-                    CurrentUserDto user = await _clockifyService.GetCurrentUserAsync(tokenData.Value);
+                    UserDo user = await _clockifyService.GetCurrentUserAsync(tokenData.Value);
                     userProfile.ClockifyToken = null;
                     // This can be removed in future, it serves the purpose of aligning old users
                     if (user.Name != null)

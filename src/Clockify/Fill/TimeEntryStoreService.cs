@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
 using Bot.Clockify.Models;
-using Clockify.Net.Models.Tasks;
-using Clockify.Net.Models.TimeEntries;
 using Microsoft.Extensions.Configuration;
 
 namespace Bot.Clockify.Fill

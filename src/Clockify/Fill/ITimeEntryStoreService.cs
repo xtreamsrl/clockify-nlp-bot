@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Bot.Clockify.Models;
-using Clockify.Net.Models.Tasks;
 
 namespace Bot.Clockify.Fill
 {

@@ -21,14 +21,14 @@ namespace Bot.Clockify.Client
             _clockifyClientFactory = clockifyClientFactory;
         }
 
-        public async Task<CurrentUserDto> GetCurrentUserAsync(string apiKey)
+        public async Task<UserDo> GetCurrentUserAsync(string apiKey)
         {
             var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.GetCurrentUserAsync();
 
             if (!response.IsSuccessful) throw new ErrorResponseException("Unable to get current user");
 
-            return response.Data;
+            return ClockifyModelFactory.ToUserDo(response.Data);
         }
 
         public async Task<List<WorkspaceDo>> GetWorkspacesAsync(string apiKey)
