@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Bot.Clockify.Models;
+using Clockify.Net.Models.Clients;
 using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.Tags;
 using Clockify.Net.Models.Tasks;
@@ -32,7 +33,7 @@ namespace Bot.Clockify.Client
         public static TaskDo ToTaskDo(TaskDto t)
         {
             var statusDo = t.Status == TaskStatus.Active ? TaskStatusDo.Active : TaskStatusDo.Done;
-            
+
             return new TaskDo
             {
                 Id = t.Id,
@@ -81,7 +82,7 @@ namespace Bot.Clockify.Client
                 TimeInterval = ToTimeInterval(entry.TimeInterval)
             };
         }
-        
+
         public static TimeEntryRequest ToTimeEntryRequest(TimeEntryReq entry)
         {
             return new TimeEntryRequest
@@ -106,6 +107,11 @@ namespace Bot.Clockify.Client
                 ActiveWorkspace = u.ActiveWorkspace,
                 DefaultWorkspace = u.DefaultWorkspace
             };
+        }
+
+        public static ClientDo ToClientDo(ClientDto c)
+        {
+            return new ClientDo(c.Id, c.Name, c.WorkspaceId);
         }
     }
 }

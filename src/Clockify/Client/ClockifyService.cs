@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bot.Clockify.Models;
-using Clockify.Net.Models.Clients;
 using Clockify.Net.Models.Tasks;
-using Clockify.Net.Models.Users;
 using Microsoft.Bot.Schema;
 
 namespace Bot.Clockify.Client
@@ -41,7 +39,7 @@ namespace Bot.Clockify.Client
             return response.Data.Select(ClockifyModelFactory.ToWorkspaceDo).ToList();
         }
 
-        public async Task<List<ClientDto>> GetClientsAsync(string apiKey, string workspaceId)
+        public async Task<List<ClientDo>> GetClientsAsync(string apiKey, string workspaceId)
         {
             var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.FindAllClientsOnWorkspaceAsync(workspaceId);
@@ -49,7 +47,7 @@ namespace Bot.Clockify.Client
             if (!response.IsSuccessful)
                 throw new ErrorResponseException($"Unable to get clients for workspaceId {workspaceId}");
 
-            return response.Data;
+            return response.Data.Select(ClockifyModelFactory.ToClientDo).ToList();
         }
 
         public async Task<List<ProjectDo>> GetProjectsAsync(string apiKey,
