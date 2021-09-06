@@ -46,13 +46,13 @@ namespace Bot.Clockify.Client
         public static HydratedTimeEntryDo ToHydratedTimeEntryDo(HydratedTimeEntryDtoImpl entry)
         {
             return new HydratedTimeEntryDo
-            {
-                Id = entry.Id,
-                Project = ToProjectDo(entry.Project),
-                Task = entry.Task != null ? ToTaskDo(entry.Task) : null,
-                Tags = entry.Tags.Select(ToTagDo).ToList(),
-                TimeInterval = ToTimeInterval(entry.TimeInterval)
-            };
+            (
+                entry.Id, 
+                ToProjectDo(entry.Project),
+                ToTimeInterval(entry.TimeInterval),
+                entry.Tags.Select(ToTagDo).ToList(),
+                entry.Task != null ? ToTaskDo(entry.Task) : null
+            );
         }
 
         public static TagDo ToTagDo(TagDto t)

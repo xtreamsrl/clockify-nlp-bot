@@ -15,35 +15,37 @@ namespace Bot.Tests.Clockify.Reports
             var hydratedTimeEntries = new[]
             {
                 new HydratedTimeEntryDo
-                {
-                    Project = ProjectRd(),
-                    Task = TaskBlockchain(),
-                    TimeInterval = new TimeInterval
+                (
+                    "e1",
+                    ProjectRd(),
+                    new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 7, 6, 7, 0, 0, TimeSpan.Zero),
                         End = new DateTimeOffset(2020, 7, 6, 15, 0, 0, TimeSpan.Zero)
-                    }
-                },
+                    },
+                    TaskBlockchain()
+                ),
                 new HydratedTimeEntryDo
-                {
-                    Project = ProjectRd(),
-                    Task = TaskBlockchain(),
-                    TimeInterval = new TimeInterval
+                (
+                    "e2",
+                    ProjectRd(),
+                    new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 7, 7, 7, 0, 0, TimeSpan.Zero),
                         End = new DateTimeOffset(2020, 7, 7, 14, 15, 0, TimeSpan.Zero)
-                    }
-                },
+                    },
+                    TaskBlockchain()
+                ),
                 new HydratedTimeEntryDo
-                {
-                    Project = ProjectForecasting(),
-                    Task = null,
-                    TimeInterval = new TimeInterval
+                (
+                    "e3",
+                    ProjectForecasting(),
+                    new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 7, 8, 7, 0, 0, TimeSpan.Zero),
                         End = new DateTimeOffset(2020, 7, 8, 14, 30, 0, TimeSpan.Zero)
                     }
-                }
+                )
             };
 
             object[] expectedReportEntries =
@@ -80,35 +82,34 @@ namespace Bot.Tests.Clockify.Reports
             var hydratedTimeEntries = new[]
             {
                 new HydratedTimeEntryDo
-                {
-                    Project = ProjectForecasting(),
-                    Task = null,
-                    TimeInterval = new TimeInterval
+                (
+                    "e1",
+                    ProjectForecasting(),
+                    new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 7, 8, 7, 0, 0, TimeSpan.Zero),
                     }
-                }
+                )
             };
 
             var reportEntries = ReportUtil.ConvertToReportEntries(hydratedTimeEntries);
 
             reportEntries.First().Hours.Should().Be(0);
         }
-        
+
         private static ProjectDo ProjectRd()
         {
-            return new ProjectDo {Name = "r&d"};
+            return new ProjectDo { Name = "r&d" };
         }
-        
+
         private static ProjectDo ProjectForecasting()
         {
-            return new ProjectDo {Name = "forecasting"};
+            return new ProjectDo { Name = "forecasting" };
         }
 
         private static TaskDo TaskBlockchain()
         {
-            return new TaskDo {Name = "blockchain"};
+            return new TaskDo { Name = "blockchain" };
         }
-
     }
 }

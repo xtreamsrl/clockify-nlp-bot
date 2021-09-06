@@ -196,34 +196,37 @@ namespace Bot.Tests.Clockify.Reports
             return new List<HydratedTimeEntryDo>
             {
                 new HydratedTimeEntryDo
-                {
-                    Project = ProjectRd(),
-                    Task = TaskBlockchain(),
-                    TimeInterval = new TimeInterval
+                (
+                    "e1",
+                    ProjectRd(),
+                    new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 2, 2, 7, 0, 0, TimeSpan.Zero),
                         End = new DateTimeOffset(2020, 2, 2, 15, 0, 0, TimeSpan.Zero),
-                    }
-                },
+                    },
+                    TaskBlockchain()
+                ),
                 new HydratedTimeEntryDo
-                {
-                    Project = ProjectRd(),
-                    Task = TaskBlockchain(),
-                    TimeInterval = new TimeInterval
+                (
+                    "e2",
+                    ProjectRd(),
+                    new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 2, 4, 7, 0, 0, TimeSpan.Zero),
                         End = new DateTimeOffset(2020, 2, 4, 11, 15, 0, TimeSpan.Zero),
-                    }
-                },
+                    },
+                    TaskBlockchain()
+                ),
                 new HydratedTimeEntryDo
-                {
-                    Project = ProjectForecasting(),
-                    TimeInterval = new TimeInterval
+                (
+                    "e3",
+                    ProjectForecasting(),
+                    new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 2, 3, 7, 0, 0, TimeSpan.Zero),
                         End = new DateTimeOffset(2020, 2, 3, 13, 0, 0, TimeSpan.Zero),
                     }
-                }
+                )
             };
         }
 
@@ -232,15 +235,16 @@ namespace Bot.Tests.Clockify.Reports
             return new List<HydratedTimeEntryDo>
             {
                 new HydratedTimeEntryDo
-                {
-                    Project = new ProjectDo { Name = "operations" },
-                    Task = new TaskDo { Name = "management" },
-                    TimeInterval = new TimeInterval
+                (
+                    "e4",
+                    new ProjectDo { Name = "operations" },
+                    new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 2, 3, 15, 0, 0, TimeSpan.Zero),
                         End = new DateTimeOffset(2020, 2, 3, 18, 30, 0, TimeSpan.Zero),
-                    }
-                }
+                    },
+                    new TaskDo { Name = "management" }
+                )
             };
         }
     }
