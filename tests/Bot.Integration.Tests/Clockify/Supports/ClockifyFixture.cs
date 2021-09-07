@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoFixture;
 using Bot.Clockify.Client;
 using Bot.Clockify.Models;
 using Xunit;
@@ -10,6 +11,7 @@ namespace Bot.Integration.Tests.Clockify.Supports
     public class ClockifyFixture : IAsyncLifetime
     {
         private readonly TestClockifyService _testClockifyService = new TestClockifyService(new ClockifyClientFactory());
+        private Fixture _fixture = new Fixture();
         
         private List<ClientDo> _clients;
 
@@ -25,8 +27,8 @@ namespace Bot.Integration.Tests.Clockify.Supports
 
         private async Task<List<ClientDo>> SetupClients()
         {
-            var client1 = await _testClockifyService.CreateClientAsync(ClockifyWorkspaceId, new ClientReq("Client1"));
-            var client2 = await _testClockifyService.CreateClientAsync(ClockifyWorkspaceId, new ClientReq("Client2"));
+            var client1 = await _testClockifyService.CreateClientAsync(ClockifyWorkspaceId, _fixture.Create<ClientReq>());
+            var client2 = await _testClockifyService.CreateClientAsync(ClockifyWorkspaceId, _fixture.Create<ClientReq>());
 
             return new List<ClientDo> { client1, client2 };
         }
