@@ -14,7 +14,7 @@ namespace Bot.Clockify
         }
 
         public EntryFillRemindService(IUserProfilesProvider userProfilesProvider, IConfiguration configuration,
-            ICompositeNeedReminderService compositeNeedRemindService, ICommonMessageSource messageSource) :
+            ICompositeNeedReminderService compositeNeedRemindService, IClockifyMessageSource messageSource) :
             base(userProfilesProvider, configuration, compositeNeedRemindService,
                 BotCallbackMaker(messageSource.RemindEntryFill))
         {

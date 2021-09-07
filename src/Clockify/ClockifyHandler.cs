@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +12,6 @@ using Bot.Supports;
 using Luis;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Schema;
 
 namespace Bot.Clockify
 {
@@ -57,21 +57,29 @@ namespace Bot.Clockify
             var (topIntent, entities) =
                 await _luisRecognizer.RecognizeAsyncIntent(turnContext, cancellationToken);
 
-            switch (topIntent)
+            try
             {
-                case TimeSurveyBotLuis.Intent.Report:
-                    await dialogContext.BeginDialogAsync(_reportDialog.Id, entities, cancellationToken);
-                    return true;
-                case TimeSurveyBotLuis.Intent.Fill:
-                    await dialogContext.BeginDialogAsync(_fillDialog.Id, entities, cancellationToken);
-                    return true;
-                case TimeSurveyBotLuis.Intent.FillAsYesterday:
-                    return false;
-                case TimeSurveyBotLuis.Intent.Utilities_Stop:
-                    await dialogContext.BeginDialogAsync(_stopReminderDialog.Id, entities, cancellationToken);
-                    return true;
-                default: 
-                    return false;
+                switch (topIntent)
+                {
+                    case TimeSurveyBotLuis.Intent.Report:
+                        await dialogContext.BeginDialogAsync(_reportDialog.Id, entities, cancellationToken);
+                        return true;
+                    case TimeSurveyBotLuis.Intent.Fill:
+                        await dialogContext.BeginDialogAsync(_fillDialog.Id, entities, cancellationToken);
+                        return true;
+                    case TimeSurveyBotLuis.Intent.FillAsYesterday:
+                        return false;
+                    case TimeSurveyBotLuis.Intent.Utilities_Stop:
+                        await dialogContext.BeginDialogAsync(_stopReminderDialog.Id, entities, cancellationToken);
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                await dialogContext.BeginDialogAsync(_clockifySetupDialog.Id, _dialogState, cancellationToken);
+                return true;
             }
         }
 
@@ -91,7 +99,6 @@ namespace Bot.Clockify
                 // TODO: it will be removed when only ClockifyTokenId will be used
                 if (userProfile.ClockifyTokenId == null && userProfile.ClockifyToken != null)
                 {
-                    await _clockifyService.GetCurrentUserAsync(userProfile.ClockifyToken);
                     var tokenData = await _tokenRepository.WriteAsync(userProfile.ClockifyToken);
                     userProfile.ClockifyToken = null;
                     userProfile.ClockifyTokenId = tokenData.Id;
@@ -99,24 +106,29 @@ namespace Bot.Clockify
                 else
                 {
                     // ClockifyTokenId can't be null.
-                    var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
-                    UserDo user = await _clockifyService.GetCurrentUserAsync(tokenData.Value);
-                    userProfile.ClockifyToken = null;
-                    // This can be removed in future, it serves the purpose of aligning old users
-                    if (user.Name != null)
+                    if (userProfile.Email == null)
                     {
-                        userProfile.FirstName = user.Name.Split(" ")[0]; //TODO: this might be wrong, don't care
-                        userProfile.LastName = new string(user.Name.Skip(userProfile.FirstName.Length + 1).ToArray());
+                        var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
+                        UserDo user = await _clockifyService.GetCurrentUserAsync(tokenData.Value);
+                        userProfile.ClockifyToken = null;
+                        // This can be removed in future, it serves the purpose of aligning old users
+                        string? fullName = user.Name;
+                        if (fullName != null)
+                        {
+                            //TODO: this might be wrong, don't care
+                            userProfile.FirstName = fullName.Split(" ")[0];
+                            userProfile.LastName =
+                                new string(fullName.Skip(userProfile.FirstName.Length + 1).ToArray());
+                        }
+
                         userProfile.Email = user.Email;
                     }
                 }
 
                 return false;
             }
-            catch (ErrorResponseException)
+            catch (UnauthorizedAccessException)
             {
-                // TODO check if it is an UnauthorizedException
-                // old login is invalid, asking again
                 await _clockifySetupDialog.RunAsync(turnContext, _dialogState, cancellationToken);
                 return true;
             }

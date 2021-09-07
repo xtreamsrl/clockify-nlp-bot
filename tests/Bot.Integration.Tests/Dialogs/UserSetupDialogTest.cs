@@ -1,4 +1,5 @@
-﻿using Bot.Clockify;
+﻿using System;
+using Bot.Clockify;
 using Bot.Clockify.Client;
 using Bot.Data;
 using Bot.States;
@@ -54,13 +55,13 @@ namespace Bot.Integration.Tests.Dialogs
         }
 
         [Fact]
-        private async void UserSetupDialog_ClockifyIsDown_ShouldReturnMessageError()
+        private async void UserSetupDialog_ClockifyThrows401_ShouldAskAgain()
         {
             var userState = new UserState(new MemoryStorage());
             var clockifyService = new Mock<IClockifyService>();
             clockifyService
                 .Setup(service => service.GetCurrentUserAsync(It.IsAny<string>()))
-                .ThrowsAsync(new ErrorResponseException("unable to get current user"));
+                .ThrowsAsync(new UnauthorizedAccessException());
             var clockifyMessageSource = new Mock<IClockifyMessageSource>();
             clockifyMessageSource.Setup(c => c.SetupRequest).Returns(SetupRequest);
             clockifyMessageSource.Setup(c => c.SetupReject).Returns(SetupReject);
