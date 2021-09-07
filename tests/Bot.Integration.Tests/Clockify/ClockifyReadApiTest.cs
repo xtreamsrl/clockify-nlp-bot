@@ -84,9 +84,8 @@ namespace Bot.Integration.Tests.Clockify
             GetHydratedTimeEntries_ApiKeyIsValidAndWorkspaceExistAndUserExist_ShouldReturnAllUserTimeEntries()
         {
             var clockifyService = new ClockifyService(new ClockifyClientFactory());
-
-            // TODO read user from workspace
-            const string existingUserId = "5efc6d24f833d7257bfa352b";
+            
+            string existingUserId = clockifyService.GetCurrentUserAsync(ClockifyApiKey).Result.Id;
 
             var hydratedTimeEntries =
                 await clockifyService.GetHydratedTimeEntriesAsync(ClockifyApiKey, ClockifyWorkspaceId, existingUserId);
