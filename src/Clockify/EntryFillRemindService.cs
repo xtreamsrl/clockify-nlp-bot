@@ -1,5 +1,4 @@
-﻿using Bot.Common;
-using Bot.Remind;
+﻿using Bot.Remind;
 using Bot.States;
 using Microsoft.Bot.Builder;
 using Microsoft.Extensions.Configuration;

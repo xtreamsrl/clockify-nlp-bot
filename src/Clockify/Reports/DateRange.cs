@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Bot.Clockify
+namespace Bot.Clockify.Reports
 {
     public readonly struct DateRange
     {

@@ -1,5 +1,6 @@
 ﻿using System;
 using Bot.Clockify;
+using Bot.Clockify.Reports;
 using FluentAssertions;
 using Xunit;
 
