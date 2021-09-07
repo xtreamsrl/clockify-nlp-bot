@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
+using Bot.Clockify.Models;
 using Clockify.Net.Models.TimeEntries;
 using FluentAssertions;
 using FluentAssertions.Extensions;
@@ -19,10 +20,13 @@ namespace Bot.Integration.Tests.Clockify
             var clockifyClient = new RichClockifyClient(ClockifyApiKey);
 
             var now = DateTimeOffset.UtcNow;
-            var newTimeEntry = new TimeEntryRequest
+            var newTimeEntry = new TimeEntryReq
             {
-                Start = now,
-                End = now.AddHours(8),
+                TimeInterval = new TimeInterval
+                {
+                    Start = now,
+                    End = now.AddHours(8),
+                },
                 ProjectId = "5efc6f19f833d7257bfa3c54"
             };
 

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
+using Bot.Clockify.Models;
 using Bot.Data;
 using Bot.States;
-using Clockify.Net.Models.Users;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 
@@ -72,7 +72,7 @@ namespace Bot.Clockify
                 var userProfile = await _userState.CreateProperty<UserProfile>("UserProfile")
                     .GetAsync(promptContext.Context, () => new UserProfile(), cancellationToken);
 
-                CurrentUserDto currentUser = await _clockifyService.GetCurrentUserAsync(token);
+                UserDo currentUser = await _clockifyService.GetCurrentUserAsync(token);
                 var tokenData = await _tokenRepository.WriteAsync(token, userProfile.ClockifyTokenId);
                 userProfile.ClockifyTokenId = tokenData.Id;
                 userProfile.ClockifyToken = null;

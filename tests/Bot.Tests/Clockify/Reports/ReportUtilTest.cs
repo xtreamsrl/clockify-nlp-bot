@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Linq;
+using Bot.Clockify.Models;
 using Bot.Clockify.Reports;
-using Clockify.Net.Models.Projects;
-using Clockify.Net.Models.Tasks;
-using Clockify.Net.Models.TimeEntries;
 using FluentAssertions;
 using Xunit;
 
@@ -16,36 +14,38 @@ namespace Bot.Tests.Clockify.Reports
         {
             var hydratedTimeEntries = new[]
             {
-                new HydratedTimeEntryDtoImpl
-                {
-                    Project = ProjectRd(),
-                    Task = TaskBlockchain(),
-                    TimeInterval = new TimeIntervalDto
+                new HydratedTimeEntryDo
+                (
+                    "e1",
+                    ProjectRd(),
+                    new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 7, 6, 7, 0, 0, TimeSpan.Zero),
                         End = new DateTimeOffset(2020, 7, 6, 15, 0, 0, TimeSpan.Zero)
-                    }
-                },
-                new HydratedTimeEntryDtoImpl
-                {
-                    Project = ProjectRd(),
-                    Task = TaskBlockchain(),
-                    TimeInterval = new TimeIntervalDto
+                    },
+                    TaskBlockchain()
+                ),
+                new HydratedTimeEntryDo
+                (
+                    "e2",
+                    ProjectRd(),
+                    new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 7, 7, 7, 0, 0, TimeSpan.Zero),
                         End = new DateTimeOffset(2020, 7, 7, 14, 15, 0, TimeSpan.Zero)
-                    }
-                },
-                new HydratedTimeEntryDtoImpl
-                {
-                    Project = ProjectForecasting(),
-                    Task = null,
-                    TimeInterval = new TimeIntervalDto
+                    },
+                    TaskBlockchain()
+                ),
+                new HydratedTimeEntryDo
+                (
+                    "e3",
+                    ProjectForecasting(),
+                    new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 7, 8, 7, 0, 0, TimeSpan.Zero),
                         End = new DateTimeOffset(2020, 7, 8, 14, 30, 0, TimeSpan.Zero)
                     }
-                }
+                )
             };
 
             object[] expectedReportEntries =
@@ -81,36 +81,35 @@ namespace Bot.Tests.Clockify.Reports
         {
             var hydratedTimeEntries = new[]
             {
-                new HydratedTimeEntryDtoImpl
-                {
-                    Project = ProjectForecasting(),
-                    Task = null,
-                    TimeInterval = new TimeIntervalDto
+                new HydratedTimeEntryDo
+                (
+                    "e1",
+                    ProjectForecasting(),
+                    new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 7, 8, 7, 0, 0, TimeSpan.Zero),
                     }
-                }
+                )
             };
 
             var reportEntries = ReportUtil.ConvertToReportEntries(hydratedTimeEntries);
 
             reportEntries.First().Hours.Should().Be(0);
         }
-        
-        private static ProjectDtoImpl ProjectRd()
+
+        private static ProjectDo ProjectRd()
         {
-            return new ProjectDtoImpl {Name = "r&d"};
-        }
-        
-        private static ProjectDtoImpl ProjectForecasting()
-        {
-            return new ProjectDtoImpl {Name = "forecasting"};
+            return new ProjectDo { Name = "r&d" };
         }
 
-        private static TaskDto TaskBlockchain()
+        private static ProjectDo ProjectForecasting()
         {
-            return new TaskDto {Name = "blockchain"};
+            return new ProjectDo { Name = "forecasting" };
         }
 
+        private static TaskDo TaskBlockchain()
+        {
+            return new TaskDo { Name = "blockchain" };
+        }
     }
 }

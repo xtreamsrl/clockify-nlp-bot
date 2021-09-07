@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
-using Clockify.Net.Models.Projects;
-using Clockify.Net.Models.Tasks;
-using Clockify.Net.Models.TimeEntries;
+using Bot.Clockify.Models;
 using Microsoft.Extensions.Configuration;
 
 namespace Bot.Clockify.Fill
@@ -21,19 +19,22 @@ namespace Bot.Clockify.Fill
             _tagName = configuration["Tag"];
         }
 
-        public async Task<double> AddTimeEntries(string clockifyToken, ProjectDtoImpl project, TaskDto? task, double minutes)
+        public async Task<double> AddTimeEntries(string clockifyToken, ProjectDo project, TaskDo? task, double minutes)
         {
             string? tagId = await _clockifyService.GetTagAsync(clockifyToken, project.WorkspaceId, _tagName);
             string userId = (await _clockifyService.GetCurrentUserAsync(clockifyToken)).Id;
             string workspaceId = project.WorkspaceId;
             var startTime = new DateTimeOffset(DateTime.Today.AddHours(9));
-            var timeEntry = new TimeEntryRequest
+            var timeEntry = new TimeEntryReq
             {
                 ProjectId = project.Id,
                 TaskId = task?.Id,
                 Billable = project.Billable,
-                Start = startTime,
-                End = startTime.AddMinutes(minutes),
+                TimeInterval = new TimeInterval
+                {
+                    Start = startTime,
+                    End = startTime.AddMinutes(minutes)
+                },
                 UserId = userId,
                 TagIds = new List<string?> {tagId},
             };

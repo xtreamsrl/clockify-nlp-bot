@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Clockify.Net.Models.TimeEntries;
+using Bot.Clockify.Models;
 
 namespace Bot.Clockify.Reports
 {
     public static class ReportUtil
     {
-        public static IEnumerable<ReportEntry> ConvertToReportEntries(IEnumerable<HydratedTimeEntryDtoImpl> timeEntries)
+        public static IEnumerable<ReportEntry> ConvertToReportEntries(IEnumerable<HydratedTimeEntryDo> timeEntries)
         {
             var reportEntries =
                 from timeEntry in timeEntries
@@ -48,10 +48,10 @@ namespace Bot.Clockify.Reports
             return $"{days:0.00}d";
         }
 
-        private static float DurationInDecimal(HydratedTimeEntryDtoImpl timeEntry)
+        private static float DurationInDecimal(HydratedTimeEntryDo hydratedTimeEntry)
         {
-            var end = timeEntry.TimeInterval.End;
-            var start = timeEntry.TimeInterval.Start;
+            var end = hydratedTimeEntry.TimeInterval.End;
+            var start = hydratedTimeEntry.TimeInterval.Start;
 
             if (start == null || end == null) return 0.0f;
 

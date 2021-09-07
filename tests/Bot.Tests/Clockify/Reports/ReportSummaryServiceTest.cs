@@ -2,17 +2,11 @@
 using System.Collections.Generic;
 using Bot.Clockify;
 using Bot.Clockify.Client;
+using Bot.Clockify.Models;
 using Bot.Clockify.Reports;
 using Bot.Data;
 using Bot.States;
-using Clockify.Net.Models.Projects;
-using Clockify.Net.Models.Tasks;
-using Clockify.Net.Models.TimeEntries;
-using Clockify.Net.Models.Workspaces;
 using FluentAssertions;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -30,7 +24,7 @@ namespace Bot.Tests.Clockify.Reports
 
             mockTokenRepository.Setup(r => r.ReadAsync(It.IsAny<string>()))
                 .ReturnsAsync(new TokenData("id", "clockifyToken"));
-            var workspaces = new List<WorkspaceDto>
+            var workspaces = new List<WorkspaceDo>
             {
                 Workspace1(),
                 Workspace2()
@@ -84,7 +78,7 @@ namespace Bot.Tests.Clockify.Reports
 
             mockTokenRepository.Setup(r => r.ReadAsync(It.IsAny<string>()))
                 .ReturnsAsync(new TokenData("id", "clockifyToken"));
-            var workspaces = new List<WorkspaceDto>
+            var workspaces = new List<WorkspaceDo>
             {
                 Workspace1(),
             };
@@ -129,14 +123,14 @@ namespace Bot.Tests.Clockify.Reports
 
             mockTokenRepository.Setup(r => r.ReadAsync(It.IsAny<string>()))
                 .ReturnsAsync(new TokenData("id", "clockifyToken"));
-            var workspaces = new List<WorkspaceDto>
+            var workspaces = new List<WorkspaceDo>
             {
                 Workspace1()
             };
             mockClockifyService.Setup(c => c.GetWorkspacesAsync(It.IsAny<string>()))
                 .ReturnsAsync(workspaces);
 
-            var emptyTimeEntries = new List<HydratedTimeEntryDtoImpl>();
+            var emptyTimeEntries = new List<HydratedTimeEntryDo>();
 
             mockClockifyService
                 .SetupSequence(c => c.GetHydratedTimeEntriesAsync(
@@ -171,82 +165,86 @@ namespace Bot.Tests.Clockify.Reports
             };
         }
 
-        private static WorkspaceDto Workspace1()
+        private static WorkspaceDo Workspace1()
         {
-            return new WorkspaceDto { Id = "id1", Name = "workspace1" };
+            return new WorkspaceDo("id1", "workspace1");
         }
 
-        private static WorkspaceDto Workspace2()
+        private static WorkspaceDo Workspace2()
         {
-            return new WorkspaceDto { Id = "id2", Name = "workspace2" };
+            return new WorkspaceDo("id2", "workspace2");
         }
 
 
-        private static ProjectDtoImpl ProjectRd()
+        private static ProjectDo ProjectRd()
         {
-            return new ProjectDtoImpl { Name = "r&d" };
+            return new ProjectDo { Name = "r&d" };
         }
 
-        private static ProjectDtoImpl ProjectForecasting()
+        private static ProjectDo ProjectForecasting()
         {
-            return new ProjectDtoImpl { Name = "forecasting" };
+            return new ProjectDo { Name = "forecasting" };
         }
 
-        private static TaskDto TaskBlockchain()
+        private static TaskDo TaskBlockchain()
         {
-            return new TaskDto { Name = "blockchain" };
+            return new TaskDo { Name = "blockchain" };
         }
 
-        private static List<HydratedTimeEntryDtoImpl> TimeEntriesWorkspace1()
+        private static List<HydratedTimeEntryDo> TimeEntriesWorkspace1()
         {
-            return new List<HydratedTimeEntryDtoImpl>
+            return new List<HydratedTimeEntryDo>
             {
-                new HydratedTimeEntryDtoImpl
-                {
-                    Project = ProjectRd(),
-                    Task = TaskBlockchain(),
-                    TimeInterval = new TimeIntervalDto
+                new HydratedTimeEntryDo
+                (
+                    "e1",
+                    ProjectRd(),
+                    new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 2, 2, 7, 0, 0, TimeSpan.Zero),
                         End = new DateTimeOffset(2020, 2, 2, 15, 0, 0, TimeSpan.Zero),
-                    }
-                },
-                new HydratedTimeEntryDtoImpl
-                {
-                    Project = ProjectRd(),
-                    Task = TaskBlockchain(),
-                    TimeInterval = new TimeIntervalDto
+                    },
+                    TaskBlockchain()
+                ),
+                new HydratedTimeEntryDo
+                (
+                    "e2",
+                    ProjectRd(),
+                    new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 2, 4, 7, 0, 0, TimeSpan.Zero),
                         End = new DateTimeOffset(2020, 2, 4, 11, 15, 0, TimeSpan.Zero),
-                    }
-                },
-                new HydratedTimeEntryDtoImpl
-                {
-                    Project = ProjectForecasting(),
-                    TimeInterval = new TimeIntervalDto
+                    },
+                    TaskBlockchain()
+                ),
+                new HydratedTimeEntryDo
+                (
+                    "e3",
+                    ProjectForecasting(),
+                    new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 2, 3, 7, 0, 0, TimeSpan.Zero),
                         End = new DateTimeOffset(2020, 2, 3, 13, 0, 0, TimeSpan.Zero),
                     }
-                }
+                )
             };
         }
 
-        private static List<HydratedTimeEntryDtoImpl> TimeEntriesWorkspace2()
+        private static List<HydratedTimeEntryDo> TimeEntriesWorkspace2()
         {
-            return new List<HydratedTimeEntryDtoImpl>
+            return new List<HydratedTimeEntryDo>
             {
-                new HydratedTimeEntryDtoImpl
-                {
-                    Project = new ProjectDtoImpl { Name = "operations" },
-                    Task = new TaskDto { Name = "management" },
-                    TimeInterval = new TimeIntervalDto
+                new HydratedTimeEntryDo
+                (
+                    "e4",
+                    new ProjectDo { Name = "operations" },
+                    new TimeInterval
                     {
                         Start = new DateTimeOffset(2020, 2, 3, 15, 0, 0, TimeSpan.Zero),
                         End = new DateTimeOffset(2020, 2, 3, 18, 30, 0, TimeSpan.Zero),
-                    }
-                }
+                    },
+                    new TaskDo { Name = "management" }
+                )
             };
         }
     }

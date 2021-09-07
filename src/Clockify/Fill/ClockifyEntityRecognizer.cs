@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
-using Clockify.Net.Models.Projects;
-using Clockify.Net.Models.Tasks;
-using Clockify.Net.Models.Workspaces;
+using Bot.Clockify.Models;
 using F23.StringSimilarity.Interfaces;
 
 namespace Bot.Clockify.Fill
@@ -21,7 +19,7 @@ namespace Bot.Clockify.Fill
             _clockifyService = clockifyService;
         }
 
-        public async Task<ProjectDtoImpl> RecognizeProject(string workedEntity, string apiKey)
+        public async Task<ProjectDo> RecognizeProject(string workedEntity, string apiKey)
         {
             var possibleProjects = (await GetAllPossibleProjects(apiKey)).ToList();
 
@@ -63,23 +61,23 @@ namespace Bot.Clockify.Fill
             return best.Project;
         }
 
-        private async Task<IEnumerable<ProjectDtoImpl>> GetAllPossibleProjects(string apiKey)
+        private async Task<IEnumerable<ProjectDo>> GetAllPossibleProjects(string apiKey)
         {
             var workspaces = await _clockifyService.GetWorkspacesAsync(apiKey);
 
-            async Task<List<ProjectDtoImpl>> ProjectsFromWs(WorkspaceDto w) =>
+            async Task<List<ProjectDo>> ProjectsFromWs(WorkspaceDo w) =>
                 await _clockifyService.GetProjectsAsync(apiKey, w.Id);
 
             var possibleProjects = (await Task.WhenAll(workspaces.Select(ProjectsFromWs))).SelectMany(p => p);
             return possibleProjects;
         }
 
-        private async Task<IEnumerable<TaskDto>> GetAllPossibleTasks(string apiKey, ProjectDtoImpl project)
+        private async Task<IEnumerable<TaskDo>> GetAllPossibleTasks(string apiKey, ProjectDo project)
         {
             return await _clockifyService.GetTasksAsync(apiKey, project.WorkspaceId, project.Id);
         }
 
-        public async Task<TaskDto> RecognizeTask(string? workedEntity, string apiKey, ProjectDtoImpl project)
+        public async Task<TaskDo> RecognizeTask(string? workedEntity, string apiKey, ProjectDo project)
         {
             var possibleTasks = (await GetAllPossibleTasks(apiKey, project)).ToList();
 
@@ -124,10 +122,10 @@ namespace Bot.Clockify.Fill
 
     public class AmbiguousRecognizableProjectException : Exception
     {
-        public readonly ProjectDtoImpl Option1;
-        public readonly ProjectDtoImpl Option2;
+        public readonly ProjectDo Option1;
+        public readonly ProjectDo Option2;
 
-        public AmbiguousRecognizableProjectException(ProjectDtoImpl option1, ProjectDtoImpl option2) :
+        public AmbiguousRecognizableProjectException(ProjectDo option1, ProjectDo option2) :
             base(option1 + " - " + option2)
         {
             Option1 = option1;

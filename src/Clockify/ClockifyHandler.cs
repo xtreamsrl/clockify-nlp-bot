@@ -4,11 +4,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
 using Bot.Clockify.Fill;
+using Bot.Clockify.Models;
 using Bot.Clockify.Reports;
 using Bot.Data;
 using Bot.States;
 using Bot.Supports;
-using Clockify.Net.Models.Users;
 using Luis;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
@@ -109,10 +109,10 @@ namespace Bot.Clockify
                     if (userProfile.Email == null)
                     {
                         var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
-                        CurrentUserDto user = await _clockifyService.GetCurrentUserAsync(tokenData.Value);
+                        UserDo user = await _clockifyService.GetCurrentUserAsync(tokenData.Value);
                         userProfile.ClockifyToken = null;
                         // This can be removed in future, it serves the purpose of aligning old users
-                        string fullName = user.Name;
+                        string? fullName = user.Name;
                         if (fullName != null)
                         {
                             //TODO: this might be wrong, don't care
