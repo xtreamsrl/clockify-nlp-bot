@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
+using Bot.Integration.Tests.Clockify.Supports;
 using FluentAssertions;
 using Microsoft.Bot.Schema;
 using Xunit;
@@ -10,11 +11,15 @@ using static Bot.Integration.Tests.Clockify.ClockifyConsts;
 
 namespace Bot.Integration.Tests.Clockify
 {
-    public class ClockifyReadApiTest
+    public class ClockifyReadApiTest : IClassFixture<ClockifyFixture>
     {
-        // TODO Add a class Setup/Teardown to reconstruct clockify test env.
-        // Unfortunately The workspace must be created by hand.
-        
+        private readonly ClockifyFixture _clockifyFixture;
+
+        public ClockifyReadApiTest(ClockifyFixture clockifyFixture)
+        {
+            _clockifyFixture = clockifyFixture;
+        }
+
         [Fact]
         public async void GetClients_ApiKeyIsNotValidAndWorkspaceExist_ThrowsException()
         {
@@ -35,12 +40,23 @@ namespace Bot.Integration.Tests.Clockify
             await action.Should().ThrowExactlyAsync<ErrorResponseException>()
                 .WithMessage($"Unable to get clients for workspaceId {NotExistingWorkspaceId}");
         }
-        
+
+        [Fact]
+        public async void GetClients_ApiKeyIsValidAndWorkspaceExist_ShouldReturnAllClients()
+        {
+            var clockifyService = new ClockifyService(new ClockifyClientFactory());
+
+            var clients = await clockifyService.GetClientsAsync(ClockifyApiKey, ClockifyWorkspaceId);
+
+            clients.Should().NotBeNullOrEmpty($"clients should exist for workspaceId -  {ClockifyWorkspaceId}");
+        }
+
+        // TODO populate tag.
         [Fact]
         public async void GetTag_ApiKeyIsValid_ShouldReturnTag()
         {
             var clockifyService = new ClockifyService(new ClockifyClientFactory());
-            
+
             string? tag = await clockifyService.GetTagAsync(ClockifyApiKey, ClockifyWorkspaceId, "bot");
 
             tag.Should().NotBeNullOrEmpty("tag should exist for the workspace");
@@ -54,16 +70,6 @@ namespace Bot.Integration.Tests.Clockify
             Func<Task> action = () => clockifyService.GetTagAsync(InvalidApiKey, ClockifyApiKey, "bot");
 
             await action.Should().ThrowExactlyAsync<UnauthorizedAccessException>();
-        }
-
-        [Fact]
-        public async void GetClients_ApiKeyIsValidAndWorkspaceExist_ShouldReturnAllClients()
-        {
-            var clockifyService = new ClockifyService(new ClockifyClientFactory());
-
-            var clients = await clockifyService.GetClientsAsync(ClockifyApiKey, ClockifyWorkspaceId);
-
-            clients.Should().NotBeNullOrEmpty($"clients should exist for workspaceId -  {ClockifyWorkspaceId}");
         }
 
         [Fact]
@@ -146,13 +152,11 @@ namespace Bot.Integration.Tests.Clockify
         {
             var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
-            const string notExistingClientId = "invalid-client-id";
-
-            var clients = new List<string> {notExistingClientId};
+            var clients = new List<string> {InvalidClientId};
 
             var projects = await clockifyService.GetProjectsByClientsAsync(ClockifyApiKey, ClockifyWorkspaceId, clients);
 
-            projects.Should().BeEmpty($"clientId {notExistingClientId} does not exist");
+            projects.Should().BeEmpty($"clientId {InvalidClientId} does not exist");
         }
 
         [Fact]
