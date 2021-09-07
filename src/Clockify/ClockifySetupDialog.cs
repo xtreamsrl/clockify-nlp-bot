@@ -9,7 +9,6 @@ using Bot.States;
 using Clockify.Net.Models.Users;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Schema;
 
 namespace Bot.Clockify
 {
@@ -87,7 +86,7 @@ namespace Bot.Clockify
 
                 return true;
             }
-            catch (ErrorResponseException)
+            catch (UnauthorizedAccessException)
             {
                 return false;
             }

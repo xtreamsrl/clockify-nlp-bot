@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Clockify.Net.Models.Clients;
 using Clockify.Net.Models.Projects;
@@ -8,6 +9,7 @@ using Clockify.Net.Models.TimeEntries;
 using Clockify.Net.Models.Users;
 using Clockify.Net.Models.Workspaces;
 using Microsoft.Bot.Schema;
+using RestSharp;
 
 namespace Bot.Clockify.Client
 {
@@ -21,12 +23,17 @@ namespace Bot.Clockify.Client
         {
             _clockifyClientFactory = clockifyClientFactory;
         }
+        
+        private static void ThrowUnauthorizedIf401(IRestResponse response)
+        {
+            if (response.StatusCode == HttpStatusCode.Unauthorized) throw new UnauthorizedAccessException();
+        }
 
         public async Task<CurrentUserDto> GetCurrentUserAsync(string apiKey)
         {
             var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.GetCurrentUserAsync();
-
+            ThrowUnauthorizedIf401(response);
             if (!response.IsSuccessful) throw new ErrorResponseException("Unable to get current user");
 
             return response.Data;
@@ -36,7 +43,7 @@ namespace Bot.Clockify.Client
         {
             var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.GetWorkspacesAsync();
-
+            ThrowUnauthorizedIf401(response);
             if (!response.IsSuccessful) throw new ErrorResponseException("Unable to get workspaces");
 
             return response.Data;
@@ -46,7 +53,7 @@ namespace Bot.Clockify.Client
         {
             var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.FindAllClientsOnWorkspaceAsync(workspaceId);
-
+            ThrowUnauthorizedIf401(response);
             if (!response.IsSuccessful)
                 throw new ErrorResponseException($"Unable to get clients for workspaceId {workspaceId}");
 
@@ -58,7 +65,7 @@ namespace Bot.Clockify.Client
         {
             var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.FindAllProjectsOnWorkspaceAsync(workspaceId, 1, PageSize);
-
+            ThrowUnauthorizedIf401(response);
             if (!response.IsSuccessful)
                 throw new ErrorResponseException($"Unable to get projects for workspaceId {workspaceId}");
 
@@ -70,7 +77,7 @@ namespace Bot.Clockify.Client
         {
             var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.FindAllProjectsOnWorkspaceByClientsAsync(workspaceId, clients);
-
+            ThrowUnauthorizedIf401(response);
             if (!response.IsSuccessful)
                 throw new ErrorResponseException(
                     $"Unable to get projects for workspaceId {workspaceId} and clients {clients}"
@@ -85,7 +92,7 @@ namespace Bot.Clockify.Client
             // TODO Implement pagination? Clockify api do not put any total page in response body
             var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.FindAllTasksAsync(workspaceId, projectId, pageSize: PageSize);
-
+            ThrowUnauthorizedIf401(response);
             if (!response.IsSuccessful)
                 throw new ErrorResponseException(
                     $"Unable to get tasks for workspaceId {workspaceId} and projectId {projectId}"
@@ -110,6 +117,7 @@ namespace Bot.Clockify.Client
                 end: end,
                 pageSize: PageSize
             );
+            ThrowUnauthorizedIf401(response);
 
             if (!response.IsSuccessful)
                 throw new ErrorResponseException(
@@ -128,6 +136,7 @@ namespace Bot.Clockify.Client
 
             var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.FindAllTagsOnWorkspaceAsync(workspaceId);
+            ThrowUnauthorizedIf401(response);
 
             if (!response.IsSuccessful)
             {
@@ -161,6 +170,7 @@ namespace Bot.Clockify.Client
         {
             var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.CreateTimeEntryAsync(workspaceId, timeEntryRequest);
+            ThrowUnauthorizedIf401(response);
 
             if (!response.IsSuccessful)
                 throw new ErrorResponseException(
@@ -175,6 +185,7 @@ namespace Bot.Clockify.Client
         {
             var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
             var response = await clockifyClient.DeleteTimeEntryAsync(workspaceId, timeEntryId);
+            ThrowUnauthorizedIf401(response);
 
             if (!response.IsSuccessful)
                 throw new ErrorResponseException(
