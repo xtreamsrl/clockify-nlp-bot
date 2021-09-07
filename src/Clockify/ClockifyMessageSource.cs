@@ -36,6 +36,7 @@ namespace Bot.Clockify
         
         public string RemindStoppedAlready => GetString(nameof(RemindStoppedAlready));
         public string RemindStopAnswer => GetString(nameof(RemindStopAnswer));
+        public string RemindEntryFill => GetString(nameof(RemindEntryFill));
 
         private string GetString(string name) => _localizer[name];
     }

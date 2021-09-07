@@ -27,5 +27,6 @@
         
         string RemindStoppedAlready { get; }
         string RemindStopAnswer { get; }
+        string RemindEntryFill { get; }
     }
 }
