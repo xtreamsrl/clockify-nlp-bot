@@ -31,10 +31,36 @@ namespace Bot.Integration.Tests.Clockify.Supports
             return response.Data;
         }
 
-        public Task DeleteClientAsync(string workspaceId, string clientId)
+        public async Task DeleteClientAsync(string workspaceId, string clientId)
         {
             var request = new RestRequest($"workspaces/{workspaceId}/clients/{clientId}", Method.DELETE);
-            return _client.ExecuteAsync(request);
+            var response = await _client.ExecuteAsync(request);
+            ThrowOnFailure(response);
+        }
+
+        public async Task<ProjectDo> CreateProjectAsync(string workspaceId, ProjectReq projectReq)
+        {
+            var request = new RestRequest($"workspaces/{workspaceId}/projects", Method.POST);
+            request.AddJsonBody(projectReq);
+            var response = await _client.ExecutePostAsync<ProjectDo>(request);
+            ThrowOnFailure(response);
+            return response.Data;
+        }
+
+        public async Task<ProjectDo> ArchiveProjectAsync(ProjectDo project)
+        {
+            var request = new RestRequest($"workspaces/{project.WorkspaceId}/projects/{project.Id}");
+            request.AddJsonBody(new ArchiveProjectReq(true));
+            var response = await _client.ExecuteAsync<ProjectDo>(request, Method.PUT);
+            ThrowOnFailure(response);
+            return response.Data;
+        }
+
+        public async Task DeleteProjectAsync(string workspaceId, string projectId)
+        {
+            var request = new RestRequest($"workspaces/{workspaceId}/projects/{projectId}", Method.DELETE);
+            var response = await _client.ExecuteAsync(request);
+            ThrowOnFailure(response);
         }
 
         private static void ThrowOnFailure(IRestResponse response)

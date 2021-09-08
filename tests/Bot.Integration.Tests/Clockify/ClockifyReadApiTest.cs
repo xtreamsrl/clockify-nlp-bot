@@ -1,8 +1,10 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
+using Bot.Clockify.Models;
 using Bot.Integration.Tests.Clockify.Supports;
 using FluentAssertions;
 using Microsoft.Bot.Schema;
@@ -165,17 +167,13 @@ namespace Bot.Integration.Tests.Clockify
         {
             var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
-            // TODO read clients from workspace
-            const string client1 = "5efc6e5d963f622c66c55662";
-            const string client2 = "5efc6e29f833d7257bfa38f0";
+            var clientIds = _clockifyFixture.Clients().Select(c => c.Id).ToList();
 
-            var clients = new List<string> {client1, client2};
-
-            var projects = await clockifyService.GetProjectsByClientsAsync(ClockifyApiKey, ClockifyWorkspaceId, clients);
+            var projects = await clockifyService.GetProjectsByClientsAsync(ClockifyApiKey, ClockifyWorkspaceId, clientIds);
 
             projects.Should()
-                .OnlyContain(project => clients.Contains(project.ClientId),
-                    $"all projects found must contain one of the following clients - {clients}");
+                .OnlyContain(project => clientIds.Contains(project.ClientId),
+                    $"all projects found must contain one of the following clients - {clientIds}");
         }
 
         [Fact]
