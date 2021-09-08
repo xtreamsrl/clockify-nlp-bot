@@ -97,11 +97,10 @@ namespace Bot.Clockify.Client
             {
                 ProjectId = entry.ProjectId,
                 TaskId = entry.TaskId,
-                UserId = entry.UserId,
                 Billable = entry.Billable,
                 TagIds = entry.TagIds,
-                Start = entry.TimeInterval.Start,
-                End = entry.TimeInterval.End
+                Start = entry.Start,
+                End = entry.End
             };
         }
 
