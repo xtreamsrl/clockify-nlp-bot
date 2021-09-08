@@ -9,6 +9,7 @@ using static Bot.Integration.Tests.Clockify.ClockifyConsts;
 
 namespace Bot.Integration.Tests.Clockify.Supports
 {
+    
     public class ClockifyFixture : IAsyncLifetime
     {
         private readonly TestClockifyService _testClockifyService = new TestClockifyService(new ClockifyClientFactory());

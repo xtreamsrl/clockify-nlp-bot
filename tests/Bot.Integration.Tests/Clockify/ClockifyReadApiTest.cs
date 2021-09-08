@@ -12,6 +12,7 @@ using static Bot.Integration.Tests.Clockify.ClockifyConsts;
 
 namespace Bot.Integration.Tests.Clockify
 {
+    [Collection(nameof(ClockifyCollection))]
     public class ClockifyReadApiTest : IClassFixture<ClockifyFixture>
     {
         private readonly ClockifyFixture _clockifyFixture;

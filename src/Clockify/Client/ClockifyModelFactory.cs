@@ -10,7 +10,7 @@ using Clockify.Net.Models.Workspaces;
 
 namespace Bot.Clockify.Client
 {
-    internal static class ClockifyModelFactory
+    public static class ClockifyModelFactory
     {
         public static WorkspaceDo ToWorkspaceDo(WorkspaceDto w)
         {
