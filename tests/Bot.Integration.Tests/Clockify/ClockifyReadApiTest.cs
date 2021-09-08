@@ -195,9 +195,8 @@ namespace Bot.Integration.Tests.Clockify
         public async void GetTasks_ApiKeyIsValidAndWorkspaceExistAndProjectExist_ShouldReturnAllProjectTasks()
         {
             var clockifyService = new ClockifyService(new ClockifyClientFactory());
-
-            // TODO read project id from api
-            const string projectId = "5efc6ee1963f622c66c55819";
+            
+            string projectId = _clockifyFixture.ProjectWithTasks().Id;
 
             var tasks = await clockifyService.GetTasksAsync(ClockifyApiKey, ClockifyWorkspaceId, projectId);
 

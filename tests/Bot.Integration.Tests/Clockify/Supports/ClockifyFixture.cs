@@ -15,21 +15,25 @@ namespace Bot.Integration.Tests.Clockify.Supports
         
         private List<ClientDo> _clients;
         private List<ProjectDo> _projects;
+        private List<TaskDo> _tasks;
 
         public async Task InitializeAsync()
         {
             _clients = await SetupClients();
             _projects = await SetupProjects();
+            _tasks = await SetupTasks();
         }
 
         public async Task DisposeAsync()
         {
             // TODO Maybe it's better to cleanup everything and not only entities created in the current test run.
+            await CleanupTasks(_tasks);
             await CleanupProjects(_projects);
             await CleanupClients(_clients);
         }
 
         public IEnumerable<ClientDo> Clients() => _clients;
+        public ProjectDo ProjectWithTasks() => _projects[0];
 
         private async Task<List<ClientDo>> SetupClients()
         {
@@ -57,12 +61,12 @@ namespace Bot.Integration.Tests.Clockify.Supports
             {
                 ClientId = _clients[1].Id
             };
-            var project1 =
+            var projectWithTasks =
                 await _testClockifyService.CreateProjectAsync(ClockifyWorkspaceId, projectReq1);
             var project2 =
                 await _testClockifyService.CreateProjectAsync(ClockifyWorkspaceId, projectReq2);
 
-            return new List<ProjectDo> { project1, project2 };
+            return new List<ProjectDo> { projectWithTasks, project2 };
         }
         
         private async Task CleanupProjects(List<ProjectDo> projects)
@@ -71,6 +75,22 @@ namespace Bot.Integration.Tests.Clockify.Supports
             {
                 await _testClockifyService.ArchiveProjectAsync(project);
                 await _testClockifyService.DeleteProjectAsync(project.WorkspaceId, project.Id);
+            }
+        }
+
+        private async Task<List<TaskDo>> SetupTasks()
+        {
+            // TODO evaluate creation of tasks for every project.
+            var task = await _testClockifyService.CreateTaskAsync(ProjectWithTasks().WorkspaceId, ProjectWithTasks().Id,
+                _fixture.Create<TaskReq>());
+            return new List<TaskDo> { task };
+        }
+
+        private async Task CleanupTasks(List<TaskDo> tasks)
+        {
+            foreach (var task in tasks)
+            {
+                await _testClockifyService.DeleteTaskAsync(ClockifyWorkspaceId, task.ProjectId, task.Id);
             }
         }
     }

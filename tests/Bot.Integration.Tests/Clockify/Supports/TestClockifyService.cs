@@ -62,6 +62,22 @@ namespace Bot.Integration.Tests.Clockify.Supports
             var response = await _client.ExecuteAsync(request);
             ThrowOnFailure(response);
         }
+        
+        public async Task<TaskDo> CreateTaskAsync(string workspaceId, string projectId, TaskReq taskReq)
+        {
+            var request = new RestRequest($"workspaces/{workspaceId}/projects/{projectId}/tasks", Method.POST);
+            request.AddJsonBody(taskReq);
+            var response = await _client.ExecutePostAsync<TaskDo>(request);
+            ThrowOnFailure(response);
+            return response.Data;
+        }
+
+        public async Task DeleteTaskAsync(string workspaceId, string projectId, string taskId)
+        {
+            var request = new RestRequest($"workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}", Method.DELETE);
+            var response = await _client.ExecuteAsync(request);
+            ThrowOnFailure(response);
+        }
 
         private static void ThrowOnFailure(IRestResponse response)
         {
