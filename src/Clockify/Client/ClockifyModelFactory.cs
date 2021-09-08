@@ -83,6 +83,14 @@ namespace Bot.Clockify.Client
             };
         }
 
+        public static TaskRequest ToTaskRequest(TaskReq task)
+        {
+            return new TaskRequest
+            {
+                Name = task.Name
+            };
+        }
+
         public static TimeEntryRequest ToTimeEntryRequest(TimeEntryReq entry)
         {
             return new TimeEntryRequest

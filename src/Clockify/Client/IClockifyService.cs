@@ -30,6 +30,6 @@ namespace Bot.Clockify.Client
 
         public Task<string?> GetTagAsync(string apiKey, string workspaceId, string tagName);
 
-        public Task<TaskDo> CreateTaskAsync(string apiKey, string taskName, string projectId, string workspaceId);
+        public Task<TaskDo> CreateTaskAsync(string apiKey, TaskReq taskReq, string projectId, string workspaceId);
     }
 }

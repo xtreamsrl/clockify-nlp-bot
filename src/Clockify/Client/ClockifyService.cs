@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Bot.Clockify.Models;
-using Clockify.Net.Models.Tasks;
 using Microsoft.Bot.Schema;
 using RestSharp;
 
@@ -135,13 +134,12 @@ namespace Bot.Clockify.Client
             return response.Data.Find(e => e.Name == tagName)?.Id;
         }
 
-        public async Task<TaskDo> CreateTaskAsync(string apiKey, string taskName, string projectId, string workspaceId)
+        public async Task<TaskDo> CreateTaskAsync(string apiKey, TaskReq taskReq, string projectId, string workspaceId)
         {
             var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
-            var response = await clockifyClient.CreateTaskAsync(workspaceId, projectId, new TaskRequest()
-            {
-                Name = taskName
-            });
+            var response =
+                await clockifyClient.CreateTaskAsync(workspaceId, projectId,
+                    ClockifyModelFactory.ToTaskRequest(taskReq));
             ThrowUnauthorizedIf401(response);
             if (!response.IsSuccessful)
                 throw new ErrorResponseException(

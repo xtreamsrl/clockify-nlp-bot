@@ -189,7 +189,7 @@ namespace Bot.Clockify.Fill
             try
             {
                 var createdTask =
-                    await _clockifyService.CreateTaskAsync(token, newTaskName!, project.Id, project.WorkspaceId);
+                    await _clockifyService.CreateTaskAsync(token, new TaskReq(newTaskName!), project.Id, project.WorkspaceId);
                 fullEntity += " - " + createdTask.Name;
                 return await AddEntryAndExit(stepContext, cancellationToken, token, project, minutes, fullEntity,
                     createdTask);
