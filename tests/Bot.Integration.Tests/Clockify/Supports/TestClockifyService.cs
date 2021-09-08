@@ -79,6 +79,22 @@ namespace Bot.Integration.Tests.Clockify.Supports
             ThrowOnFailure(response);
         }
 
+        public async Task<TagDo> CreateTagAsync(string workspaceId, string tagName)
+        {
+            var request = new RestRequest($"workspaces/{workspaceId}/tags", Method.POST);
+            request.AddJsonBody(new Dictionary<string, string> { { "name", tagName } });
+            var response = await _client.ExecutePostAsync<TagDo>(request);
+            ThrowOnFailure(response);
+            return response.Data;
+        }
+
+        public async Task DeleteTagAsync(string workspaceId, string tagId)
+        {
+            var request = new RestRequest($"workspaces/{workspaceId}/tags/{tagId}", Method.DELETE);
+            var response = await _client.ExecuteAsync(request);
+            ThrowOnFailure(response);
+        }
+
         private static void ThrowOnFailure(IRestResponse response)
         {
             if (!response.IsSuccessful)

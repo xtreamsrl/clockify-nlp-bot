@@ -16,9 +16,11 @@ namespace Bot.Integration.Tests.Clockify.Supports
         private List<ClientDo> _clients;
         private List<ProjectDo> _projects;
         private List<TaskDo> _tasks;
+        private TagDo _tag;
 
         public async Task InitializeAsync()
         {
+            _tag = await CreateBotTag();
             _clients = await SetupClients();
             _projects = await SetupProjects();
             _tasks = await SetupTasks();
@@ -30,10 +32,14 @@ namespace Bot.Integration.Tests.Clockify.Supports
             await CleanupTasks(_tasks);
             await CleanupProjects(_projects);
             await CleanupClients(_clients);
+            await CleanupBotTag(_tag);
         }
 
         public IEnumerable<ClientDo> Clients() => _clients;
+
         public ProjectDo ProjectWithTasks() => _projects[0];
+
+        public TagDo BotTag() => _tag;
 
         private async Task<List<ClientDo>> SetupClients()
         {
@@ -68,7 +74,7 @@ namespace Bot.Integration.Tests.Clockify.Supports
 
             return new List<ProjectDo> { projectWithTasks, project2 };
         }
-        
+
         private async Task CleanupProjects(List<ProjectDo> projects)
         {
             foreach (var project in projects)
@@ -92,6 +98,16 @@ namespace Bot.Integration.Tests.Clockify.Supports
             {
                 await _testClockifyService.DeleteTaskAsync(ClockifyWorkspaceId, task.ProjectId, task.Id);
             }
+        }
+
+        private async Task<TagDo> CreateBotTag()
+        {
+            return await _testClockifyService.CreateTagAsync(ClockifyWorkspaceId, _fixture.Create<string>());
+        }
+
+        private async Task CleanupBotTag(TagDo tag)
+        {
+            await _testClockifyService.DeleteTagAsync(ClockifyWorkspaceId, tag.Id);
         }
     }
 }

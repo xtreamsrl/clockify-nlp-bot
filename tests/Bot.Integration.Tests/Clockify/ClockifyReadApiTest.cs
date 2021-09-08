@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
-using Bot.Clockify.Models;
 using Bot.Integration.Tests.Clockify.Supports;
 using FluentAssertions;
 using Microsoft.Bot.Schema;
@@ -59,7 +58,9 @@ namespace Bot.Integration.Tests.Clockify
         {
             var clockifyService = new ClockifyService(new ClockifyClientFactory());
 
-            string? tag = await clockifyService.GetTagAsync(ClockifyApiKey, ClockifyWorkspaceId, "bot");
+            string tagName = _clockifyFixture.BotTag().Name;
+
+            string? tag = await clockifyService.GetTagAsync(ClockifyApiKey, ClockifyWorkspaceId, tagName);
 
             tag.Should().NotBeNullOrEmpty("tag should exist for the workspace");
         }
