@@ -95,6 +95,23 @@ namespace Bot.Integration.Tests.Clockify.Supports
             ThrowOnFailure(response);
         }
 
+        public async Task<TimeEntryDo> CreateTimeEntryAsync(string workspaceId, TimeEntryReq timeEntryReq)
+        {
+            var request = new RestRequest($"workspaces/{workspaceId}/time-entries", Method.POST);
+            request.AddJsonBody(timeEntryReq);
+            var response = await _client.ExecutePostAsync<TimeEntryDo>(request);
+            ThrowOnFailure(response);
+            return response.Data;
+        }
+        
+        public async Task DeleteTimeEntryAsync(string workspaceId, string timeEntryId)
+        {
+            var request = new RestRequest($"workspaces/{workspaceId}/time-entries/{timeEntryId}", Method.DELETE);
+            var response = await _client.ExecuteAsync(request);
+            ThrowOnFailure(response);
+        }
+        
+
         private static void ThrowOnFailure(IRestResponse response)
         {
             if (!response.IsSuccessful)

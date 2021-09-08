@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoFixture;
 using Bot.Clockify.Client;
@@ -11,12 +12,13 @@ namespace Bot.Integration.Tests.Clockify.Supports
     public class ClockifyFixture : IAsyncLifetime
     {
         private readonly TestClockifyService _testClockifyService = new TestClockifyService(new ClockifyClientFactory());
-        private Fixture _fixture = new Fixture();
+        private readonly Fixture _fixture = new Fixture();
         
         private List<ClientDo> _clients;
         private List<ProjectDo> _projects;
         private List<TaskDo> _tasks;
         private TagDo _tag;
+        private List<TimeEntryDo> _timeEntries;
 
         public async Task InitializeAsync()
         {
@@ -24,11 +26,13 @@ namespace Bot.Integration.Tests.Clockify.Supports
             _clients = await SetupClients();
             _projects = await SetupProjects();
             _tasks = await SetupTasks();
+            _timeEntries = await AddTimeEntries();
         }
 
         public async Task DisposeAsync()
         {
             // TODO Maybe it's better to cleanup everything and not only entities created in the current test run.
+            await CleanupTimeEntries(_timeEntries);
             await CleanupTasks(_tasks);
             await CleanupProjects(_projects);
             await CleanupClients(_clients);
@@ -38,6 +42,8 @@ namespace Bot.Integration.Tests.Clockify.Supports
         public IEnumerable<ClientDo> Clients() => _clients;
 
         public ProjectDo ProjectWithTasks() => _projects[0];
+
+        public ProjectDo ProjectWithoutTasks() => _projects[1];
 
         public TagDo BotTag() => _tag;
 
@@ -108,6 +114,22 @@ namespace Bot.Integration.Tests.Clockify.Supports
         private async Task CleanupBotTag(TagDo tag)
         {
             await _testClockifyService.DeleteTagAsync(ClockifyWorkspaceId, tag.Id);
+        }
+
+        private async Task<List<TimeEntryDo>> AddTimeEntries()
+        {
+            var now = DateTimeOffset.UtcNow;
+            var timeEntryReq = new TimeEntryReq(ProjectWithTasks().Id, now, end: now.AddHours(4));
+            var timeEntry = await _testClockifyService.CreateTimeEntryAsync(ClockifyWorkspaceId, timeEntryReq);
+            return new List<TimeEntryDo> { timeEntry };
+        }
+        
+        private async Task CleanupTimeEntries(List<TimeEntryDo> timeEntries)
+        {
+            foreach (var timeEntry in timeEntries)
+            {
+                await _testClockifyService.DeleteTimeEntryAsync(ClockifyWorkspaceId, timeEntry.Id);
+            }
         }
     }
 }

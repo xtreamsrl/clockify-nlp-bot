@@ -21,14 +21,11 @@ namespace Bot.Integration.Tests.Clockify
 
             var now = DateTimeOffset.UtcNow;
             var newTimeEntry = new TimeEntryReq
-            {
-                TimeInterval = new TimeInterval
-                {
-                    Start = now,
-                    End = now.AddHours(8),
-                },
-                ProjectId = "5efc6f19f833d7257bfa3c54"
-            };
+            (
+                "5efc6f19f833d7257bfa3c54",
+                now,
+                end: now.AddHours(8)
+            );
 
             var addedTimeEntry =
                 await clockifyService.AddTimeEntryAsync(ClockifyApiKey, ClockifyWorkspaceId, newTimeEntry);
