@@ -13,7 +13,7 @@ namespace Bot.Clockify.Client
     // Read operations
     public partial class ClockifyService : IClockifyService
     {
-        private const int PageSize = 200;
+        private const int PageSize = 2000;
         private readonly IClockifyClientFactory _clockifyClientFactory;
 
         public ClockifyService(IClockifyClientFactory clockifyClientFactory)
@@ -56,6 +56,7 @@ namespace Bot.Clockify.Client
             string workspaceId)
         {
             var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
+            // TODO Implement pagination? Clockify api do not put any total page in response body
             var response = await clockifyClient.FindAllProjectsOnWorkspaceAsync(workspaceId, 1, PageSize);
             ThrowUnauthorizedIf401(response);
             if (!response.IsSuccessful)
