@@ -12,7 +12,7 @@ namespace Bot.Integration.Tests.Clockify.Supports
     
     public class ClockifyFixture : IAsyncLifetime
     {
-        private readonly TestClockifyService _testClockifyService = new TestClockifyService(new ClockifyClientFactory());
+        private readonly TestClockifyService _testClockifyService = new TestClockifyService();
         private readonly Fixture _fixture = new Fixture();
         
         private List<ClientDo> _clients;

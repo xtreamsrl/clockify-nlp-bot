@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Bot.Clockify.Client;
 using Bot.Clockify.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -12,15 +11,11 @@ using static Bot.Integration.Tests.Clockify.ClockifyConsts;
 
 namespace Bot.Integration.Tests.Clockify.Supports
 {
-    public class TestClockifyService : ClockifyService
+    public class TestClockifyService
     {
         private const string BaseUrl = "https://api.clockify.me/api/v1";
         private const string ApiKeyHeaderName = "X-Api-Key";
         private readonly IRestClient _client = GetClockifyRestClient();
-
-        public TestClockifyService(IClockifyClientFactory clockifyClientFactory) : base(clockifyClientFactory)
-        {
-        }
 
         public async Task<ClientDo> CreateClientAsync(string workspaceId, ClientReq clientReq)
         {
