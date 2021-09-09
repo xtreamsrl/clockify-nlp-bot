@@ -7,6 +7,13 @@ using static Bot.Integration.Tests.Clockify.ClockifyConsts;
 
 namespace Bot.Integration.Tests.Clockify.Supports
 {
+    /// <summary>
+    /// Setup and cleanup clockify environment. If something goes wrong you need to manually sanitize your clockify
+    /// workspace by deleting it and recreating a new one.
+    ///
+    /// Please use this fixture only with <see cref="ClockifyCollection">MyClass</see>. Multiple instances will result
+    /// in test failure due to entity creation name conflicts.
+    /// </summary>
     public class ClockifyFixture : IAsyncLifetime
     {
         private readonly TestClockifyService _testClockifyService = new TestClockifyService();

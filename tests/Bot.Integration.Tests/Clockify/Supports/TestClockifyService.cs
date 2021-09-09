@@ -11,6 +11,11 @@ using static Bot.Integration.Tests.Clockify.ClockifyConsts;
 
 namespace Bot.Integration.Tests.Clockify.Supports
 {
+    /// <summary>
+    /// A clockify client to setup a test clockify environment.
+    ///
+    /// <exception cref="Exception">Thrown in case of any error.</exception>
+    /// </summary>
     public class TestClockifyService
     {
         private const string BaseUrl = "https://api.clockify.me/api/v1";
