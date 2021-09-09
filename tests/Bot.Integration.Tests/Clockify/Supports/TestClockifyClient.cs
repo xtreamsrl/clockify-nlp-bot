@@ -16,7 +16,7 @@ namespace Bot.Integration.Tests.Clockify.Supports
     ///
     /// <exception cref="Exception">Thrown in case of any error.</exception>
     /// </summary>
-    public class TestClockifyService
+    public class TestClockifyClient
     {
         private const string BaseUrl = "https://api.clockify.me/api/v1";
         private const string ApiKeyHeaderName = "X-Api-Key";

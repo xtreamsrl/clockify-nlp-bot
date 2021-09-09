@@ -16,7 +16,7 @@ namespace Bot.Integration.Tests.Clockify.Supports
     /// </summary>
     public class ClockifyFixture : IAsyncLifetime
     {
-        private readonly TestClockifyService _testClockifyService = new TestClockifyService();
+        private readonly TestClockifyClient _testClockifyClient = new TestClockifyClient();
 
         private List<ClientDo> _clients;
         private List<ProjectDo> _projects;
@@ -59,8 +59,8 @@ namespace Bot.Integration.Tests.Clockify.Supports
 
         private async Task<List<ClientDo>> SetupClients()
         {
-            var clientA = await _testClockifyService.CreateClientAsync(ClockifyWorkspaceId, new ClientReq(ClientA));
-            var clientB = await _testClockifyService.CreateClientAsync(ClockifyWorkspaceId, new ClientReq(ClientB));
+            var clientA = await _testClockifyClient.CreateClientAsync(ClockifyWorkspaceId, new ClientReq(ClientA));
+            var clientB = await _testClockifyClient.CreateClientAsync(ClockifyWorkspaceId, new ClientReq(ClientB));
             return new List<ClientDo> { clientA, clientB };
         }
 
@@ -68,7 +68,7 @@ namespace Bot.Integration.Tests.Clockify.Supports
         {
             foreach (var client in clients)
             {
-                await _testClockifyService.DeleteClientAsync(ClockifyWorkspaceId, client.Id);
+                await _testClockifyClient.DeleteClientAsync(ClockifyWorkspaceId, client.Id);
             }
         }
 
@@ -83,9 +83,9 @@ namespace Bot.Integration.Tests.Clockify.Supports
                 ClientId = _clients[1].Id
             };
             var projectWithTasks =
-                await _testClockifyService.CreateProjectAsync(ClockifyWorkspaceId, projectReqA);
+                await _testClockifyClient.CreateProjectAsync(ClockifyWorkspaceId, projectReqA);
             var projectWithoutTasks =
-                await _testClockifyService.CreateProjectAsync(ClockifyWorkspaceId, projectReqB);
+                await _testClockifyClient.CreateProjectAsync(ClockifyWorkspaceId, projectReqB);
 
             return new List<ProjectDo> { projectWithTasks, projectWithoutTasks };
         }
@@ -94,14 +94,14 @@ namespace Bot.Integration.Tests.Clockify.Supports
         {
             foreach (var project in projects)
             {
-                await _testClockifyService.ArchiveProjectAsync(project);
-                await _testClockifyService.DeleteProjectAsync(project.WorkspaceId, project.Id);
+                await _testClockifyClient.ArchiveProjectAsync(project);
+                await _testClockifyClient.DeleteProjectAsync(project.WorkspaceId, project.Id);
             }
         }
 
         private async Task<List<TaskDo>> SetupTasks()
         {
-            var task = await _testClockifyService.CreateTaskAsync(ProjectWithTasks().WorkspaceId, ProjectWithTasks().Id,
+            var task = await _testClockifyClient.CreateTaskAsync(ProjectWithTasks().WorkspaceId, ProjectWithTasks().Id,
                 new TaskReq(TaskA));
             return new List<TaskDo> { task };
         }
@@ -110,25 +110,25 @@ namespace Bot.Integration.Tests.Clockify.Supports
         {
             foreach (var task in tasks)
             {
-                await _testClockifyService.DeleteTaskAsync(ClockifyWorkspaceId, task.ProjectId, task.Id);
+                await _testClockifyClient.DeleteTaskAsync(ClockifyWorkspaceId, task.ProjectId, task.Id);
             }
         }
 
         private async Task<TagDo> CreateBotTag()
         {
-            return await _testClockifyService.CreateTagAsync(ClockifyWorkspaceId, Tag);
+            return await _testClockifyClient.CreateTagAsync(ClockifyWorkspaceId, Tag);
         }
 
         private async Task CleanupBotTag(TagDo tag)
         {
-            await _testClockifyService.DeleteTagAsync(ClockifyWorkspaceId, tag.Id);
+            await _testClockifyClient.DeleteTagAsync(ClockifyWorkspaceId, tag.Id);
         }
 
         private async Task<List<TimeEntryDo>> AddTimeEntries()
         {
             var now = DateTimeOffset.UtcNow;
             var timeEntryReq = new TimeEntryReq(ProjectWithTasks().Id, now, end: now.AddHours(4));
-            var timeEntry = await _testClockifyService.CreateTimeEntryAsync(ClockifyWorkspaceId, timeEntryReq);
+            var timeEntry = await _testClockifyClient.CreateTimeEntryAsync(ClockifyWorkspaceId, timeEntryReq);
             return new List<TimeEntryDo> { timeEntry };
         }
 
@@ -136,7 +136,7 @@ namespace Bot.Integration.Tests.Clockify.Supports
         {
             foreach (var timeEntry in timeEntries)
             {
-                await _testClockifyService.DeleteTimeEntryAsync(ClockifyWorkspaceId, timeEntry.Id);
+                await _testClockifyClient.DeleteTimeEntryAsync(ClockifyWorkspaceId, timeEntry.Id);
             }
         }
     }
