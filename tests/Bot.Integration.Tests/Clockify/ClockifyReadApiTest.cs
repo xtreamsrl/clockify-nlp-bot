@@ -13,7 +13,7 @@ using static Bot.Integration.Tests.Clockify.ClockifyConsts;
 namespace Bot.Integration.Tests.Clockify
 {
     [Collection(nameof(ClockifyCollection))]
-    public class ClockifyReadApiTest : IClassFixture<ClockifyFixture>
+    public class ClockifyReadApiTest
     {
         private readonly ClockifyFixture _clockifyFixture;
 
@@ -53,7 +53,6 @@ namespace Bot.Integration.Tests.Clockify
             clients.Should().NotBeNullOrEmpty($"clients should exist for workspaceId -  {ClockifyWorkspaceId}");
         }
 
-        // TODO populate tag.
         [Fact]
         public async void GetTag_ApiKeyIsValid_ShouldReturnTag()
         {
