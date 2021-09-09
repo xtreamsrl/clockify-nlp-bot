@@ -8,10 +8,12 @@ using FluentAssertions;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Testing;
+using Microsoft.Bot.Builder.Testing.XUnit;
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Schema;
 using Moq;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Bot.Tests.Clockify.Dialogs
 {
@@ -21,6 +23,13 @@ namespace Bot.Tests.Clockify.Dialogs
         private const string SetupRequest = "SetupRequest";
         private const string SetupReject = "SetupReject";
         private const string SetupFeedback = "SetupFeedback";
+
+        private readonly IMiddleware[] _middlewares;
+
+        public ClockifySetupDialogTest(ITestOutputHelper output)
+        {
+            _middlewares = new IMiddleware[]{ new XUnitDialogTestLogger(output)};
+        }
 
         [Fact]
         private async void ClockifySetupDialog_UserProvideValidToken_GiveFeedbackToUserAndSaveTokenId()
@@ -45,7 +54,7 @@ namespace Bot.Tests.Clockify.Dialogs
 
             var dialog = new ClockifySetupDialog(userState, mockClockifyService.Object, mockTokenRepository.Object,
                 clockifyMessageSource.Object);
-            var dialogTestClient = new DialogTestClient(Channels.Telegram, dialog);
+            var dialogTestClient = new DialogTestClient(Channels.Telegram, dialog, middlewares: _middlewares);
 
             var reply = await dialogTestClient.SendActivityAsync<IMessageActivity>("ciao");
             reply.Text.Should().Be(SetupRequest);
