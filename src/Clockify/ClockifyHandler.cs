@@ -62,18 +62,15 @@ namespace Bot.Clockify
                 switch (luisResult.TopIntentWithMinScore())
                 {
                     case TimeSurveyBotLuis.Intent.Report:
-                        await dialogContext.BeginDialogAsync(_reportDialog.Id, luisResult.Entities._instance,
-                            cancellationToken);
+                        await dialogContext.BeginDialogAsync(_reportDialog.Id, luisResult, cancellationToken);
                         return true;
                     case TimeSurveyBotLuis.Intent.Fill:
-                        await dialogContext.BeginDialogAsync(_fillDialog.Id, luisResult.Entities._instance,
-                            cancellationToken);
+                        await dialogContext.BeginDialogAsync(_fillDialog.Id, luisResult, cancellationToken);
                         return true;
                     case TimeSurveyBotLuis.Intent.FillAsYesterday:
                         return false;
                     case TimeSurveyBotLuis.Intent.Utilities_Stop:
-                        await dialogContext.BeginDialogAsync(_stopReminderDialog.Id, luisResult.Entities._instance,
-                            cancellationToken);
+                        await dialogContext.BeginDialogAsync(_stopReminderDialog.Id, cancellationToken: cancellationToken);
                         return true;
                     default:
                         return false;

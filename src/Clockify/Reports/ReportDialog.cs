@@ -42,11 +42,11 @@ namespace Bot.Clockify.Reports
             var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
             string clockifyToken = tokenData.Value;
             stepContext.Values["Token"] = clockifyToken;
-            var entities = (TimeSurveyBotLuis._Entities._Instance)stepContext.Options;
+            var luisResult = (TimeSurveyBotLuis)stepContext.Options;
 
             try
             {
-                string timePeriodInstance = _reportExtractor.GetDateTimeInstance(entities);
+                string timePeriodInstance = luisResult.TimePeriod();
                 var dateRange = _reportExtractor.GetDateRangeFromTimePeriod(timePeriodInstance);
 
                 // TODO refactor Summary to manage error response exception

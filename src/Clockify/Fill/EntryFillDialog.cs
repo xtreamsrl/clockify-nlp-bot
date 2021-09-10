@@ -64,13 +64,13 @@ namespace Bot.Clockify.Fill
             var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
             string clockifyToken = tokenData.Value;
             stepContext.Values["Token"] = clockifyToken;
-            var entities = (TimeSurveyBotLuis._Entities._Instance)stepContext.Options;
+            var luisResult = (TimeSurveyBotLuis)stepContext.Options;
 
             try
             {
-                string workedPeriod = EntityExtractorUtil.GetWorkerPeriodInstance(entities);
-                string workedEntity = EntityExtractorUtil.GetWorkedEntity(entities);
-                var recognizedProject = await _clockifyWorkableRecognizer.RecognizeProject(workedEntity, clockifyToken);
+                string workedPeriod = luisResult.TimePeriod();
+                var recognizedProject =
+                    await _clockifyWorkableRecognizer.RecognizeProject(luisResult.ProjectName(), clockifyToken);
                 stepContext.Values["Project"] = recognizedProject;
                 double minutes = TextToMinutes.ToMinutes(workedPeriod);
                 stepContext.Values["Minutes"] = minutes;
