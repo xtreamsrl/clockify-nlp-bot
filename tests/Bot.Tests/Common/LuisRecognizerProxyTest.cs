@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
-using Bot.Clockify;
 using Bot.Common;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 
-namespace Bot.Tests.Clockify.Reports
+namespace Bot.Tests.Common
 {
-    public class ReportRecognizerTest
+    public class LuisRecognizerProxyTest
     {
         [Fact]
         public void WhenNotConfigured_IsConfiguredShouldReturnFalse()
