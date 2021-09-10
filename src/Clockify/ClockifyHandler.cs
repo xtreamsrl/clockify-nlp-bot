@@ -6,7 +6,6 @@ using Bot.Clockify.Client;
 using Bot.Clockify.Fill;
 using Bot.Clockify.Models;
 using Bot.Clockify.Reports;
-using Bot.Common;
 using Bot.Data;
 using Bot.States;
 using Bot.Supports;
@@ -25,13 +24,12 @@ namespace Bot.Clockify
         private readonly IClockifyService _clockifyService;
         private readonly DialogSet _dialogSet;
         private readonly IStatePropertyAccessor<DialogState> _dialogState;
-        private readonly CommonRecognizer _recognizerProxy;
         private readonly ITokenRepository _tokenRepository;
 
         public ClockifyHandler(EntryFillDialog fillDialog, ReportDialog reportDialog,
             StopReminderDialog stopReminderDialog, IClockifyService clockifyService,
             ConversationState conversationState, ClockifySetupDialog clockifySetupDialog,
-            CommonRecognizer recognizerProxy, ITokenRepository tokenRepository)
+            ITokenRepository tokenRepository)
         {
             _dialogState = conversationState.CreateProperty<DialogState>("ClockifyDialogState");
             _fillDialog = fillDialog;
@@ -39,7 +37,6 @@ namespace Bot.Clockify
             _stopReminderDialog = stopReminderDialog;
             _clockifyService = clockifyService;
             _clockifySetupDialog = clockifySetupDialog;
-            _recognizerProxy = recognizerProxy;
             _tokenRepository = tokenRepository;
             _dialogSet = new DialogSet(_dialogState)
                 .Add(_fillDialog)
@@ -49,13 +46,16 @@ namespace Bot.Clockify
         }
 
         public async Task<bool> Handle(ITurnContext turnContext, CancellationToken cancellationToken,
-            UserProfile userProfile)
+            UserProfile userProfile, TimeSurveyBotLuis? luisResult = null)
         {
+            if (luisResult == null)
+            {
+                return false;
+            }
+
             var dialogContext = await _dialogSet.CreateContextAsync(turnContext, cancellationToken);
 
             if (await RunClockifySetupIfNeeded(turnContext, cancellationToken, userProfile)) return true;
-
-            var luisResult = await _recognizerProxy.RecognizeAsync<TimeSurveyBotLuis>(turnContext, cancellationToken);
 
             try
             {
@@ -70,7 +70,8 @@ namespace Bot.Clockify
                     case TimeSurveyBotLuis.Intent.FillAsYesterday:
                         return false;
                     case TimeSurveyBotLuis.Intent.Utilities_Stop:
-                        await dialogContext.BeginDialogAsync(_stopReminderDialog.Id, cancellationToken: cancellationToken);
+                        await dialogContext.BeginDialogAsync(_stopReminderDialog.Id,
+                            cancellationToken: cancellationToken);
                         return true;
                     default:
                         return false;

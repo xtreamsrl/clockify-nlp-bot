@@ -4,13 +4,14 @@ using System.Threading.Tasks;
 using Bot.Data;
 using Bot.States;
 using Bot.Supports;
+using Luis;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 
 namespace Bot.DIC
 {
-    public class DicHandler: IBotHandler
+    public class DicHandler : IBotHandler
     {
         private readonly NextWeekRemoteWorkingDialog _nextWeekRemoteWorkingDialog;
         private readonly LongTermRemoteWorkingDialog _longTermRemoteWorkingDialog;
@@ -42,7 +43,8 @@ namespace Bot.DIC
                 .Add(_notifyUsersDialog);
         }
 
-        public async Task<bool> Handle(ITurnContext turnContext, CancellationToken cancellationToken, UserProfile userProfile)
+        public async Task<bool> Handle(ITurnContext turnContext, CancellationToken cancellationToken,
+            UserProfile userProfile, TimeSurveyBotLuis? luisResult = null)
         {
             var dialogContext = await _dialogSet.CreateContextAsync(turnContext, cancellationToken);
             if (await RunDICSetupIfNeeded(turnContext, cancellationToken, userProfile)) return true;

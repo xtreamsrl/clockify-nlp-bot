@@ -10,29 +10,29 @@ namespace Bot.Supports
 {
     public class UtilityHandler : IBotHandler
     {
-        private readonly CommonRecognizer _recognizer;
         private readonly DialogSet _dialogSet;
         private readonly ICommonMessageSource _messageSource;
 
-        public UtilityHandler(ConversationState conversationState, CommonRecognizer recognizer,
-            ICommonMessageSource messageSource)
+        public UtilityHandler(ConversationState conversationState, ICommonMessageSource messageSource)
         {
             IStatePropertyAccessor<DialogState> dialogState =
                 conversationState.CreateProperty<DialogState>("UtilityDialogState");
-            _recognizer = recognizer;
             _messageSource = messageSource;
             _dialogSet = new DialogSet(dialogState);
         }
 
         public async Task<bool> Handle(ITurnContext turnContext, CancellationToken cancellationToken,
-            UserProfile userProfile)
+            UserProfile userProfile, TimeSurveyBotLuis? luisResult = null)
         {
+            if (luisResult == null)
+            {
+                return false;
+            }
+            
             if (userProfile.ClockifyToken == null && userProfile.ClockifyTokenId == null)
             {
                 await ExplainBot(turnContext, cancellationToken);
             }
-
-            var luisResult = await _recognizer.RecognizeAsync<TimeSurveyBotLuis>(turnContext, cancellationToken);
 
             switch (luisResult.TopIntentWithMinScore())
             {
