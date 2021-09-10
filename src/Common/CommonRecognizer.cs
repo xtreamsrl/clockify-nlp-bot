@@ -9,19 +9,19 @@ using LuisPredictionOptions = Microsoft.Bot.Builder.AI.LuisV3.LuisPredictionOpti
 
 namespace Bot.Common
 {
-    // Proxy around LuisRecognizer
-    public sealed class LuisRecognizerProxy : IRecognizer
+    public sealed class CommonRecognizer : IRecognizer
     {
-        private readonly LuisRecognizer? _recognizer;
+        private readonly LuisRecognizer _recognizer;
 
-        public LuisRecognizerProxy(IConfiguration configuration)
+        public CommonRecognizer(IConfiguration configuration)
         {
             bool luisIsConfigured = !string.IsNullOrEmpty(configuration["LuisAppId"]) &&
                                     !string.IsNullOrEmpty(configuration["LuisAPIKey"]) &&
                                     !string.IsNullOrEmpty(configuration["LuisAPIHostName"]);
             if (!luisIsConfigured)
             {
-                return;
+                throw new Exception(
+                    "LUIS is not configured. To enable all capabilities, add 'LuisAppId', 'LuisAPIKey' and 'LuisAPIHostName' to the appsettings.json file.");
             }
 
             var luisApplication = new LuisApplication(
@@ -43,32 +43,13 @@ namespace Bot.Common
             _recognizer = new LuisRecognizer(recognizerOptions);
         }
 
-        public bool IsConfigured => _recognizer != null;
-
         public async Task<RecognizerResult> RecognizeAsync(ITurnContext turnContext,
             CancellationToken cancellationToken)
-        {
-            if (_recognizer == null) throw new ArgumentNullException();
-
-            return await _recognizer.RecognizeAsync(turnContext, cancellationToken);
-        }
+            => await _recognizer.RecognizeAsync(turnContext, cancellationToken);
 
         public async Task<T> RecognizeAsync<T>(ITurnContext turnContext, CancellationToken cancellationToken)
             where T : IRecognizerConvert, new()
-        {
-            if (_recognizer == null) throw new ArgumentNullException();
-
-            return await _recognizer.RecognizeAsync<T>(turnContext, cancellationToken);
-        }
-
-        public async Task<(TimeSurveyBotLuis.Intent topIntent, TimeSurveyBotLuis._Entities._Instance entities)>
-            RecognizeAsyncIntent(ITurnContext turnContext, CancellationToken cancellationToken, double minScore = 0.75)
-        {
-            var luisResult = await RecognizeAsync<TimeSurveyBotLuis>(turnContext, cancellationToken);
-            var (topIntent, score) = luisResult.TopIntent();
-            var entities = luisResult.Entities._instance;
-
-            return score < minScore ? (TimeSurveyBotLuis.Intent.None, entities) : (topIntent, entities);
-        }
+            => await _recognizer.RecognizeAsync<T>(turnContext, cancellationToken);
+        
     }
 }

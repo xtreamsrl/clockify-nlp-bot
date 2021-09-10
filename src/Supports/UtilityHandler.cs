@@ -10,16 +10,16 @@ namespace Bot.Supports
 {
     public class UtilityHandler : IBotHandler
     {
-        private readonly LuisRecognizerProxy _luisRecognizer;
+        private readonly CommonRecognizer _recognizer;
         private readonly DialogSet _dialogSet;
         private readonly ICommonMessageSource _messageSource;
 
-        public UtilityHandler(ConversationState conversationState, LuisRecognizerProxy luisRecognizer,
+        public UtilityHandler(ConversationState conversationState, CommonRecognizer recognizer,
             ICommonMessageSource messageSource)
         {
             IStatePropertyAccessor<DialogState> dialogState =
                 conversationState.CreateProperty<DialogState>("UtilityDialogState");
-            _luisRecognizer = luisRecognizer;
+            _recognizer = recognizer;
             _messageSource = messageSource;
             _dialogSet = new DialogSet(dialogState);
         }
@@ -32,10 +32,9 @@ namespace Bot.Supports
                 await ExplainBot(turnContext, cancellationToken);
             }
 
-            var (topIntent, _) =
-                await _luisRecognizer.RecognizeAsyncIntent(turnContext, cancellationToken);
+            var luisResult = await _recognizer.RecognizeAsync<TimeSurveyBotLuis>(turnContext, cancellationToken);
 
-            switch (topIntent)
+            switch (luisResult.TopIntentWithMinScore())
             {
                 case TimeSurveyBotLuis.Intent.Thanks:
                 {

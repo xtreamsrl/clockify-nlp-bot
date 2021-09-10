@@ -25,13 +25,13 @@ namespace Bot.Clockify
         private readonly IClockifyService _clockifyService;
         private readonly DialogSet _dialogSet;
         private readonly IStatePropertyAccessor<DialogState> _dialogState;
-        private readonly LuisRecognizerProxy _luisRecognizer;
+        private readonly CommonRecognizer _recognizerProxy;
         private readonly ITokenRepository _tokenRepository;
 
         public ClockifyHandler(EntryFillDialog fillDialog, ReportDialog reportDialog,
             StopReminderDialog stopReminderDialog, IClockifyService clockifyService,
             ConversationState conversationState, ClockifySetupDialog clockifySetupDialog,
-            LuisRecognizerProxy luisRecognizer, ITokenRepository tokenRepository)
+            CommonRecognizer recognizerProxy, ITokenRepository tokenRepository)
         {
             _dialogState = conversationState.CreateProperty<DialogState>("ClockifyDialogState");
             _fillDialog = fillDialog;
@@ -39,7 +39,7 @@ namespace Bot.Clockify
             _stopReminderDialog = stopReminderDialog;
             _clockifyService = clockifyService;
             _clockifySetupDialog = clockifySetupDialog;
-            _luisRecognizer = luisRecognizer;
+            _recognizerProxy = recognizerProxy;
             _tokenRepository = tokenRepository;
             _dialogSet = new DialogSet(_dialogState)
                 .Add(_fillDialog)
@@ -55,23 +55,25 @@ namespace Bot.Clockify
 
             if (await RunClockifySetupIfNeeded(turnContext, cancellationToken, userProfile)) return true;
 
-            var (topIntent, entities) =
-                await _luisRecognizer.RecognizeAsyncIntent(turnContext, cancellationToken);
+            var luisResult = await _recognizerProxy.RecognizeAsync<TimeSurveyBotLuis>(turnContext, cancellationToken);
 
             try
             {
-                switch (topIntent)
+                switch (luisResult.TopIntentWithMinScore())
                 {
                     case TimeSurveyBotLuis.Intent.Report:
-                        await dialogContext.BeginDialogAsync(_reportDialog.Id, entities, cancellationToken);
+                        await dialogContext.BeginDialogAsync(_reportDialog.Id, luisResult.Entities._instance,
+                            cancellationToken);
                         return true;
                     case TimeSurveyBotLuis.Intent.Fill:
-                        await dialogContext.BeginDialogAsync(_fillDialog.Id, entities, cancellationToken);
+                        await dialogContext.BeginDialogAsync(_fillDialog.Id, luisResult.Entities._instance,
+                            cancellationToken);
                         return true;
                     case TimeSurveyBotLuis.Intent.FillAsYesterday:
                         return false;
                     case TimeSurveyBotLuis.Intent.Utilities_Stop:
-                        await dialogContext.BeginDialogAsync(_stopReminderDialog.Id, entities, cancellationToken);
+                        await dialogContext.BeginDialogAsync(_stopReminderDialog.Id, luisResult.Entities._instance,
+                            cancellationToken);
                         return true;
                     default:
                         return false;
