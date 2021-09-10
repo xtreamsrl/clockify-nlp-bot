@@ -7,7 +7,7 @@ using Microsoft.Bot.Builder.AI.Luis;
 using Microsoft.Extensions.Configuration;
 using LuisPredictionOptions = Microsoft.Bot.Builder.AI.LuisV3.LuisPredictionOptions;
 
-namespace Bot.Clockify
+namespace Bot.Common
 {
     // Proxy around LuisRecognizer
     public sealed class LuisRecognizerProxy : IRecognizer

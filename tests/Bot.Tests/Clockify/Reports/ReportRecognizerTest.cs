@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Bot.Clockify;
+using Bot.Common;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;

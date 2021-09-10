@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Bot.Clockify;
 using Bot.Common;
 using Bot.States;
 using Luis;
