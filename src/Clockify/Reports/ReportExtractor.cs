@@ -1,5 +1,4 @@
 ﻿using Bot.Common;
-using Bot.Models;
 using Luis;
 
 namespace Bot.Clockify.Reports
