@@ -10,7 +10,8 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.AI.Luis;
-namespace Luis
+
+namespace Bot.Common.Recognizer
 {
     public partial class TimeSurveyBotLuis: IRecognizerConvert
     {
@@ -59,7 +60,7 @@ namespace Luis
 
         public void Convert(dynamic result)
         {
-            var app = JsonConvert.DeserializeObject<TimeSurveyBotLuis>(
+            var app = JsonConvert.DeserializeObject<Bot.Common.Recognizer.TimeSurveyBotLuis>(
                 JsonConvert.SerializeObject(
                     result,
                     new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore, Error = OnError }

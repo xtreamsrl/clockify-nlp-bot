@@ -2,9 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Bot.Common;
+using Bot.Common.Recognizer;
 using Bot.States;
-using Luis;
 using Microsoft.Bot.Builder;
 
 namespace Bot.Supports

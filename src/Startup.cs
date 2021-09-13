@@ -7,6 +7,7 @@ using Bot.Clockify.Client;
 using Bot.Clockify.Fill;
 using Bot.Clockify.Reports;
 using Bot.Common;
+using Bot.Common.Recognizer;
 using Bot.Data;
 using Bot.DIC;
 using Bot.Remind;

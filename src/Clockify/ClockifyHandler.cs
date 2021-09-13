@@ -6,10 +6,10 @@ using Bot.Clockify.Client;
 using Bot.Clockify.Fill;
 using Bot.Clockify.Models;
 using Bot.Clockify.Reports;
+using Bot.Common.Recognizer;
 using Bot.Data;
 using Bot.States;
 using Bot.Supports;
-using Luis;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 

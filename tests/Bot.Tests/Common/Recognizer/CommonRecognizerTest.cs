@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Bot.Common;
+using Bot.Common.Recognizer;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 
-namespace Bot.Tests.Common
+namespace Bot.Tests.Common.Recognizer
 {
     public class CommonRecognizerTest
     {

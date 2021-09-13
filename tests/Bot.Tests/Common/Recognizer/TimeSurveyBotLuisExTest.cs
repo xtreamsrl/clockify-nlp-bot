@@ -1,11 +1,11 @@
 ﻿using System;
 using Bot.Clockify;
+using Bot.Common.Recognizer;
 using FluentAssertions;
-using Luis;
 using Microsoft.Bot.Builder.AI.Luis;
 using Xunit;
 
-namespace Bot.Tests.Common
+namespace Bot.Tests.Common.Recognizer
 {
     public class TimeSurveyBotLuisExTest
     {

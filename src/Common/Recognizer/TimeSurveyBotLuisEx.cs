@@ -1,8 +1,9 @@
 ﻿using System.Linq;
 using Bot.Clockify;
 using Bot.Clockify.Fill;
+using Microsoft.Bot.Builder.AI.Luis;
 
-namespace Luis
+namespace Bot.Common.Recognizer
 {
     public partial class TimeSurveyBotLuis
     {
@@ -18,12 +19,12 @@ namespace Luis
             if (
                 workedEntityInstances == null ||
                 workedEntityInstances.Length == 0 ||
-                workedEntityInstances.First().Text == null
+                Enumerable.First<InstanceData>(workedEntityInstances).Text == null
             )
             {
                 throw new InvalidWorkedEntityException("No worked entity has been recognized");
             }
-            return workedEntityInstances.First().Text;
+            return Enumerable.First<InstanceData>(workedEntityInstances).Text;
         }
 
         public string TimePeriod()
@@ -32,11 +33,11 @@ namespace Luis
             if (
                 workedPeriodInstances == null ||
                 workedPeriodInstances.Length == 0 ||
-                workedPeriodInstances.First().Text == null)
+                Enumerable.First<InstanceData>(workedPeriodInstances).Text == null)
             {
                 throw new InvalidWorkedPeriodInstanceException("No worked period has been recognized");
             }
-            return workedPeriodInstances.First().Text;
+            return Enumerable.First<InstanceData>(workedPeriodInstances).Text;
         }
     }
 }
