@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Bot.Clockify.Fill
+namespace Bot.Common.Recognizer
 {
     public class InvalidWorkedEntityException : Exception
     {

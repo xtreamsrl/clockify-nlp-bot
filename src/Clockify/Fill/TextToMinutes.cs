@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Bot.Common.Recognizer;
 using Microsoft.Recognizers.Text;
 using Microsoft.Recognizers.Text.DateTime;
 
