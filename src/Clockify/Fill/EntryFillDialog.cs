@@ -68,11 +68,10 @@ namespace Bot.Clockify.Fill
 
             try
             {
-                string workedPeriod = luisResult.TimePeriod();
                 var recognizedProject =
                     await _clockifyWorkableRecognizer.RecognizeProject(luisResult.ProjectName(), clockifyToken);
                 stepContext.Values["Project"] = recognizedProject;
-                double minutes = TextToMinutes.ToMinutes(workedPeriod);
+                double minutes = luisResult.TimePeriodInMinutes();
                 stepContext.Values["Minutes"] = minutes;
                 string fullEntity = recognizedProject.Name;
                 stepContext.Values["FullEntity"] = fullEntity;

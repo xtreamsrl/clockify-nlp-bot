@@ -1,5 +1,4 @@
 ﻿using System;
-using Bot.Clockify;
 using Bot.Common.Recognizer;
 using FluentAssertions;
 using Microsoft.Bot.Builder.AI.Luis;
@@ -10,7 +9,7 @@ namespace Bot.Tests.Common.Recognizer
     public class TimeSurveyBotLuisExTest
     {
         [Fact]
-        public void GetDateTimeInstance_ValidEntitiesInstance_ShouldReturnFirstDateTimeText()
+        public void TimePeriod_ValidEntitiesInstance_ReturnsFirstDateTimeText()
         {
             const string timePeriod = "from 01 July to 10 July";
             var instances = new TimeSurveyBotLuis._Entities._Instance
@@ -42,7 +41,7 @@ namespace Bot.Tests.Common.Recognizer
         }
         
         [Fact]
-        public void GetDateTimeInstance_NullOrEmptyDateTimeInstance_ThrowsException()
+        public void TimePeriod_NullOrEmptyDateTimeInstance_ThrowsException()
         {
             var emptyDateTimeTextEntities = new TimeSurveyBotLuis._Entities._Instance
             {
@@ -81,8 +80,7 @@ namespace Bot.Tests.Common.Recognizer
                     _instance = new TimeSurveyBotLuis._Entities._Instance()
                 }
             };
-
-
+            
             Func<string> getDateTimeWithNullDateTimeEntities = () =>  lsEmptyDateTimeTextInstance.TimePeriod();
             getDateTimeWithNullDateTimeEntities.Should().ThrowExactly<InvalidWorkedPeriodInstanceException>()
                 .WithMessage("No worked period has been recognized");
@@ -95,5 +93,33 @@ namespace Bot.Tests.Common.Recognizer
             getDateTimeWithNullDateTimeText.Should().ThrowExactly<InvalidWorkedPeriodInstanceException>()
                 .WithMessage("No worked period has been recognized");
         }
+
+        [Fact]
+        public void TimePeriodInMinutes_EightHoursPeriod_ReturnsMinutes()
+        {
+            var instances = new TimeSurveyBotLuis._Entities._Instance
+            {
+                datetime = new[]
+                {
+                    new InstanceData
+                    {
+                        Text = "8 hours",
+                        Type = "builtin.datetimeV2.duration"
+                    }
+                }
+            };
+            var luisResult = new TimeSurveyBotLuis
+            {
+                Entities = new TimeSurveyBotLuis._Entities
+                {
+                    _instance = instances
+                }
+            };
+
+            const double expectedMinutes = 480.00;
+            
+            luisResult.TimePeriodInMinutes().Should().Be(expectedMinutes);
+        }
+        
     }
 }
