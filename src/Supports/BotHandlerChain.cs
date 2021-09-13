@@ -11,9 +11,9 @@ namespace Bot.Supports
     public class BotHandlerChain
     {
         private readonly IEnumerable<IBotHandler> _botHandlers;
-        private readonly CommonRecognizer _recognizer;
+        private readonly IRecognizer _recognizer;
 
-        public BotHandlerChain(IEnumerable<IBotHandler> botHandlers, CommonRecognizer recognizer)
+        public BotHandlerChain(IEnumerable<IBotHandler> botHandlers, IRecognizer recognizer)
         {
             _botHandlers = botHandlers;
             _recognizer = recognizer;

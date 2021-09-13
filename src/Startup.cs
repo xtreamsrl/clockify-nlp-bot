@@ -92,7 +92,7 @@ namespace Bot
             services.AddSingleton(storage);
             services.AddSingleton<ConversationState>();
             services.AddSingleton<UserState>();
-            services.AddSingleton<CommonRecognizer>();
+            services.AddSingleton<IRecognizer, CommonRecognizer>();
             services.AddSingleton<IBot, Supports.Bot>();
             services.AddSingleton<IAzureBlobReader, AzureBlobReader>();
             services.AddSingleton<IUserProfileStorageReader, UserProfileStorageReader>();
