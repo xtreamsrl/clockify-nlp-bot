@@ -88,7 +88,7 @@ namespace Bot.Clockify
         private async Task<bool> RunClockifySetupIfNeeded(ITurnContext turnContext, CancellationToken cancellationToken,
             UserProfile userProfile)
         {
-            if (userProfile.ClockifyTokenId == null && userProfile.ClockifyToken == null)
+            if (userProfile.ClockifyTokenId == null)
             {
                 await _clockifySetupDialog.RunAsync(turnContext, _dialogState, cancellationToken);
                 return true;
@@ -96,35 +96,10 @@ namespace Bot.Clockify
 
             try
             {
-                // TODO: it will be removed when only ClockifyTokenId will be used
-                if (userProfile.ClockifyTokenId == null && userProfile.ClockifyToken != null)
+                if (userProfile.Email == null)
                 {
-                    var tokenData = await _tokenRepository.WriteAsync(userProfile.ClockifyToken);
-                    userProfile.ClockifyToken = null;
-                    userProfile.ClockifyTokenId = tokenData.Id;
+                    await SetUserEmailFromClockify(userProfile);
                 }
-                else
-                {
-                    // ClockifyTokenId can't be null.
-                    if (userProfile.Email == null)
-                    {
-                        var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
-                        UserDo user = await _clockifyService.GetCurrentUserAsync(tokenData.Value);
-                        userProfile.ClockifyToken = null;
-                        // This can be removed in future, it serves the purpose of aligning old users
-                        string? fullName = user.Name;
-                        if (fullName != null)
-                        {
-                            //TODO: this might be wrong, don't care
-                            userProfile.FirstName = fullName.Split(" ")[0];
-                            userProfile.LastName =
-                                new string(fullName.Skip(userProfile.FirstName.Length + 1).ToArray());
-                        }
-
-                        userProfile.Email = user.Email;
-                    }
-                }
-
                 return false;
             }
             catch (UnauthorizedAccessException)
@@ -132,6 +107,22 @@ namespace Bot.Clockify
                 await _clockifySetupDialog.RunAsync(turnContext, _dialogState, cancellationToken);
                 return true;
             }
+        }
+
+        private async Task SetUserEmailFromClockify(UserProfile userProfile)
+        {
+            var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
+            UserDo user = await _clockifyService.GetCurrentUserAsync(tokenData.Value);
+            string? fullName = user.Name;
+            if (fullName != null)
+            {
+                //TODO: this might be wrong, don't care
+                userProfile.FirstName = fullName.Split(" ")[0];
+                userProfile.LastName =
+                    new string(fullName.Skip(userProfile.FirstName.Length + 1).ToArray());
+            }
+
+            userProfile.Email = user.Email;
         }
     }
 }

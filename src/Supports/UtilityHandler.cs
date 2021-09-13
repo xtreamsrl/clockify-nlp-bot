@@ -28,7 +28,7 @@ namespace Bot.Supports
         public async Task<bool> Handle(ITurnContext turnContext, CancellationToken cancellationToken,
             UserProfile userProfile)
         {
-            if (userProfile.ClockifyToken == null && userProfile.ClockifyTokenId == null)
+            if (userProfile.ClockifyTokenId == null)
             {
                 await ExplainBot(turnContext, cancellationToken);
             }
