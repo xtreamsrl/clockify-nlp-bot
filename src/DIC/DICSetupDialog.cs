@@ -72,7 +72,6 @@ namespace Bot.DIC
 
                 var tokenData = await _tokenRepository.WriteAsync(token, userProfile.DicTokenId);
                 userProfile.DicTokenId = tokenData.Id;
-                userProfile.DicToken = null;
 
                 userProfile.EmployeeId = employee.id;
                 userProfile.FirstName = employee.first_name;

@@ -107,8 +107,6 @@ namespace Bot.DIC
             {
                 var tokenData = await _tokenRepository.ReadAsync(userProfile.DicTokenId);
                 await _dicService.GetCurrentEmployeeAsync(tokenData.Value);
-                // TODO Remove when porting will be completed
-                userProfile.DicToken = null;
             }
             catch (ErrorResponseException)
             {

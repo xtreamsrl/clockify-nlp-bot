@@ -12,9 +12,7 @@ namespace Bot.States
         public string? UserId { get; set; }
         
         public int? EmployeeId { get; set; }
-        
-        public string? DicToken { get; set; }
-        
+
         public string? DicTokenId { get; set; }
 
         public string? FirstName { get; set; }
