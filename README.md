@@ -16,7 +16,7 @@ It's simple, just open a chat with the bot either on Teams or Telegram.
 
 **Proactive reminders**
 It will assist you to complete your due diligence. If you have less than 6 hours 
-reported on your Clocki (no matter how you put them in) it sends you a reminder.
+reported on your Clockify (no matter how you put them in) it sends you a reminder.
 
 **Adding time entries with ease**
 Add your time flexibly, even indicating projects partially. For example, you can type
@@ -52,42 +52,37 @@ The following are minimal instructions for installing and deploying the bot on A
 ### Prerequisites
 
 - [.NET Core SDK](https://dotnet.microsoft.com/download) version 3.1
+```bash
+# determine dotnet version
+dotnet --version
+```
 
-  ```bash
-  # determine dotnet version
-  dotnet --version
-  ```
+### To run this bot
 
-### To try this sample
+Make sure to provide required configuration values. The app currently needs a value for these properties:
 
-- In a terminal, navigate to `Bot`
+```json
+{
+  "LuisAppId": "",
+  "LuisAPIKey": "",
+  "LuisAPIHostName": "",
+  "ProactiveBotApiKey": "",
+  "KeyVaultName": "",
+  "MicrosoftAppId": "",
+  "MicrosoftAppPassword": ""
+}
+```
 
-    ```bash
-    # change into project folder
-  cd Bot
-    ```
+Then run the bot. For example, from a terminal:
 
-- Run the bot from a terminal or from Visual Studio, choose option A or B.
-
-  A) From a terminal
-
-  ```bash
-  # run the bot
-  dotnet run
-  ```
-
-  B) Or from Visual Studio
-
-  - Launch Visual Studio
-  - File -> Open -> Project/Solution
-  - Navigate to `Bot` folder
-  - Select `Bot.csproj` file
-  - Press `F5` to run the project
+```bash
+# run the bot
+dotnet run
+```
 
 ### Integration testing setup
 
 - Create a Clockify account and generate an API key
-- Create testing workspaces and a tag named `bot`
 - Create a `test.runsettings` file with the following env variables
 
 ```xml
