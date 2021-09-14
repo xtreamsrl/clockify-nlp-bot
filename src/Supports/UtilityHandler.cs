@@ -1,9 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Bot.Clockify;
 using Bot.Common;
+using Bot.Common.Recognizer;
 using Bot.States;
-using Luis;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 
@@ -11,32 +10,31 @@ namespace Bot.Supports
 {
     public class UtilityHandler : IBotHandler
     {
-        private readonly LuisRecognizerProxy _luisRecognizer;
         private readonly DialogSet _dialogSet;
         private readonly ICommonMessageSource _messageSource;
 
-        public UtilityHandler(ConversationState conversationState, LuisRecognizerProxy luisRecognizer,
-            ICommonMessageSource messageSource)
+        public UtilityHandler(ConversationState conversationState, ICommonMessageSource messageSource)
         {
             IStatePropertyAccessor<DialogState> dialogState =
                 conversationState.CreateProperty<DialogState>("UtilityDialogState");
-            _luisRecognizer = luisRecognizer;
             _messageSource = messageSource;
             _dialogSet = new DialogSet(dialogState);
         }
 
         public async Task<bool> Handle(ITurnContext turnContext, CancellationToken cancellationToken,
-            UserProfile userProfile)
+            UserProfile userProfile, TimeSurveyBotLuis? luisResult = null)
         {
+            if (luisResult == null)
+            {
+                return false;
+            }
+            
             if (userProfile.ClockifyTokenId == null)
             {
                 await ExplainBot(turnContext, cancellationToken);
             }
 
-            var (topIntent, _) =
-                await _luisRecognizer.RecognizeAsyncIntent(turnContext, cancellationToken);
-
-            switch (topIntent)
+            switch (luisResult.TopIntentWithMinScore())
             {
                 case TimeSurveyBotLuis.Intent.Thanks:
                 {

@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Bot.Common.Recognizer;
+using Bot.Data;
 using Bot.States;
-using Luis;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 
@@ -35,13 +36,20 @@ namespace Bot.Clockify.Reports
         {
             var userProfile =
                 await StaticUserProfileHelper.GetUserProfileAsync(_userState, stepContext.Context, cancellationToken);
-            var entities = (TimeSurveyBotLuis._Entities._Instance)stepContext.Options;
+            var luisResult = (TimeSurveyBotLuis)stepContext.Options;
             try
             {
-                string timePeriodInstance = _reportExtractor.GetDateTimeInstance(entities);
+                string timePeriodInstance = luisResult.TimePeriod();
                 var dateRange = _reportExtractor.GetDateRangeFromTimePeriod(timePeriodInstance);
 
-                // TODO refactor Summary to manage error response exception
+                if (dateRange.End.Subtract(dateRange.Start).Days > 366)
+                {
+                    await stepContext.Context.SendActivityAsync(
+                        MessageFactory.Text(string.Format(_messageSource.ReportDateRangeExceedOneYear, "\n")),
+                        cancellationToken);
+                    return await stepContext.EndDialogAsync(null, cancellationToken);
+                }
+
                 string summary = await _reportSummaryService.Summary(
                     userProfile,
                     dateRange

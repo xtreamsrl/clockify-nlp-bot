@@ -5,9 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
 using Bot.Clockify.Models;
+using Bot.Common.Recognizer;
 using Bot.Data;
 using Bot.States;
-using Luis;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
@@ -64,15 +64,14 @@ namespace Bot.Clockify.Fill
             var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
             string clockifyToken = tokenData.Value;
             stepContext.Values["ClockifyTokenId"] = userProfile.ClockifyTokenId;
-            var entities = (TimeSurveyBotLuis._Entities._Instance)stepContext.Options;
+            var luisResult = (TimeSurveyBotLuis)stepContext.Options;
 
             try
             {
-                string workedPeriod = EntityExtractorUtil.GetWorkerPeriodInstance(entities);
-                string workedEntity = EntityExtractorUtil.GetWorkedEntity(entities);
-                var recognizedProject = await _clockifyWorkableRecognizer.RecognizeProject(workedEntity, clockifyToken);
+                var recognizedProject =
+                    await _clockifyWorkableRecognizer.RecognizeProject(luisResult.ProjectName(), clockifyToken);
                 stepContext.Values["Project"] = recognizedProject;
-                double minutes = TextToMinutes.ToMinutes(workedPeriod);
+                double minutes = luisResult.TimePeriodInMinutes();
                 stepContext.Values["Minutes"] = minutes;
                 string fullEntity = recognizedProject.Name;
                 stepContext.Values["FullEntity"] = fullEntity;
@@ -200,7 +199,7 @@ namespace Bot.Clockify.Fill
             try
             {
                 var createdTask =
-                    await _clockifyService.CreateTaskAsync(clockifyToken, newTaskName!, project.Id, project.WorkspaceId);
+                    await _clockifyService.CreateTaskAsync(clockifyToken, new TaskReq(newTaskName!), project.Id, project.WorkspaceId);
                 fullEntity += " - " + createdTask.Name;
                 return await AddEntryAndExit(stepContext, cancellationToken, clockifyToken, project, minutes, fullEntity,
                     createdTask);

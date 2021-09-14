@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Bot.Clockify.Models;
-using Clockify.Net.Models.Tasks;
 using Microsoft.Bot.Schema;
 using RestSharp;
 
@@ -13,7 +12,7 @@ namespace Bot.Clockify.Client
     // Read operations
     public partial class ClockifyService : IClockifyService
     {
-        private const int PageSize = 200;
+        private const int PageSize = 2000;
         private readonly IClockifyClientFactory _clockifyClientFactory;
 
         public ClockifyService(IClockifyClientFactory clockifyClientFactory)
@@ -56,6 +55,7 @@ namespace Bot.Clockify.Client
             string workspaceId)
         {
             var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
+            // TODO Implement pagination? Clockify api do not put any total page in response body
             var response = await clockifyClient.FindAllProjectsOnWorkspaceAsync(workspaceId, 1, PageSize);
             ThrowUnauthorizedIf401(response);
             if (!response.IsSuccessful)
@@ -135,13 +135,12 @@ namespace Bot.Clockify.Client
             return response.Data.Find(e => e.Name == tagName)?.Id;
         }
 
-        public async Task<TaskDo> CreateTaskAsync(string apiKey, string taskName, string projectId, string workspaceId)
+        public async Task<TaskDo> CreateTaskAsync(string apiKey, TaskReq taskReq, string projectId, string workspaceId)
         {
             var clockifyClient = _clockifyClientFactory.CreateClient(apiKey);
-            var response = await clockifyClient.CreateTaskAsync(workspaceId, projectId, new TaskRequest()
-            {
-                Name = taskName
-            });
+            var response =
+                await clockifyClient.CreateTaskAsync(workspaceId, projectId,
+                    ClockifyModelFactory.ToTaskRequest(taskReq));
             ThrowUnauthorizedIf401(response);
             if (!response.IsSuccessful)
                 throw new ErrorResponseException(

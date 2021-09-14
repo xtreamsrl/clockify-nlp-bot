@@ -88,4 +88,8 @@
     <data name="RemindStopAnswer" xml:space="preserve">
         <value>Ok, no more reminders for today, you have my word 🤙</value>
     </data>
+    <data name="ReportDateRangeExceedOneYear" xml:space="preserve">
+        <value>omg that's a looot of time😰{0}
+Please don't exceed one year window</value>
+    </data>
 </root>
