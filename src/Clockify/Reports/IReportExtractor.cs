@@ -1,4 +1,4 @@
-﻿namespace Bot.Clockify.Reports
+namespace Bot.Clockify.Reports
 {
     public interface IReportExtractor
     {

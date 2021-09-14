@@ -11,6 +11,7 @@ namespace Bot.Integration.Tests.Clockify
         public static readonly string ClockifyWorkspaceId = Environment.GetEnvironmentVariable(WorkspaceId);
 
         public const string InvalidApiKey = "invalid-api-key";
+        public const string InvalidClientId = "invalid-client-id";
         public const string NotExistingWorkspaceId = "invalid-workspace-id";
     }
 }

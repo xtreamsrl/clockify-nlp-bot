@@ -10,7 +10,7 @@ using Clockify.Net.Models.Workspaces;
 
 namespace Bot.Clockify.Client
 {
-    internal static class ClockifyModelFactory
+    public static class ClockifyModelFactory
     {
         public static WorkspaceDo ToWorkspaceDo(WorkspaceDto w)
         {
@@ -83,17 +83,24 @@ namespace Bot.Clockify.Client
             };
         }
 
+        public static TaskRequest ToTaskRequest(TaskReq task)
+        {
+            return new TaskRequest
+            {
+                Name = task.Name
+            };
+        }
+
         public static TimeEntryRequest ToTimeEntryRequest(TimeEntryReq entry)
         {
             return new TimeEntryRequest
             {
                 ProjectId = entry.ProjectId,
                 TaskId = entry.TaskId,
-                UserId = entry.UserId,
                 Billable = entry.Billable,
                 TagIds = entry.TagIds,
-                Start = entry.TimeInterval.Start,
-                End = entry.TimeInterval.End
+                Start = entry.Start,
+                End = entry.End
             };
         }
 

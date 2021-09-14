@@ -33,6 +33,7 @@ namespace Bot.Clockify
         public string ReportTotalHours => GetString(nameof(ReportTotalHours));
         public string ReportNoWork => GetString(nameof(ReportNoWork));
         public string ReportWork => GetString(nameof(ReportWork));
+        public string ReportDateRangeExceedOneYear => GetString(nameof(ReportDateRangeExceedOneYear));
         
         public string RemindStoppedAlready => GetString(nameof(RemindStoppedAlready));
         public string RemindStopAnswer => GetString(nameof(RemindStopAnswer));

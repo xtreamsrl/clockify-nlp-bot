@@ -49,7 +49,14 @@ namespace Bot.Clockify.Reports
                 string timePeriodInstance = luisResult.TimePeriod();
                 var dateRange = _reportExtractor.GetDateRangeFromTimePeriod(timePeriodInstance);
 
-                // TODO refactor Summary to manage error response exception
+                if (dateRange.End.Subtract(dateRange.Start).Days > 366)
+                {
+                    await stepContext.Context.SendActivityAsync(
+                        MessageFactory.Text(string.Format(_messageSource.ReportDateRangeExceedOneYear, "\n")),
+                        cancellationToken);
+                    return await stepContext.EndDialogAsync(null, cancellationToken);
+                }
+
                 string summary = await _reportSummaryService.Summary(
                     userProfile,
                     dateRange

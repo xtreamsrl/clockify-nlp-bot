@@ -30,16 +30,5 @@ namespace Bot.Clockify.Models
         public TaskDo? Task { get; }
         public TimeInterval TimeInterval { get; }
     }
-
-    public class TagDo
-    {
-        public TagDo(string id, string name)
-        {
-            Id = id;
-            Name = name;
-        }
-
-        public string Id { get; }
-        public string Name { get; }
-    }
+    
 }
