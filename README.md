@@ -1,10 +1,55 @@
-﻿# Bot
+# Clockify NLP Bot
 
-Bot Framework v4 empty bot sample.
+**Clockify NLP Bot** is a [Bot Framework](https://dev.botframework.com) bot developed to act as a timesheet assistant for the busy and the lazy.
+It reminds proactively people to fill in their time when EOD approaches, and it accepts natural language for creating time entries directly from chat.
 
-This bot has been created using [Bot Framework](https://dev.botframework.com), it shows the minimum code required to build a bot.
+<img src="https://user-images.githubusercontent.com/11543564/133216495-aa6feb9d-c30e-45f4-aeed-0329e0f75585.png" width="700">
 
-## Prerequisites
+## How to use it
+It's simple, just open a chat with the bot either on Teams or Telegram.
+
+👉 [Chat on Telegram](http://t.me/clockify_telegram_bot)  
+👉 [Chat on Teams](https://teams.microsoft.com/l/chat/0/0?users=28:d7dfef09-5ad7-4e1c-ac47-a3899bf1964c)
+
+
+## Features:
+
+**Proactive reminders**
+It will assist you to complete your due diligence. If you have less than 6 hours 
+reported on your Clocki (no matter how you put them in) it sends you a reminder.
+
+**Adding time entries with ease**
+Add your time flexibly, even indicating projects partially. For example, you can type
+`time bot` instead of `time_survey_bot`. If it's not ambiguous, it'll figure it out.
+
+**Smart task request**
+Some projects benefit from tasks drill down, some don't. If you never use them on the project, 
+it doesn't ask it in the first place.
+
+## Architecture
+
+This bot is hosted by [xtream](https://xtreamers.io/?utm_source=github&utm_medium=readme&utm_campaign=clockify_bot) on Azure Cloud.
+This is what it looks like:
+
+<img src="https://user-images.githubusercontent.com/11543564/133226975-3bc36031-ef93-41cc-ab65-dac156c3cbfe.png" width="900">
+
+## Support
+
+This project was started as an internal tool for our employees, and then we decided to roll it out
+to anyone who could benefit from it, with a few tweaks and adjustments. Hence, we'd do our best to work on any issue 
+or bug but do consider we're maintaining it on out spare time.
+
+If you'd like to see this project grow in features, richness and support, you can give a ⭐️ to let us know this is helpful. 
+You can also buy us a coffee if you like.
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/R6R267IDP)
+
+## Installing
+
+If you want to host the bot yourself, you'll need to provide for the other components of the architecture on your own.  
+The following are minimal instructions for installing and deploying the bot on App Service.
+
+### Prerequisites
 
 - [.NET Core SDK](https://dotnet.microsoft.com/download) version 3.1
 
@@ -13,7 +58,7 @@ This bot has been created using [Bot Framework](https://dev.botframework.com), i
   dotnet --version
   ```
 
-## To try this sample
+### To try this sample
 
 - In a terminal, navigate to `Bot`
 
@@ -39,12 +84,10 @@ This bot has been created using [Bot Framework](https://dev.botframework.com), i
   - Select `Bot.csproj` file
   - Press `F5` to run the project
 
-## Integration testing setup
+### Integration testing setup
 
-- Create a clockify account and generate the API key
-
+- Create a Clockify account and generate an API key
 - Create testing workspaces and a tag named `bot`
-
 - Create a `test.runsettings` file with the following env variables
 
 ```xml
@@ -58,22 +101,21 @@ This bot has been created using [Bot Framework](https://dev.botframework.com), i
     </RunConfiguration>
 </RunSettings>
 ```
-
 - Configure the Test Runner to use the custom settings
 
-## Testing the bot using Bot Framework Emulator
+### Testing the bot using Bot Framework Emulator
 
 [Bot Framework Emulator](https://github.com/microsoft/botframework-emulator) is a desktop application that allows bot developers to test and debug their bots on localhost or running remotely through a tunnel.
 
 - Install the Bot Framework Emulator version 4.9.0 or greater from [here](https://github.com/Microsoft/BotFramework-Emulator/releases)
 
-### Connect to the bot using Bot Framework Emulator
+#### Connect to the bot using Bot Framework Emulator
 
 - Launch Bot Framework Emulator
 - File -> Open Bot
 - Enter a Bot URL of `http://localhost:3978/api/messages`
 
-## Deploy the bot to Azure
+### Deploy the bot to Azure
 
 To learn more about deploying a bot to Azure, see [Deploy your bot to Azure](https://aka.ms/azuredeployment) for a complete list of deployment instructions.
 
@@ -90,4 +132,3 @@ To learn more about deploying a bot to Azure, see [Deploy your bot to Azure](htt
 - [Language Understanding using LUIS](https://docs.microsoft.com/en-us/azure/cognitive-services/luis/)
 - [Channels and Bot Connector Service](https://docs.microsoft.com/en-us/azure/bot-service/bot-concepts?view=azure-bot-service-4.0)
 
-Generated with `dotnet new emptybot` v4.9.1
