@@ -38,7 +38,7 @@ namespace Bot.Remind
             List<UserProfile> userProfiles = await _userProfilesProvider.GetUserProfilesAsync();
 
             List<UserProfile> userToRemind = userProfiles
-                .Where(u => (u.ClockifyTokenId ?? u.ClockifyToken) != null && u.ConversationReference != null)
+                .Where(u => u.ClockifyTokenId != null && u.ConversationReference != null)
                 .Where(u => ReminderNeeded(u).Result)
                 .ToList();
 
