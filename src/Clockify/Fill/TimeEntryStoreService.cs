@@ -26,18 +26,14 @@ namespace Bot.Clockify.Fill
             string workspaceId = project.WorkspaceId;
             var startTime = new DateTimeOffset(DateTime.Today.AddHours(9));
             var timeEntry = new TimeEntryReq
-            {
-                ProjectId = project.Id,
-                TaskId = task?.Id,
-                Billable = project.Billable,
-                TimeInterval = new TimeInterval
-                {
-                    Start = startTime,
-                    End = startTime.AddMinutes(minutes)
-                },
-                UserId = userId,
-                TagIds = new List<string?> {tagId},
-            };
+            (
+                project.Id,
+                startTime,
+                taskId: task?.Id,
+                billable: project.Billable,
+                end: startTime.AddMinutes(minutes),
+                tagIds: (tagId != null) ? new List<string> {tagId} : null
+            );
 
             await _clockifyService.AddTimeEntryAsync(clockifyToken, workspaceId, timeEntry);
 
