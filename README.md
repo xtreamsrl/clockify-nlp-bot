@@ -31,7 +31,7 @@ it doesn't ask it in the first place.
 This bot is hosted by [xtream](https://xtreamers.io/?utm_source=github&utm_medium=readme&utm_campaign=clockify_bot) on Azure Cloud.
 This is what it looks like:
 
-<img src="https://user-images.githubusercontent.com/11543564/133226975-3bc36031-ef93-41cc-ab65-dac156c3cbfe.png" width="900">
+<img src="https://user-images.githubusercontent.com/11543564/133262156-140eaa1f-fbc0-4b60-a5c3-a17caf890406.png" width="1000">
 
 ## Support
 
