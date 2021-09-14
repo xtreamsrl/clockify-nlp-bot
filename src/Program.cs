@@ -16,11 +16,6 @@ namespace Bot
             return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.ConfigureLogging(logging =>
-                    {
-                        logging.AddDebug();
-                        logging.AddConsole();
-                    });
                     webBuilder.UseStartup<Startup>();
                 });
         }

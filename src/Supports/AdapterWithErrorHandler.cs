@@ -15,6 +15,9 @@ namespace Bot.Supports
 
             OnTurnError = async (turnContext, exception) =>
             {
+                // Log any leaked exception from the application
+                logger.LogError(exception, "[OnTurnError] unhandled error : {ExMessage}", exception.Message);
+                
                 if (environment.IsDevelopment())
                 {
                     await turnContext.SendActivityAsync(
