@@ -75,7 +75,6 @@ namespace Bot.Clockify
                 UserDo currentUser = await _clockifyService.GetCurrentUserAsync(token);
                 var tokenData = await _tokenRepository.WriteAsync(token, userProfile.ClockifyTokenId);
                 userProfile.ClockifyTokenId = tokenData.Id;
-                userProfile.ClockifyToken = null;
                 userProfile.UserId = currentUser.Id;
                 if (currentUser.Name != null)
                 {

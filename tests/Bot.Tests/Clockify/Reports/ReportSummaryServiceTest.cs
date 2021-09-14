@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Bot.Clockify;
 using Bot.Clockify.Client;
 using Bot.Clockify.Models;
 using Bot.Clockify.Reports;
@@ -160,7 +159,7 @@ namespace Bot.Tests.Clockify.Reports
         {
             return new UserProfile
             {
-                ClockifyToken = "token",
+                ClockifyTokenId = "tokenId",
                 UserId = "uid"
             };
         }

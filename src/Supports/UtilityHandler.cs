@@ -29,7 +29,7 @@ namespace Bot.Supports
                 return false;
             }
             
-            if (userProfile.ClockifyToken == null && userProfile.ClockifyTokenId == null)
+            if (userProfile.ClockifyTokenId == null)
             {
                 await ExplainBot(turnContext, cancellationToken);
             }

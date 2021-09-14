@@ -15,17 +15,14 @@ namespace Bot.Clockify.Reports
         private readonly IReportExtractor _reportExtractor;
         private const string ReportWaterfall = "ReportWaterfall";
         private readonly UserState _userState;
-        private readonly ITokenRepository _tokenRepository;
         private readonly IClockifyMessageSource _messageSource;
 
-        public ReportDialog(
-            IReportSummaryService reportSummaryService, IReportExtractor reportExtractor, UserState userState,
-            ITokenRepository tokenRepository, IClockifyMessageSource messageSource)
+        public ReportDialog(IReportSummaryService reportSummaryService, IReportExtractor reportExtractor,
+            UserState userState, IClockifyMessageSource messageSource)
         {
             _reportSummaryService = reportSummaryService;
             _reportExtractor = reportExtractor;
             _userState = userState;
-            _tokenRepository = tokenRepository;
             _messageSource = messageSource;
             AddDialog(new WaterfallDialog(ReportWaterfall, new List<WaterfallStep>
             {
@@ -39,11 +36,7 @@ namespace Bot.Clockify.Reports
         {
             var userProfile =
                 await StaticUserProfileHelper.GetUserProfileAsync(_userState, stepContext.Context, cancellationToken);
-            var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
-            string clockifyToken = tokenData.Value;
-            stepContext.Values["Token"] = clockifyToken;
             var luisResult = (TimeSurveyBotLuis)stepContext.Options;
-
             try
             {
                 string timePeriodInstance = luisResult.TimePeriod();
