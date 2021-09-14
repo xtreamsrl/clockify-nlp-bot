@@ -3,7 +3,9 @@
 **Clockify NLP Bot** is a [Bot Framework](https://dev.botframework.com) bot developed to act as a timesheet assistant for the busy and the lazy among us.
 It reminds proactively people to fill in their time when EOD approaches, and it accepts natural language for creating time entries directly from chat.
 
-<img src="https://user-images.githubusercontent.com/11543564/133216495-aa6feb9d-c30e-45f4-aeed-0329e0f75585.png" width="700">
+It's easy!
+
+<img src="https://user-images.githubusercontent.com/11543564/133298270-2c519ca4-1b18-48cd-9363-79a6271311ea.png" width="700">
 
 ## How to use it
 It's simple, just open a chat with the bot either on Teams or Telegram.
