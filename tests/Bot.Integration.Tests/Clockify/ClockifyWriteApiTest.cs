@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
 using Bot.Clockify.Models;
-using Clockify.Net.Models.TimeEntries;
+using Bot.Integration.Tests.Clockify.Supports;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using Microsoft.Bot.Schema;
@@ -11,8 +11,16 @@ using static Bot.Integration.Tests.Clockify.ClockifyConsts;
 
 namespace Bot.Integration.Tests.Clockify
 {
+    [Collection(nameof(ClockifyCollection))]
     public class ClockifyWriteApiTest
     {
+        private readonly ClockifyFixture _clockifyFixture;
+
+        public ClockifyWriteApiTest(ClockifyFixture clockifyFixture)
+        {
+            _clockifyFixture = clockifyFixture;
+        }
+
         [Fact]
         public async void AddTimeEntry_ApiKeyIsValidAndRequestBodyIsValid_ShouldAddTimeEntry()
         {
@@ -21,14 +29,11 @@ namespace Bot.Integration.Tests.Clockify
 
             var now = DateTimeOffset.UtcNow;
             var newTimeEntry = new TimeEntryReq
-            {
-                TimeInterval = new TimeInterval
-                {
-                    Start = now,
-                    End = now.AddHours(8),
-                },
-                ProjectId = "5efc6f19f833d7257bfa3c54"
-            };
+            (
+                _clockifyFixture.ProjectWithoutTasks().Id,
+                now,
+                end: now.AddHours(8)
+            );
 
             var addedTimeEntry =
                 await clockifyService.AddTimeEntryAsync(ClockifyApiKey, ClockifyWorkspaceId, newTimeEntry);
@@ -49,17 +54,18 @@ namespace Bot.Integration.Tests.Clockify
             var clockifyClient = new RichClockifyClient(ClockifyApiKey);
 
             var now = DateTimeOffset.UtcNow;
-            var newTimeEntry = new TimeEntryRequest
-            {
-                Start = now,
-                End = now.AddHours(8),
-                ProjectId = "5efc6f19f833d7257bfa3c54"
-            };
+            var newTimeEntry = new TimeEntryReq
+            (
+                _clockifyFixture.ProjectWithoutTasks().Id,
+                now,
+                end: now.AddHours(8)
+            );
 
-            var createdTimeEntry = await clockifyClient.CreateTimeEntryAsync(ClockifyWorkspaceId, newTimeEntry);
+            var createdTimeEntry = await clockifyClient.CreateTimeEntryAsync(ClockifyWorkspaceId, 
+                ClockifyModelFactory.ToTimeEntryRequest(newTimeEntry));
             createdTimeEntry.Data.Id.Should().NotBeNullOrWhiteSpace();
 
-            var timeEntryToDelete = createdTimeEntry.Data.Id;
+            string timeEntryToDelete = createdTimeEntry.Data.Id;
 
             Func<Task> action = () =>
                 clockifyService.DeleteTimeEntry(ClockifyApiKey, ClockifyWorkspaceId, timeEntryToDelete);
