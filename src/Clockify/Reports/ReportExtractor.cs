@@ -1,5 +1,4 @@
 ﻿using Bot.Common;
-using Luis;
 
 namespace Bot.Clockify.Reports
 {
@@ -10,11 +9,6 @@ namespace Bot.Clockify.Reports
         public ReportExtractor(IDateTimeProvider dateTimeProvider)
         {
             _dateTimeProvider = dateTimeProvider;
-        }
-
-        public string GetDateTimeInstance(TimeSurveyBotLuis._Entities._Instance entities)
-        {
-            return EntityExtractorUtil.GetWorkerPeriodInstance(entities);
         }
 
         // TODO from yesterday to today return correct dates at 00:00 and clockify doesn't return time entries for today 

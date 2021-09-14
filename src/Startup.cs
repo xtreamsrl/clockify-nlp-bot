@@ -7,6 +7,7 @@ using Bot.Clockify.Client;
 using Bot.Clockify.Fill;
 using Bot.Clockify.Reports;
 using Bot.Common;
+using Bot.Common.Recognizer;
 using Bot.Data;
 using Bot.DIC;
 using Bot.Remind;
@@ -91,7 +92,7 @@ namespace Bot
             services.AddSingleton(storage);
             services.AddSingleton<ConversationState>();
             services.AddSingleton<UserState>();
-            services.AddSingleton<LuisRecognizerProxy>();
+            services.AddSingleton<IRecognizer, CommonRecognizer>();
             services.AddSingleton<IBot, Supports.Bot>();
             services.AddSingleton<IAzureBlobReader, AzureBlobReader>();
             services.AddSingleton<IUserProfileStorageReader, UserProfileStorageReader>();
