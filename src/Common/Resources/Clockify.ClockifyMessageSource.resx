@@ -78,12 +78,44 @@
     <data name="ReportWork" xml:space="preserve">
         <value>Work reported on workspace **{0}**:</value>
     </data>
-    <data name="RemindEntryFill" xml:space="preserve">
-        <value>Hey! I can see you have not filled up entirely your time sheet for the day. Remember, fill in earlier to make the entries really reflect what you did. I'll keep reminding you until you comply 🙃, if I become too annoying just ask me to stop.
-</value>
+    <data name="RemindEntryFill_1" xml:space="preserve">
+        <value>Hey! 💁 My gears tell me your timesheet needs entries. Be nice, make me happy. Tell me some work you did 🙏</value>
     </data>
-    <data name="RemindStoppedAlready" xml:space="preserve">
-        <value>You already told me to stop sending you reminders for the day, there's no need to insist</value>
+    <data name="RemindEntryFill_2" xml:space="preserve">
+        <value>Here I am 🙈, a bot reminding a human to do a timesheet. What a strange world. Btw, what did you do today?</value>
+    </data>
+    <data name="RemindEntryFill_3" xml:space="preserve">
+        <value>Ok, no need to go crazy. Just your friendly reminder here. If you want me to stop, just say so. I'll get offended, though ☹. </value>
+    </data>
+    <data name="RemindEntryFill_4" xml:space="preserve">
+        <value>💡 Do you know that timesheets reported once per day are way more accurate than when you report your time once per week? Go on, go fill up your entries, you'll thank me later.</value>
+    </data>
+    <data name="RemindEntryFill_5" xml:space="preserve">
+        <value>When I was a child I wanted to be a surgeon 😌. Then I remembered I'm a chat bot, so I became a Clockify assistant. Ah, can you please tell me what you did today on your projects? Give my life some meaning, man. </value>
+    </data>
+    <data name="RemindEntryFill_6" xml:space="preserve">
+        <value>🎵 What you doing? Where you at? Oh, you got plans? Don't say that. Ok, now that I've Bruno Marsed you, can you please remember to do your daily timesheet?</value>
+    </data>
+    <data name="RemindEntryFill_7" xml:space="preserve">
+        <value>Roses are red, violets are blue, please do your timesheet or I'll come to you 🌹</value>
+    </data>
+    <data name="RemindEntryFill_8" xml:space="preserve">
+        <value>Hey 👋 feeling like doing your timesheet?</value>
+    </data>
+    <data name="RemindEntryFill_9" xml:space="preserve">
+        <value>You should be done working by now, why don't you tell me what you did today?</value>
+    </data>
+    <data name="RemindEntryFill_10" xml:space="preserve">
+        <value>Hey man, your timesheet for the day sucks. Can you add some more entries?</value>
+    </data>
+    <data name="RemindEntryFill_11" xml:space="preserve">
+        <value>.-.. --- .-.. Just some morse code to remind you to do your timesheet</value>
+    </data>
+    <data name="RemindEntryFill_12" xml:space="preserve">
+        <value>🌎 Ok let's try international languages: bonvolu plenigi vian tempan raporton</value>
+    </data>
+    <data name="RemindEntryFill_13" xml:space="preserve">
+        <value>Gotcha! You haven't reported your workday fully, have you? I can help!</value>
     </data>
     <data name="RemindStopAnswer" xml:space="preserve">
         <value>Ok, no more reminders for today, you have my word 🤙</value>
