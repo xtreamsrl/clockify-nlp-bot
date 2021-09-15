@@ -46,12 +46,13 @@ namespace Bot.Clockify
 
         private string GetString(string name)
         {
+            if (!_localizer[name].ResourceNotFound) return _localizer[name].Value;
             string? key = _localizer.GetAllStrings()
                 .Select(s => s.Name)
                 .Where(k => k.StartsWith(name))
                 .OrderBy(_ => Rnd.Next())
                 .Last();
-            return _localizer[key];
+            return _localizer[key].Value;
         }
     }
 }
