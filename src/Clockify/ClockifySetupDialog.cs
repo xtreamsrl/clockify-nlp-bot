@@ -9,6 +9,7 @@ using Bot.Data;
 using Bot.States;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
+using TimeZoneConverter;
 
 namespace Bot.Clockify
 {
@@ -82,6 +83,7 @@ namespace Bot.Clockify
                     userProfile.LastName = new string(currentUser.Name.Skip(userProfile.FirstName.Length + 1).ToArray());
                 }
                 userProfile.Email = currentUser.Email;
+                userProfile.TimeZone = TZConvert.GetTimeZoneInfo(currentUser.TimeZone);
 
                 return true;
             }

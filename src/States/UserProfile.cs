@@ -22,5 +22,6 @@ namespace Bot.States
         public DateTime? StopRemind { get; set; }
         public bool Experimental { get; set; }
         public string? Email { get; set; }
+        public TimeZoneInfo? TimeZone { get; set; }
     }
 }

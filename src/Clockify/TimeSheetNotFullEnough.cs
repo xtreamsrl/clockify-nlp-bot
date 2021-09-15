@@ -43,7 +43,7 @@ namespace Bot.Clockify
                     });
                 return totalHoursInserted < 6;
             }
-            catch (Exception _)
+            catch (Exception)
             {
                 return false;
             }
