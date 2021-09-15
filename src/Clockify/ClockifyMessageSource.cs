@@ -6,7 +6,7 @@ namespace Bot.Clockify
 {
     public class ClockifyMessageSource : IClockifyMessageSource
     {
-        private static Random rnd = new Random();
+        private static readonly Random Rnd = new Random();
         
         private readonly IStringLocalizer<ClockifyMessageSource> _localizer;
 
@@ -49,8 +49,8 @@ namespace Bot.Clockify
             string? key = _localizer.GetAllStrings()
                 .Select(s => s.Name)
                 .Where(k => k.StartsWith(name))
-                .OrderBy(_ => rnd.Next())
-                .First();
+                .OrderBy(_ => Rnd.Next())
+                .Last();
             return _localizer[key];
         }
     }
