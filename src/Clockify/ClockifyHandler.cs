@@ -89,41 +89,9 @@ namespace Bot.Clockify
         private async Task<bool> RunClockifySetupIfNeeded(ITurnContext turnContext, CancellationToken cancellationToken,
             UserProfile userProfile)
         {
-            if (userProfile.ClockifyTokenId == null)
-            {
-                await _clockifySetupDialog.RunAsync(turnContext, _dialogState, cancellationToken);
-                return true;
-            }
-
-            try
-            {
-                if (userProfile.Email == null)
-                {
-                    await SetUserEmailFromClockify(userProfile);
-                }
-                return false;
-            }
-            catch (UnauthorizedAccessException)
-            {
-                await _clockifySetupDialog.RunAsync(turnContext, _dialogState, cancellationToken);
-                return true;
-            }
-        }
-
-        private async Task SetUserEmailFromClockify(UserProfile userProfile)
-        {
-            var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
-            UserDo user = await _clockifyService.GetCurrentUserAsync(tokenData.Value);
-            string? fullName = user.Name;
-            if (fullName != null)
-            {
-                //TODO: this might be wrong, don't care
-                userProfile.FirstName = fullName.Split(" ")[0];
-                userProfile.LastName =
-                    new string(fullName.Skip(userProfile.FirstName.Length + 1).ToArray());
-            }
-
-            userProfile.Email = user.Email;
+            if (userProfile.ClockifyTokenId != null) return false;
+            await _clockifySetupDialog.RunAsync(turnContext, _dialogState, cancellationToken);
+            return true;
         }
     }
 }
