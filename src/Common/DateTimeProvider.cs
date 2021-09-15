@@ -8,5 +8,10 @@ namespace Bot.Common
         {
             return DateTime.Now;
         }
+
+        public DateTime DateTimeUtcNow()
+        {
+            return DateTime.UtcNow;
+        }
     }
 }
