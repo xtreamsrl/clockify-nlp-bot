@@ -6,6 +6,7 @@ using Bot.States;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Bot.DIC
 {
@@ -26,9 +27,9 @@ namespace Bot.DIC
 
         public SmartWorkingRemindService(IUserProfilesProvider userProfilesProvider, IConfiguration configuration,
             ICompositeNeedReminderService compositeNeedReminderService, ClockifySetupDialog clockifySetup,
-            ConversationState conversationState) :
+            ConversationState conversationState, ILogger<SmartWorkingRemindService> logger) :
             base(userProfilesProvider, configuration, compositeNeedReminderService,
-                BotCallback(clockifySetup, conversationState))
+                BotCallback(clockifySetup, conversationState), logger)
         {
         }
     }

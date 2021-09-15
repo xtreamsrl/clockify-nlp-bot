@@ -8,6 +8,7 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Bot.DIC
 {
@@ -19,13 +20,15 @@ namespace Bot.DIC
         private readonly IBotFrameworkHttpAdapter _adapter;
         private readonly string _appId;
         private readonly IDicMessageSource _messageSource;
+        private readonly ILogger<NotifyUsersDialog> _logger;
 
         public NotifyUsersDialog(IUserProfilesProvider userProfilesProvider, IBotFrameworkHttpAdapter adapter, 
-            IConfiguration configuration, IDicMessageSource messageSource)
+            IConfiguration configuration, IDicMessageSource messageSource, ILogger<NotifyUsersDialog> logger)
         {
             _userProfilesProvider = userProfilesProvider;
             _adapter = adapter;
             _messageSource = messageSource;
+            _logger = logger;
             AddDialog(new WaterfallDialog(TaskWaterfall, new List<WaterfallStep>
             {
                 PromptForNotificationAsync,
@@ -62,7 +65,8 @@ namespace Bot.DIC
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    // Just logging the exception is sufficient, we do not want to stop other reminders.
+                    _logger.LogError(e,"Reminder not sent for user {UserId}", userProfile.UserId);
                 }
             }
             await stepContext.Context.SendActivityAsync(

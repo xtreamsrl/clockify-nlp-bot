@@ -6,22 +6,26 @@ using Bot.States;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Bot.Remind
 {
-    public class GenericRemindService : IRemindService
+    public abstract class GenericRemindService : IRemindService
     {
         private readonly IUserProfilesProvider _userProfilesProvider;
         private readonly ICompositeNeedReminderService _compositeNeedRemindService;
         private readonly string _appId;
         private readonly BotCallbackHandler _botCallback;
+        private readonly ILogger _logger;
 
         protected GenericRemindService(IUserProfilesProvider userProfilesProvider, IConfiguration configuration,
-            ICompositeNeedReminderService compositeNeedReminderService, BotCallbackHandler botCallback)
+            ICompositeNeedReminderService compositeNeedReminderService, BotCallbackHandler botCallback,
+            ILogger logger)
         {
             _userProfilesProvider = userProfilesProvider;
             _compositeNeedRemindService = compositeNeedReminderService;
             _botCallback = botCallback;
+            _logger = logger;
             _appId = configuration["MicrosoftAppId"];
             if (string.IsNullOrEmpty(_appId))
             {
@@ -46,7 +50,7 @@ namespace Bot.Remind
             {
                 try
                 {
-                    ((BotAdapter) adapter).ContinueConversationAsync(
+                    ((BotAdapter)adapter).ContinueConversationAsync(
                         _appId,
                         userProfile!.ConversationReference,
                         _botCallback,
@@ -55,8 +59,8 @@ namespace Bot.Remind
                 }
                 catch (Exception e)
                 {
-                    // TODO Use logger
-                    Console.WriteLine(e);
+                    // Just logging the exception is sufficient, we do not want to stop other reminders.
+                    _logger.LogError(e, "Reminder not sent for user {UserId}", userProfile.UserId);
                 }
             }
 
