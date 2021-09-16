@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Bot.Builder;
-using RestSharp.Deserializers;
+using Newtonsoft.Json;
 
-namespace Bot.Models.DIC
+namespace Bot.DIC
 {
     public class Access
     {
@@ -18,7 +17,14 @@ namespace Bot.Models.DIC
 
         public string? number { get; set; }
         
+        [JsonProperty(PropertyName = "main_role")]
+        public MainRole role { get; set; }
         public List<TeamEmployeeAccess> teams { get; set; }
+    }
+
+    public class MainRole
+    {
+        public Team team { get; set; }
     }
 
     public class TeamEmployeeAccess

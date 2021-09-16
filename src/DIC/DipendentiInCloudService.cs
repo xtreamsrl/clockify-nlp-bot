@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Bot.Models.DIC;
 using Microsoft.Bot.Schema;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -14,6 +14,9 @@ namespace Bot.DIC
 {
     public class DipendentiInCloudService : IDipendentiInCloudService
     {
+        private const string MaintainerTeamId = nameof(MaintainerTeamId);
+        private const string MaintainerCompanyId = nameof(MaintainerCompanyId);
+        
         public DipendentiInCloudService(DipendentiInCloudClient dicClient)
         {
             DicClient = dicClient;
@@ -21,6 +24,13 @@ namespace Bot.DIC
 
         private DipendentiInCloudClient DicClient { get; }
 
+        public bool IsMaintainer(Employee employee)
+        {
+            int teamId = int.Parse(Environment.GetEnvironmentVariable(MaintainerTeamId) ?? "0");
+            int companyId = int.Parse(Environment.GetEnvironmentVariable(MaintainerCompanyId) ?? "0");
+            return employee.teams.Any(t => t.team.id == teamId) && employee.role.team.id == companyId;
+        }
+        
         public async Task<Employee> GetCurrentEmployeeAsync(string apiKey)
         {
             var response = await DicClient.GetCompanyInfo(apiKey);
