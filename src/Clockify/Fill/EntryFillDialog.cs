@@ -11,6 +11,7 @@ using Bot.States;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
+using Microsoft.Extensions.Logging;
 
 namespace Bot.Clockify.Fill
 {
@@ -23,6 +24,7 @@ namespace Bot.Clockify.Fill
         private readonly WorthAskingForTaskService _worthAskingForTask;
         private readonly UserState _userState;
         private readonly IClockifyMessageSource _messageSource;
+        private readonly ILogger<EntryFillDialog> _logger;
 
 
         private const string TaskWaterfall = "TaskWaterfall";
@@ -36,7 +38,7 @@ namespace Bot.Clockify.Fill
         public EntryFillDialog(ClockifyEntityRecognizer clockifyWorkableRecognizer,
             ITimeEntryStoreService timeEntryStoreService, WorthAskingForTaskService worthAskingForTask,
             UserState userState, IClockifyService clockifyService, ITokenRepository tokenRepository,
-            IClockifyMessageSource messageSource)
+            IClockifyMessageSource messageSource, ILogger<EntryFillDialog> logger)
         {
             _clockifyWorkableRecognizer = clockifyWorkableRecognizer;
             _timeEntryStoreService = timeEntryStoreService;
@@ -45,6 +47,7 @@ namespace Bot.Clockify.Fill
             _clockifyService = clockifyService;
             _tokenRepository = tokenRepository;
             _messageSource = messageSource;
+            _logger = logger;
             AddDialog(new WaterfallDialog(TaskWaterfall, new List<WaterfallStep>
             {
                 PromptForTaskAsync,
@@ -115,12 +118,14 @@ namespace Bot.Clockify.Fill
             }
             catch (CannotRecognizeProjectException e)
             {
+                _logger.LogError(e, "Cannot recognize project: {ExMessage}", e.Message);
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text(
                     string.Format(_messageSource.ProjectUnrecognized, e.Unmatchable)), cancellationToken);
                 return await stepContext.EndDialogAsync(null, cancellationToken);
             }
             catch (AmbiguousRecognizableProjectException e)
             {
+                _logger.LogError(e, "Cannot recognize project: {ExMessage}", e.Message);
                 await stepContext.Context.SendActivityAsync(
                     MessageFactory.Text(string.Format(_messageSource.AmbiguousProjectError, e.Option1.Name,
                         e.Option2.Name)), cancellationToken);
@@ -129,6 +134,7 @@ namespace Bot.Clockify.Fill
             catch (Exception e) when (e is InvalidWorkedPeriodInstanceException ||
                                       e is InvalidWorkedEntityException)
             {
+                _logger.LogError(e, "{ExMessage}", e.Message);
                 await stepContext.Context.SendActivityAsync(
                     MessageFactory.Text(_messageSource.EntryFillUnderstandingError),
                     cancellationToken);
@@ -172,8 +178,9 @@ namespace Bot.Clockify.Fill
                         recognizedTask = await _clockifyWorkableRecognizer.RecognizeTask(requestedTask, clockifyToken, project);
                         fullEntity += " - " + recognizedTask.Name;
                     }
-                    catch (CannotRecognizeProjectException)
+                    catch (CannotRecognizeProjectException e)
                     {
+                        _logger.LogError(e, "Cannot recognize task: {ExMessage}", e.Message);
                         await stepContext.Context.SendActivityAsync(
                             MessageFactory.Text(_messageSource.TaskUnrecognized), cancellationToken);
                         return await stepContext.EndDialogAsync(null, cancellationToken);
@@ -206,6 +213,7 @@ namespace Bot.Clockify.Fill
             }
             catch (Exception)
             {
+                // TODO Fallback to generic error.
                 await stepContext.Context.SendActivityAsync(
                     MessageFactory.Text(_messageSource.TaskCreationError), cancellationToken);
                 // TODO Maybe we should just return the error and end the dialog.

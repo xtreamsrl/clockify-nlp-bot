@@ -42,6 +42,15 @@ namespace Bot
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers().AddNewtonsoftJson();
+
+            // Configure app insight if the key exists. New Azure regions require the use of connection strings
+            // instead of instrumentation keys.
+            string? appInsightConnectionString = _configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+            if (!string.IsNullOrWhiteSpace(appInsightConnectionString))
+            {
+                services.AddApplicationInsightsTelemetry(appInsightConnectionString);
+            }
+            
             ConfigureLocalization(services);
 
             var clockifyService = new ClockifyService(new ClockifyClientFactory());
