@@ -6,7 +6,6 @@ using Bot.Common;
 using Bot.Data;
 using Bot.Remind;
 using Bot.States;
-using TimeZoneConverter;
 
 namespace Bot.Clockify
 {
@@ -33,7 +32,7 @@ namespace Bot.Clockify
                 string userId = userProfile.UserId ?? throw new ArgumentNullException(nameof(userProfile.UserId));
                 var workspaces = await _clockifyService.GetWorkspacesAsync(clockifyToken);
 
-                TimeZoneInfo userTimeZone = userProfile.TimeZone ?? TZConvert.GetTimeZoneInfo("Europe/Rome");
+                TimeZoneInfo userTimeZone = userProfile.TimeZone;
                 var userNow = TimeZoneInfo.ConvertTime(_dateTimeProvider.DateTimeUtcNow(), userTimeZone);
                 var userToday = userNow.Date;
 

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Bot.Common;
 using Bot.States;
-using TimeZoneConverter;
 
 namespace Bot.Remind
 {
@@ -17,7 +16,7 @@ namespace Bot.Remind
 
         public Task<bool> ReminderIsNeeded(UserProfile userProfile)
         {
-            TimeZoneInfo userTimeZone = userProfile.TimeZone ?? TZConvert.GetTimeZoneInfo("Europe/Rome");
+            TimeZoneInfo userTimeZone = userProfile.TimeZone;
             var userTime = TimeZoneInfo.ConvertTime(_dateTimeProvider.DateTimeUtcNow(), userTimeZone);
 
             if (userTime.DayOfWeek == DayOfWeek.Saturday || userTime.DayOfWeek == DayOfWeek.Sunday)

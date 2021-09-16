@@ -1,10 +1,12 @@
 ﻿using System;
 using Microsoft.Bot.Schema;
+using TimeZoneConverter;
 
 namespace Bot.States
 {
     public class UserProfile
     {
+        private TimeZoneInfo? _timeZone;
         public string? ClockifyTokenId { get; set; }
         
         public string? UserId { get; set; }
@@ -22,6 +24,9 @@ namespace Bot.States
         public DateTime? StopRemind { get; set; }
         public bool Experimental { get; set; }
         public string? Email { get; set; }
-        public TimeZoneInfo? TimeZone { get; set; }
+        public TimeZoneInfo TimeZone {
+            get => _timeZone ?? TZConvert.GetTimeZoneInfo("Europe/Rome");
+            set => _timeZone = value;
+        }
     }
 }
