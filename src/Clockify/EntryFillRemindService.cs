@@ -3,6 +3,7 @@ using Bot.Remind;
 using Bot.States;
 using Microsoft.Bot.Builder;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Bot.Clockify
 {
@@ -14,9 +15,10 @@ namespace Bot.Clockify
         }
 
         public EntryFillRemindService(IUserProfilesProvider userProfilesProvider, IConfiguration configuration,
-            ICompositeNeedReminderService compositeNeedRemindService, IClockifyMessageSource messageSource) :
+            ICompositeNeedReminderService compositeNeedRemindService, IClockifyMessageSource messageSource,
+            ILogger<EntryFillRemindService> logger) :
             base(userProfilesProvider, configuration, compositeNeedRemindService,
-                BotCallbackMaker(() => messageSource.RemindEntryFill))
+                BotCallbackMaker(() => messageSource.RemindEntryFill), logger)
         {
         }
     }
