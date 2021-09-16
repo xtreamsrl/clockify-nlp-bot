@@ -34,11 +34,12 @@ namespace Bot.Clockify
 
                 TimeZoneInfo userTimeZone = userProfile.TimeZone;
                 var userNow = TimeZoneInfo.ConvertTime(_dateTimeProvider.DateTimeUtcNow(), userTimeZone);
-                var userToday = userNow.Date;
+                var userStartToday = userNow.Date;
+                var userEndOfToday = userStartToday.AddDays(1);
 
                 double totalHoursInserted = (await Task.WhenAll(workspaces.Select(ws =>
-                        _clockifyService.GetHydratedTimeEntriesAsync(clockifyToken, ws.Id, userId, userToday,
-                            userNow))))
+                        _clockifyService.GetHydratedTimeEntriesAsync(clockifyToken, ws.Id, userId, userStartToday,
+                            userEndOfToday))))
                     .SelectMany(p => p)
                     .Sum(e =>
                     {
