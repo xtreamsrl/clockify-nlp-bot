@@ -10,6 +10,9 @@
 
         public string Email { get; set; }
 
+        // IANA timezone
+        public string TimeZone { get; set; }
+        
         public string? Name { get; set; }
     }
 }

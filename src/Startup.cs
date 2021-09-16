@@ -78,6 +78,7 @@ namespace Bot
             services.AddSingleton<DicSetupDialog, DicSetupDialog>();
             services.AddSingleton<IDipendentiInCloudService>(dicService);
 
+            services.AddSingleton<INeedRemindService, EndOfWorkingDay>();
             services.AddSingleton<INeedRemindService, TimeSheetNotFullEnough>();
             services.AddSingleton<INeedRemindService, UserDidNotSayStop>();
             services.AddSingleton<INeedRemindService, NotOnLeave>();
