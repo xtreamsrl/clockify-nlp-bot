@@ -5,5 +5,7 @@ namespace Bot.Common
     public interface IDateTimeProvider
     {
         DateTime DateTimeNow();
+        
+        DateTime DateTimeUtcNow();
     }
 }

@@ -76,6 +76,7 @@ namespace Bot
             services.AddSingleton<IDipendentiInCloudClient, DipendentiInCloudClient>();
             services.AddSingleton<IDipendentiInCloudService, DipendentiInCloudService>();
 
+            services.AddSingleton<INeedRemindService, EndOfWorkingDay>();
             services.AddSingleton<INeedRemindService, TimeSheetNotFullEnough>();
             services.AddSingleton<INeedRemindService, UserDidNotSayStop>();
             services.AddSingleton<INeedRemindService, NotOnLeave>();

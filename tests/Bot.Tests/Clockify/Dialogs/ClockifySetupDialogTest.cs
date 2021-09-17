@@ -43,7 +43,8 @@ namespace Bot.Tests.Clockify.Dialogs
                     Name = "John Doe",
                     Email = "johndoe@gmail.com",
                     ActiveWorkspace = "w1",
-                    DefaultWorkspace = "w1"
+                    DefaultWorkspace = "w1",
+                    TimeZone = "Europe/Rome"
                 });
             var clockifyMessageSource = new Mock<IClockifyMessageSource>();
             clockifyMessageSource.Setup(c => c.SetupRequest).Returns(SetupRequest);

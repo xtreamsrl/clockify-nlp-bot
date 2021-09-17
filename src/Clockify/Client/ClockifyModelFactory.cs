@@ -112,7 +112,8 @@ namespace Bot.Clockify.Client
                 Name = u.Name,
                 Email = u.Email,
                 ActiveWorkspace = u.ActiveWorkspace,
-                DefaultWorkspace = u.DefaultWorkspace
+                DefaultWorkspace = u.DefaultWorkspace,
+                TimeZone = u.Settings.TimeZone
             };
         }
 
