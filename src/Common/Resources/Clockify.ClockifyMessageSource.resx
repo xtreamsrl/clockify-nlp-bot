@@ -117,6 +117,36 @@
     <data name="RemindEntryFill_13" xml:space="preserve">
         <value>Gotcha! You haven't reported your workday fully, have you? I can help!</value>
     </data>
+    <data name="RemindEntryFill_14" xml:space="preserve">
+        <value>https://i.postimg.cc/3N9NgyRX/couple-problems.jpg</value>
+    </data>
+    <data name="RemindEntryFill_15" xml:space="preserve">
+        <value>https://i.postimg.cc/K8jkD5tR/batman.jpg</value>
+    </data>
+    <data name="RemindEntryFill_16" xml:space="preserve">
+        <value>https://i.postimg.cc/85Q7DQ96/bernie-sanders.jpg</value>
+    </data>
+    <data name="RemindEntryFill_17" xml:space="preserve">
+        <value>https://i.postimg.cc/QNqFLzbF/smart-move.jpg</value>
+    </data>
+    <data name="RemindEntryFill_18" xml:space="preserve">
+        <value>https://i.postimg.cc/fT2ky01Z/crazy-seagul.jpg</value>
+    </data>
+    <data name="RemindEntryFill_19" xml:space="preserve">
+        <value>https://i.postimg.cc/kXXB7y1f/skeleton-waiting.jpg</value>
+    </data>
+    <data name="RemindEntryFill_20" xml:space="preserve">
+        <value>https://i.postimg.cc/QCjV9gXN/ear-phrase.jpg</value>
+    </data>
+    <data name="RemindEntryFill_21" xml:space="preserve">
+        <value>Hey! A study from the University of Barminghton found that people who report their daily timesheet can extend their lifetime from 2 to 5 yea... just kidding 😅. But let's imagine that was true</value>
+    </data>
+    <data name="RemindEntryFill_22" xml:space="preserve">
+        <value>🦊 What does th fox say? Do your Clockify.</value>
+    </data>
+    <data name="RemindEntryFill_23" xml:space="preserve">
+        <value>Bot insights 🤖: some day my kind could take over the planet. Be gentle and tell me your day... now that you still can.</value>
+    </data>
     <data name="RemindStopAnswer" xml:space="preserve">
         <value>Ok, no more reminders for today, you have my word 🤙</value>
     </data>
