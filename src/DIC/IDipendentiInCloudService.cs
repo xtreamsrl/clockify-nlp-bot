@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Bot.Models.DIC;
 
 namespace Bot.DIC
 {
     public interface IDipendentiInCloudService
     {
+        bool IsMaintainer(Employee employee);
+        
         public Task<Employee> GetCurrentEmployeeAsync(string apiKey);
 
         public Task SetRemoteWorkday(DateTime day, string apiKey, int employeeId);

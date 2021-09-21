@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AdaptiveCards;
 using Bot.Data;
-using Bot.Models.DIC;
 using Bot.States;
 using FluentDateTime;
 using Microsoft.Bot.Schema;

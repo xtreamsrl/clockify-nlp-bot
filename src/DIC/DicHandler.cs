@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Bot.Common.Recognizer;
 using Bot.Data;
@@ -55,7 +54,7 @@ namespace Bot.DIC
                 var tokenData = await _tokenRepository.ReadAsync(userProfile.DicTokenId);
                 string dicToken = tokenData.Value;
                 var currentEmployee = await _dicService.GetCurrentEmployeeAsync(dicToken);
-                isMaintainer = currentEmployee.teams.Any(t => t.team.name == "Bot Maintainers");
+                isMaintainer = _dicService.IsMaintainer(currentEmployee);
             }
 
             switch (turnContext.Activity.Text.ToLower())

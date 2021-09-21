@@ -54,7 +54,6 @@ namespace Bot
             ConfigureLocalization(services);
 
             var clockifyService = new ClockifyService(new ClockifyClientFactory());
-            var dicService = new DipendentiInCloudService(new DipendentiInCloudClient());
 
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             services.AddSingleton<TextToDateRangeService>();
@@ -69,14 +68,13 @@ namespace Bot
             services.AddSingleton<ClockifyEntityRecognizer, ClockifyEntityRecognizer>();
             services.AddSingleton<UserProfilesProvider>();
             services.AddSingleton<IClockifyService>(clockifyService);
-            services.AddSingleton<NextWeekRemoteWorkingDialog, NextWeekRemoteWorkingDialog>();
-            services.AddSingleton<LongTermRemoteWorkingDialog, LongTermRemoteWorkingDialog>();
-            services.AddSingleton<TeamAvailabilityService, TeamAvailabilityService>();
+            
             services.AddSingleton<NotifyUsersDialog, NotifyUsersDialog>();
             
             // DIC
             services.AddSingleton<DicSetupDialog, DicSetupDialog>();
-            services.AddSingleton<IDipendentiInCloudService>(dicService);
+            services.AddSingleton<IDipendentiInCloudClient, DipendentiInCloudClient>();
+            services.AddSingleton<IDipendentiInCloudService, DipendentiInCloudService>();
 
             services.AddSingleton<INeedRemindService, EndOfWorkingDay>();
             services.AddSingleton<INeedRemindService, TimeSheetNotFullEnough>();
@@ -86,6 +84,9 @@ namespace Bot
             services.AddSingleton<IRemindService, EntryFillRemindService>();
             services.AddSingleton<IRemindService, SmartWorkingRemindService>();
             services.AddSingleton<IRemindServiceResolver, RemindServiceResolver>();
+            services.AddSingleton<NextWeekRemoteWorkingDialog, NextWeekRemoteWorkingDialog>();
+            services.AddSingleton<LongTermRemoteWorkingDialog, LongTermRemoteWorkingDialog>();
+            services.AddSingleton<TeamAvailabilityService, TeamAvailabilityService>();
 
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
             services.AddSingleton<ClockifySetupDialog, ClockifySetupDialog>();
