@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Bot.Remind;
 using Bot.States;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Configuration;
@@ -14,15 +16,17 @@ namespace Bot.Clockify
         {
             return async (turn, token) =>
             {
-                string text = getResource();
-                if (Uri.IsWellFormedUriString(text, UriKind.RelativeOrAbsolute))
+                string content = getResource();
+                if (Uri.IsWellFormedUriString(content, UriKind.RelativeOrAbsolute))
                 {
-                    // TODO: support other content types
-                    await turn.SendActivityAsync(MessageFactory.Attachment(new Attachment("image/png", text)), token);
+                    new FileExtensionContentTypeProvider().TryGetContentType(content, out string contentType);
+                    var attachment = new Attachment(contentType, content);   
+                    await turn.SendActivityAsync(new Activity(text: "", 
+                        attachments:new List<Attachment> {attachment}), token);
                 }
                 else
                 {
-                    await turn.SendActivityAsync(MessageFactory.Text(text), token);
+                    await turn.SendActivityAsync(MessageFactory.Text(content), token);
                 }
             };
         }
