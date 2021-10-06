@@ -132,7 +132,8 @@ namespace Bot
         {
             if (keyVaultName == null)
             {
-                throw new ArgumentNullException(keyVaultName);
+                services.AddSingleton<ITokenRepository, InMemoryTokenRepository>();
+                return;
             }
             
             var options = new SecretClientOptions()
