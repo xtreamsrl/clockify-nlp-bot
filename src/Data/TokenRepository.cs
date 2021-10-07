@@ -6,17 +6,17 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Bot.Data
 {
-    internal class TokenRepository : ITokenRepository
+    public class TokenRepository : ITokenRepository
     {
-        private IMemoryCache _cache;
         private readonly SecretClient _secretClient;
-        
-        // TODO add caching
+        private readonly IMemoryCache _cache;
+        private readonly int _cacheSeconds;
 
-        public TokenRepository(IMemoryCache cache, SecretClient secretClient)
+        public TokenRepository(SecretClient secretClient, IMemoryCache cache, int cacheSeconds)
         {
             _cache = cache;
             _secretClient = secretClient;
+            _cacheSeconds = cacheSeconds;
         }
 
         public async Task<TokenData> ReadAsync(string id)
@@ -56,7 +56,7 @@ namespace Bot.Data
         private TokenData GetTokenData(KeyVaultSecret secret)
         {
             var tokenData = new TokenData(secret.Name, secret.Value);
-            _cache.Set(tokenData.Id, tokenData);
+            _cache.Set(tokenData.Id, tokenData, new MemoryCacheEntryOptions { SlidingExpiration = TimeSpan.FromSeconds(_cacheSeconds) });
             return tokenData;
         }
     }
