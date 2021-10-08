@@ -38,6 +38,11 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
 
+    - name: Show GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT" ```
+      
     # Run unit tests and upload resulting artifacts for analysis
     - name: Unit test
       run: |
