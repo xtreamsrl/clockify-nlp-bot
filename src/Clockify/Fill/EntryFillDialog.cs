@@ -209,13 +209,11 @@ namespace Bot.Clockify.Fill
             string clockifyToken = tokenData.Value;
             try
             {
-                var createdTask =
-                    await _clockifyService.CreateTaskAsync(clockifyToken, new TaskReq(newTaskName!), project.Id,
-                        project.WorkspaceId);
+                var createdTask = await _clockifyService.CreateTaskAsync(clockifyToken, new TaskReq(newTaskName!),
+                    project.Id, project.WorkspaceId);
                 fullEntity += " - " + createdTask.Name;
-                return await AddEntryAndExit(stepContext, cancellationToken, clockifyToken, project, minutes,
-                    fullEntity,
-                    createdTask);
+                return await AddEntryAndExit(stepContext, cancellationToken, clockifyToken, project, minutes, 
+                    fullEntity, createdTask);
             }
             catch (Exception)
             {
@@ -261,10 +259,11 @@ namespace Bot.Clockify.Fill
         
         private static IMessageActivity GetExitMessageActivity(string messageText, string platform)
         {
+            IMessageActivity ma;
             switch (platform.ToLower())
             {
                 case Telegram:
-                    var ma = Activity.CreateMessageActivity();
+                    ma = Activity.CreateMessageActivity();
                     var sendMessageParams = new SendMessageParameters(messageText, new ReplyKeyboardRemove());
                     var channelData = new SendMessage(sendMessageParams);
                     ma.ChannelData = JsonConvert.SerializeObject(channelData);
