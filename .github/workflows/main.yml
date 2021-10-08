@@ -43,7 +43,7 @@ jobs:
       run: |
         cd tests/Bot.Tests
         dotnet test --no-restore --logger trx --results-directory "UnitTestResults-${{ matrix.os }}"
-    - name: Upload dotnet test results
+    - name: Upload unit test results
       uses: actions/upload-artifact@v2
       with:
         name: unit-test-results-${{ matrix.os }}
@@ -56,7 +56,7 @@ jobs:
       run: |
         cd tests/Bot.Integration.Tests
         dotnet test --no-restore --logger trx --results-directory "IntegrationTestResults-${{ matrix.os }}"
-    - name: Upload dotnet test results
+    - name: Upload integration test results
       uses: actions/upload-artifact@v2
       with:
         name: it-test-results-${{ matrix.os }}
