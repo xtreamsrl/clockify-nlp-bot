@@ -37,19 +37,34 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
-      
-    # Run dotnet test and upload resulting artifacts for analysis
-    - name: Test
-      run: dotnet test --no-restore --logger trx --results-directory "TestResults-${{ matrix.os }}"
+
+    # Run unit tests and upload resulting artifacts for analysis
+    - name: Unit test
+      run: |
+        cd tests/Bot.Tests
+        dotnet test --no-restore --logger trx --results-directory "UnitTestResults-${{ matrix.os }}"
     - name: Upload dotnet test results
       uses: actions/upload-artifact@v2
       with:
-        name: dotnet-results-${{ matrix.os }}
-        path: TestResults-${{ matrix.os }}
+        name: unit-test-results-${{ matrix.os }}
+        path: UnitTestResults-${{ matrix.os }}
       # Use always() to always run this step to publish test results when there are test failures
       if: ${{ always() }}
-      
-    # Run dotnet publish and upload resulting artifact when os is windows-latest
+
+    # Run integration tests and upload resulting artifacts for analysis
+    - name: Integration test
+      run: |
+        cd tests/Bot.Integration.Tests
+        dotnet test --no-restore --logger trx --results-directory "IntegrationTestResults-${{ matrix.os }}"
+    - name: Upload dotnet test results
+      uses: actions/upload-artifact@v2
+      with:
+        name: it-test-results-${{ matrix.os }}
+        path: IntegrationTestResults-${{ matrix.os }}
+      # Use always() to always run this step to publish test results when there are test failures
+      if: ${{ always() }}
+
+      # Run dotnet publish and upload resulting artifact when os is windows-latest
     - name: Publish artifact
       run: dotnet publish -c Release -o '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/clockify-nlp-bot'
       if: ${{ success() && matrix.os == 'windows-latest'}}
