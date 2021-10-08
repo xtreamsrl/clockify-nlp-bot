@@ -46,8 +46,7 @@ jobs:
     # Run unit tests and upload resulting artifacts for analysis
     - name: Unit test
       run: |
-        cd tests/Bot.Tests
-        dotnet test --no-restore --logger trx --results-directory "UnitTestResults-${{ matrix.os }}"
+        dotnet test tests/Bot.Tests --no-restore --logger trx --results-directory "UnitTestResults-${{ matrix.os }}"
     - name: Upload unit test results
       uses: actions/upload-artifact@v2
       with:
@@ -59,8 +58,7 @@ jobs:
     # Run integration tests and upload resulting artifacts for analysis
     - name: Integration test
       run: |
-        cd tests/Bot.Integration.Tests
-        dotnet test --no-restore --logger trx --results-directory "IntegrationTestResults-${{ matrix.os }}"
+        dotnet test tests/Bot.Integration.Tests --no-restore --logger trx --results-directory "IntegrationTestResults-${{ matrix.os }}"
       if: ${{
         (always() && github.event_name != 'pull_request') ||
         (github.event_name == 'pull_request' &&
