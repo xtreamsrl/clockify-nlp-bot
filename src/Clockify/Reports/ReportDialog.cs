@@ -39,7 +39,7 @@ namespace Bot.Clockify.Reports
             var luisResult = (TimeSurveyBotLuis)stepContext.Options;
             try
             {
-                string timePeriodInstance = luisResult.TimePeriod();
+                string timePeriodInstance = luisResult.WorkedDuration();
                 var dateRange = _reportExtractor.GetDateRangeFromTimePeriod(timePeriodInstance);
 
                 if (dateRange.End.Subtract(dateRange.Start).Days > 366)
@@ -57,7 +57,7 @@ namespace Bot.Clockify.Reports
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text(summary), cancellationToken);
                 return await stepContext.EndDialogAsync(null, cancellationToken);
             }
-            catch (InvalidWorkedPeriodInstanceException)
+            catch (InvalidWorkedDurationException)
             {
                 await stepContext.Context.SendActivityAsync(
                     MessageFactory.Text(_messageSource.ReportWorkedPeriodUnrecognized), cancellationToken);
