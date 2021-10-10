@@ -56,7 +56,7 @@ namespace Bot.Tests.Data
         [Fact]
         public async void WriteAsync_GivenNullId_ShouldGenerateRandomId()
         {
-            var expectedValue = "UnitTestValue";
+            const string expectedValue = "UnitTestValue";
             var inMemoryTokenRepository = new InMemoryTokenRepository();
 
             var tokenData = await inMemoryTokenRepository.WriteAsync(expectedValue);
@@ -89,7 +89,7 @@ namespace Bot.Tests.Data
 
             await inMemoryTokenRepository.WriteAsync(expectedTokenData.Value, expectedTokenData.Id);
 
-            var expectedValue = "UpdatedUnitTestValue";
+            const string expectedValue = "UpdatedUnitTestValue";
 
             var tokenData = await inMemoryTokenRepository.WriteAsync(expectedValue, expectedTokenData.Id);
 
