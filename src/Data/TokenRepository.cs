@@ -31,7 +31,7 @@ namespace Bot.Data
             try
             {
                 KeyVaultSecret secret = await _secretClient.GetSecretAsync(id);
-                return GetTokenData(secret);
+                return CacheAndGetTokenData(secret);
             }
             catch (RequestFailedException e)
             {
@@ -50,10 +50,10 @@ namespace Bot.Data
             
             string name = id ?? Guid.NewGuid().ToString();
             KeyVaultSecret secret = await _secretClient.SetSecretAsync(name, value);
-            return GetTokenData(secret);
+            return CacheAndGetTokenData(secret);
         }
 
-        private TokenData GetTokenData(KeyVaultSecret secret)
+        private TokenData CacheAndGetTokenData(KeyVaultSecret secret)
         {
             var tokenData = new TokenData(secret.Name, secret.Value);
             _cache.Set(tokenData.Id, tokenData, new MemoryCacheEntryOptions { SlidingExpiration = TimeSpan.FromSeconds(_cacheSeconds) });

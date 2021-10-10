@@ -52,8 +52,4 @@
     <ItemGroup>
       <_ContentIncludedByDefault Remove="wwwroot\default.htm" />
     </ItemGroup>
-    
-    <ItemGroup>
-      <None Remove="Microsoft.Extensions.Caching.Memory" />
-    </ItemGroup>
 </Project>

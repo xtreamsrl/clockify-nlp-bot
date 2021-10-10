@@ -12,10 +12,11 @@ namespace Bot.Tests.Data
 {
     public class TokenRepositoryTest
     {
+        private const int _cacheSeconds = 10;
+
         private readonly Mock<SecretClient> _mockSecretClient;
         private readonly Mock<Response> _mockResponse;
         private readonly MemoryCacheStub _memoryCacheStub;
-        private readonly int _cacheSeconds = 10;
 
         private readonly TokenRepository _sut;
 
