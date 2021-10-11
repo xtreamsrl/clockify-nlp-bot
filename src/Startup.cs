@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Azure;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -98,7 +99,11 @@ namespace Bot
                 storage = new AzureBlobStorage(_dataConnectionString, _containerName);
             }
             
-            ConfigureAzureKeyVault(services, _configuration["KeyVaultName"]);
+            if (!int.TryParse(_configuration["TokenCacheSeconds"], out var cacheSeconds))
+            {
+                cacheSeconds = 30;
+            }
+            ConfigureAzureKeyVault(services, _configuration["KeyVaultName"], cacheSeconds);
 
             services.AddSingleton(storage);
             services.AddSingleton<ConversationState>();
@@ -128,7 +133,7 @@ namespace Bot
             services.AddSingleton<ICommonMessageSource, CommonMessageSource>();
         }
 
-        private static void ConfigureAzureKeyVault(IServiceCollection services, string keyVaultName)
+        private static void ConfigureAzureKeyVault(IServiceCollection services, string keyVaultName, int cacheSeconds)
         {
             if (keyVaultName == null)
             {
@@ -149,7 +154,8 @@ namespace Bot
             var secretClient = new SecretClient(new Uri($"https://{keyVaultName}.vault.azure.net/"),
                 new DefaultAzureCredential(), options);
             services.AddSingleton(secretClient);
-            services.AddSingleton<ITokenRepository, TokenRepository>();
+            services.AddSingleton<ITokenRepository>(
+                sp => new TokenRepository(secretClient, sp.GetRequiredService<IMemoryCache>(), cacheSeconds));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
