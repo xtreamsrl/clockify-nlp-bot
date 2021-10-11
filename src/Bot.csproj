@@ -27,6 +27,7 @@
         <PackageReference Include="Microsoft.Bot.Builder.Integration.AspNet.Core" Version="4.9.3" />
         <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
         <PackageReference Include="TimeZoneConverter" Version="3.5.0" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.19" />
     </ItemGroup>
 
     <ItemGroup>
@@ -51,5 +52,4 @@
     <ItemGroup>
       <_ContentIncludedByDefault Remove="wwwroot\default.htm" />
     </ItemGroup>
-    
 </Project>

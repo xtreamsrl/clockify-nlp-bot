@@ -2,28 +2,36 @@
 using System.Threading.Tasks;
 using Azure;
 using Azure.Security.KeyVault.Secrets;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Bot.Data
 {
-    internal class TokenRepository : ITokenRepository
+    public class TokenRepository : ITokenRepository
     {
         private readonly SecretClient _secretClient;
-        
-        // TODO add caching
+        private readonly IMemoryCache _cache;
+        private readonly int _cacheSeconds;
 
-        public TokenRepository(SecretClient secretClient)
+        public TokenRepository(SecretClient secretClient, IMemoryCache cache, int cacheSeconds)
         {
+            _cache = cache;
             _secretClient = secretClient;
+            _cacheSeconds = cacheSeconds;
         }
 
         public async Task<TokenData> ReadAsync(string id)
         {
             if (id == null) throw new ArgumentNullException(id);
-            
+
+            if (_cache.TryGetValue<TokenData>(id, out var cachedTokenData))
+            {
+                return cachedTokenData;
+            }
+
             try
             {
                 KeyVaultSecret secret = await _secretClient.GetSecretAsync(id);
-                return new TokenData(secret.Name, secret.Value);
+                return CacheAndGetTokenData(secret);
             }
             catch (RequestFailedException e)
             {
@@ -42,7 +50,14 @@ namespace Bot.Data
             
             string name = id ?? Guid.NewGuid().ToString();
             KeyVaultSecret secret = await _secretClient.SetSecretAsync(name, value);
-            return new TokenData(secret.Name, secret.Value);
+            return CacheAndGetTokenData(secret);
+        }
+
+        private TokenData CacheAndGetTokenData(KeyVaultSecret secret)
+        {
+            var tokenData = new TokenData(secret.Name, secret.Value);
+            _cache.Set(tokenData.Id, tokenData, new MemoryCacheEntryOptions { SlidingExpiration = TimeSpan.FromSeconds(_cacheSeconds) });
+            return tokenData;
         }
     }
 }
