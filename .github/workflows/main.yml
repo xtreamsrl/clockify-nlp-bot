@@ -2,7 +2,7 @@ name: .NET Core CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, 'actions-merge-preview/**' ]
   pull_request:
     branches: [ main ]
 
