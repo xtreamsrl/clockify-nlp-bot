@@ -135,7 +135,7 @@ namespace Bot
 
         private static void ConfigureAzureKeyVault(IServiceCollection services, string keyVaultName, int cacheSeconds)
         {
-            if (keyVaultName == null)
+            if (string.IsNullOrEmpty(keyVaultName))
             {
                 services.AddSingleton<ITokenRepository, InMemoryTokenRepository>();
                 return;
@@ -154,6 +154,7 @@ namespace Bot
             var secretClient = new SecretClient(new Uri($"https://{keyVaultName}.vault.azure.net/"),
                 new DefaultAzureCredential(), options);
             services.AddSingleton(secretClient);
+            services.AddMemoryCache();
             services.AddSingleton<ITokenRepository>(
                 sp => new TokenRepository(secretClient, sp.GetRequiredService<IMemoryCache>(), cacheSeconds));
         }
