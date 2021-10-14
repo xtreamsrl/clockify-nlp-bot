@@ -215,7 +215,7 @@ namespace Bot.Clockify.Fill
                 var createdTask = await _clockifyService.CreateTaskAsync(clockifyToken, new TaskReq(newTaskName!),
                     project.Id, project.WorkspaceId);
                 fullEntity += " - " + createdTask.Name;
-                return await AddEntryAndExit(stepContext, cancellationToken, clockifyToken, project, minutes, 
+                return await AddEntryAndExit(stepContext, cancellationToken, clockifyToken, project, start, end, 
                     fullEntity, createdTask);
             }
             catch (Exception)
@@ -224,7 +224,7 @@ namespace Bot.Clockify.Fill
                 await stepContext.Context.SendActivityAsync(
                     MessageFactory.Text(_messageSource.TaskCreationError), cancellationToken);
                 // TODO Maybe we should just return the error and end the dialog.
-                return await AddEntryAndExit(stepContext, cancellationToken, clockifyToken, project, minutes,
+                return await AddEntryAndExit(stepContext, cancellationToken, clockifyToken, project, start, end,
                     fullEntity, null);
             }
         }
@@ -251,9 +251,10 @@ namespace Bot.Clockify.Fill
             CancellationToken cancellationToken, string clockifyToken, ProjectDo recognizedProject, 
             DateTime start, DateTime end, string fullEntity, TaskDo? task)
         {
-            var current =
+            double current =
                 await _timeEntryStoreService.AddTimeEntries(clockifyToken, recognizedProject, task, start, end);
-            var messageText = string.Format(_messageSource.AddEntryFeedback, (end-start).TotalMinutes, fullEntity, current);
+            string messageText = 
+                string.Format(_messageSource.AddEntryFeedback, (end-start).TotalMinutes, fullEntity, current);
             string platform = stepContext.Context.Activity.ChannelId;
             var ma = GetExitMessageActivity(messageText, platform);
             await stepContext.Context.SendActivityAsync(ma, cancellationToken);
