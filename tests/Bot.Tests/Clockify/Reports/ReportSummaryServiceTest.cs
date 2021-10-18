@@ -6,6 +6,7 @@ using Bot.Clockify.Reports;
 using Bot.Data;
 using Bot.States;
 using FluentAssertions;
+using Microsoft.Bot.Connector;
 using Moq;
 using Xunit;
 
@@ -55,7 +56,7 @@ namespace Bot.Tests.Clockify.Reports
                 TestClockifyUtils.ClockifyMessageSource());
 
             // Act
-            string summary = await reportSummaryService.Summary(userProfile, dateRange);
+            string summary = await reportSummaryService.Summary(Channels.Telegram, userProfile, dateRange);
 
             // Assert
             summary.Should().BeEquivalentTo($"You worked **2.72d** in 01 January 2020 - 01 March 2020" +
@@ -104,7 +105,7 @@ namespace Bot.Tests.Clockify.Reports
                 TestClockifyUtils.ClockifyMessageSource());
 
             // Act
-            string summary = await reportSummaryService.Summary(userProfile, dateRange);
+            string summary = await reportSummaryService.Summary(Channels.Telegram, userProfile, dateRange);
 
             // Assert
             summary.Should().BeEquivalentTo($"You worked **2.28d** in 01 January 2020 - 01 March 2020" +
@@ -151,7 +152,7 @@ namespace Bot.Tests.Clockify.Reports
                 TestClockifyUtils.ClockifyMessageSource());
 
             // Act
-            string summary = await reportSummaryService.Summary(userProfile, dateRange);
+            string summary = await reportSummaryService.Summary(Channels.Telegram, userProfile, dateRange);
             summary.Should().BeEquivalentTo("\n\nNo work to report on workspace **workspace1**\n\n");
         }
 
