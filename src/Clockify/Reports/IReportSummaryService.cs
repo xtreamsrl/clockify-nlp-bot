@@ -5,6 +5,6 @@ namespace Bot.Clockify.Reports
 {
     public interface IReportSummaryService
     {
-        Task<string> Summary(UserProfile userProfile, DateRange dateRange);
+        Task<string> Summary(string channel, UserProfile userProfile, DateRange dateRange);
     }
 }

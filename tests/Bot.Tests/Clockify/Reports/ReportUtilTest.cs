@@ -3,6 +3,7 @@ using System.Linq;
 using Bot.Clockify.Models;
 using Bot.Clockify.Reports;
 using FluentAssertions;
+using Microsoft.Bot.Connector;
 using Xunit;
 
 namespace Bot.Tests.Clockify.Reports
@@ -69,9 +70,25 @@ namespace Bot.Tests.Clockify.Reports
                 new ReportEntry("forecasting", "", 7.5f)
             };
 
-            var summary = ReportUtil.SummaryForReportEntries(reportEntries);
+            string summary = ReportUtil.SummaryForReportEntries(Channels.Telegram, reportEntries);
 
             summary.Should().BeEquivalentTo("\n- **forecasting**: 0.94d" +
+                                            "\n- **r&d** - blockchain: 1.91d");
+        }
+        
+        [Fact]
+        [UseCulture("en-US")]
+        public void GenerateSummary_ProjectWithUnderscoreOnTelegramChannel_ReturnsFormattedListOfEntries()
+        {
+            var reportEntries = new[]
+            {
+                new ReportEntry("r&d", "blockchain", 15.25f),
+                new ReportEntry("brand_identity", "", 7.5f)
+            };
+
+            string summary = ReportUtil.SummaryForReportEntries(Channels.Telegram, reportEntries);
+
+            summary.Should().BeEquivalentTo("\n- **brand\\_identity**: 0.94d" +
                                             "\n- **r&d** - blockchain: 1.91d");
         }
 
