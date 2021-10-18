@@ -83,15 +83,15 @@ namespace Bot.Tests.Common.Recognizer
             
             Func<string> getDateTimeWithNullDateTimeEntities = () =>  lsEmptyDateTimeTextInstance.WorkedDuration();
             getDateTimeWithNullDateTimeEntities.Should().ThrowExactly<InvalidWorkedDurationException>()
-                .WithMessage("No worked period has been recognized");
+                .WithMessage("No worked duration has been recognized");
             
             Func<string> getDateTimeWithEmptyEntities = () =>  lsEmptyInstance.WorkedDuration();
             getDateTimeWithEmptyEntities.Should().ThrowExactly<InvalidWorkedDurationException>()
-                .WithMessage("No worked period has been recognized");
+                .WithMessage("No worked duration has been recognized");
 
             Func<string> getDateTimeWithNullDateTimeText = () => lsNullDateTimeInstance.WorkedDuration();
             getDateTimeWithNullDateTimeText.Should().ThrowExactly<InvalidWorkedDurationException>()
-                .WithMessage("No worked period has been recognized");
+                .WithMessage("No worked duration has been recognized");
         }
 
         [Fact]
