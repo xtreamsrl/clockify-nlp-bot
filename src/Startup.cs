@@ -18,6 +18,7 @@ using F23.StringSimilarity;
 using F23.StringSimilarity.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Azure;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
@@ -91,6 +92,7 @@ namespace Bot
 
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
             services.AddSingleton<ClockifySetupDialog, ClockifySetupDialog>();
+            services.AddSingleton<IContentTypeProvider, FileExtensionContentTypeProvider>();
 
             // TODO use memory storage only for Development
             IStorage storage = new MemoryStorage();

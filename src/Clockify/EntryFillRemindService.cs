@@ -12,17 +12,21 @@ namespace Bot.Clockify
 {
     public class EntryFillRemindService : GenericRemindService
     {
-        private static BotCallbackHandler BotCallbackMaker(Func<string> getResource)
+        private static BotCallbackHandler BotCallbackMaker(Func<string> getResource, IContentTypeProvider cTypeProvider)
         {
             return async (turn, token) =>
             {
                 string content = getResource();
                 if (Uri.IsWellFormedUriString(content, UriKind.RelativeOrAbsolute))
                 {
-                    new FileExtensionContentTypeProvider().TryGetContentType(content, out string contentType);
-                    var attachment = new Attachment(contentType, content);   
-                    await turn.SendActivityAsync(new Activity(text: "", 
-                        attachments:new List<Attachment> {attachment}), token);
+                    cTypeProvider.TryGetContentType(content, out string contentType);
+                    if (contentType != null)
+                    {
+                        var attachment = new Attachment(contentType, content);   
+                        await turn.SendActivityAsync(new Activity(text: "", 
+                            attachments:new List<Attachment> {attachment}), token);
+                    }
+                    // TODO: handle fallback reminder
                 }
                 else
                 {
@@ -33,9 +37,9 @@ namespace Bot.Clockify
 
         public EntryFillRemindService(IUserProfilesProvider userProfilesProvider, IConfiguration configuration,
             ICompositeNeedReminderService compositeNeedRemindService, IClockifyMessageSource messageSource,
-            ILogger<EntryFillRemindService> logger) :
+            IContentTypeProvider cTypeProvider, ILogger<EntryFillRemindService> logger) :
             base(userProfilesProvider, configuration, compositeNeedRemindService,
-                BotCallbackMaker(() => messageSource.RemindEntryFill), logger)
+                BotCallbackMaker(() => messageSource.RemindEntryFill, cTypeProvider), logger)
         {
         }
     }
