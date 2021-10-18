@@ -91,6 +91,22 @@ namespace Bot.Tests.Clockify.Reports
             summary.Should().BeEquivalentTo("\n- **brand\\_identity**: 0.94d" +
                                             "\n- **r&d** - blockchain: 1.91d");
         }
+        
+        [Fact]
+        [UseCulture("en-US")]
+        public void GenerateSummary_ProjectWithUnderscoresOnTelegramChannel_ReturnsFormattedListOfEntries()
+        {
+            var reportEntries = new[]
+            {
+                new ReportEntry("r&d", "blockchain", 15.25f),
+                new ReportEntry("brand_identity_routine", "", 7.5f)
+            };
+
+            string summary = ReportUtil.SummaryForReportEntries(Channels.Telegram, reportEntries);
+
+            summary.Should().BeEquivalentTo("\n- **brand\\_identity\\_routine**: 0.94d" +
+                                            "\n- **r&d** - blockchain: 1.91d");
+        }
 
 
         [Fact]
