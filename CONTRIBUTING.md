@@ -30,7 +30,7 @@ but you must follow these prerequisites and guidelines:
 
 - [Let us know you are working on it](#let-us-know-you-are-working-on-it)
 
-- Expect feedback and to make changes to your contributions
+- Embrace feedbacks and be ready to make changes to your contributions
 
 - Write tests
 
