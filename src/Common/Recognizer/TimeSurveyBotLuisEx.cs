@@ -79,7 +79,8 @@ namespace Bot.Common.Recognizer
                 var resolvedPeriod = ((List<Dictionary<string, string>>)recognizedDateTime.Resolution["values"])[0];
                 // TODO: use resolvedPeriod to pick a (start, end) period
             }
-            return (DateTime.Today.AddHours(9), DateTime.Today.AddHours(9).AddMinutes(minutes));
+            var thisMorning = DateTime.Today.AddHours(9);
+            return (thisMorning, thisMorning.AddMinutes(minutes));
         }
     }
 }
