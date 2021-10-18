@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
 using Bot.Clockify.Models;
+using Bot.Common.ChannelData.Telegram;
 using Bot.Common.Recognizer;
 using Bot.Data;
 using Bot.States;
@@ -12,6 +13,7 @@ using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Bot.Clockify.Fill
 {
@@ -26,7 +28,6 @@ namespace Bot.Clockify.Fill
         private readonly IClockifyMessageSource _messageSource;
         private readonly ILogger<EntryFillDialog> _logger;
 
-
         private const string TaskWaterfall = "TaskWaterfall";
         private const string AskForTaskStep = "AskForTask";
         private const string AskForNewTaskNameStep = "AskForNewTaskNameStep";
@@ -34,6 +35,8 @@ namespace Bot.Clockify.Fill
         private const string No = "no";
         private const string NewTask = "new task";
         private const string Abort = "abort";
+
+        private const string Telegram = "telegram";
 
         public EntryFillDialog(ClockifyEntityRecognizer clockifyWorkableRecognizer,
             ITimeEntryStoreService timeEntryStoreService, WorthAskingForTaskService worthAskingForTask,
@@ -67,7 +70,7 @@ namespace Bot.Clockify.Fill
             var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
             string clockifyToken = tokenData.Value;
             stepContext.Values["ClockifyTokenId"] = userProfile.ClockifyTokenId;
-            var luisResult = (TimeSurveyBotLuis)stepContext.Options;
+            var luisResult = (TimeSurveyBotLuis) stepContext.Options;
 
             try
             {
@@ -104,7 +107,7 @@ namespace Bot.Clockify.Fill
                             DisplayText = _messageSource.NewTask
                         });
                     var activity = MessageFactory.Text(_messageSource.TaskSelectionQuestion);
-                    activity.SuggestedActions = new SuggestedActions { Actions = suggestions };
+                    activity.SuggestedActions = new SuggestedActions {Actions = suggestions};
                     return await stepContext.PromptAsync(AskForTaskStep, new PromptOptions
                     {
                         Prompt = activity,
@@ -145,12 +148,12 @@ namespace Bot.Clockify.Fill
         private async Task<DialogTurnResult> CreateWithTaskOrAskForNewTaskAsync(WaterfallStepContext stepContext,
             CancellationToken cancellationToken)
         {
-            var clockifyTokenId = (string)stepContext.Values["ClockifyTokenId"];
-            var project = (ProjectDo)stepContext.Values["Project"];
-            var minutes = (double)stepContext.Values["Minutes"];
+            var clockifyTokenId = (string) stepContext.Values["ClockifyTokenId"];
+            var project = (ProjectDo) stepContext.Values["Project"];
+            var minutes = (double) stepContext.Values["Minutes"];
             TaskDo? recognizedTask = null;
             var requestedTask = stepContext.Result.ToString();
-            var fullEntity = (string)stepContext.Values["FullEntity"];
+            var fullEntity = (string) stepContext.Values["FullEntity"];
             switch (requestedTask?.ToLower())
             {
                 case NewTask:
@@ -175,7 +178,8 @@ namespace Bot.Clockify.Fill
                     string clockifyToken = tokenData.Value;
                     try
                     {
-                        recognizedTask = await _clockifyWorkableRecognizer.RecognizeTask(requestedTask, clockifyToken, project);
+                        recognizedTask =
+                            await _clockifyWorkableRecognizer.RecognizeTask(requestedTask, clockifyToken, project);
                         fullEntity += " - " + recognizedTask.Name;
                     }
                     catch (CannotRecognizeProjectException e)
@@ -195,21 +199,21 @@ namespace Bot.Clockify.Fill
         private async Task<DialogTurnResult> FeedbackAndExit(WaterfallStepContext stepContext,
             CancellationToken cancellationToken)
         {
-            var clockifyTokenId = (string)stepContext.Values["ClockifyTokenId"];
-            var project = (ProjectDo)stepContext.Values["Project"];
-            var minutes = (double)stepContext.Values["Minutes"];
+            var clockifyTokenId = (string) stepContext.Values["ClockifyTokenId"];
+            var project = (ProjectDo) stepContext.Values["Project"];
+            var minutes = (double) stepContext.Values["Minutes"];
             var newTaskName = stepContext.Result.ToString();
-            var fullEntity = (string)stepContext.Values["FullEntity"];
-            
+            var fullEntity = (string) stepContext.Values["FullEntity"];
+
             var tokenData = await _tokenRepository.ReadAsync(clockifyTokenId);
             string clockifyToken = tokenData.Value;
             try
             {
-                var createdTask =
-                    await _clockifyService.CreateTaskAsync(clockifyToken, new TaskReq(newTaskName!), project.Id, project.WorkspaceId);
+                var createdTask = await _clockifyService.CreateTaskAsync(clockifyToken, new TaskReq(newTaskName!),
+                    project.Id, project.WorkspaceId);
                 fullEntity += " - " + createdTask.Name;
-                return await AddEntryAndExit(stepContext, cancellationToken, clockifyToken, project, minutes, fullEntity,
-                    createdTask);
+                return await AddEntryAndExit(stepContext, cancellationToken, clockifyToken, project, minutes, 
+                    fullEntity, createdTask);
             }
             catch (Exception)
             {
@@ -217,7 +221,8 @@ namespace Bot.Clockify.Fill
                 await stepContext.Context.SendActivityAsync(
                     MessageFactory.Text(_messageSource.TaskCreationError), cancellationToken);
                 // TODO Maybe we should just return the error and end the dialog.
-                return await AddEntryAndExit(stepContext, cancellationToken, clockifyToken, project, minutes, fullEntity, null);
+                return await AddEntryAndExit(stepContext, cancellationToken, clockifyToken, project, minutes,
+                    fullEntity, null);
             }
         }
 
@@ -225,8 +230,8 @@ namespace Bot.Clockify.Fill
             CancellationToken cancellationToken)
         {
             string? requestedTask = promptContext.Recognized.Value;
-            var options = (ClockifyTaskValidatorOptions)promptContext.Options.Validations;
-            string[] specialAnswers = { No, NewTask, Abort };
+            var options = (ClockifyTaskValidatorOptions) promptContext.Options.Validations;
+            string[] specialAnswers = {No, NewTask, Abort};
             if (specialAnswers.Contains(requestedTask?.ToLower())) return true;
             try
             {
@@ -243,14 +248,31 @@ namespace Bot.Clockify.Fill
             CancellationToken cancellationToken,
             string clockifyToken, ProjectDo recognizedProject, double minutes, string fullEntity, TaskDo? task)
         {
-            double current =
+            var current =
                 await _timeEntryStoreService.AddTimeEntries(clockifyToken, recognizedProject, task, minutes);
-
-            var feedback =
-                MessageFactory.Text(string.Format(_messageSource.AddEntryFeedback, minutes, fullEntity, current));
-            feedback.SuggestedActions = new SuggestedActions { Actions = new List<CardAction>() };
-            await stepContext.Context.SendActivityAsync(feedback, cancellationToken);
+            var messageText = string.Format(_messageSource.AddEntryFeedback, minutes, fullEntity, current);
+            string platform = stepContext.Context.Activity.ChannelId;
+            var ma = GetExitMessageActivity(messageText, platform);
+            await stepContext.Context.SendActivityAsync(ma, cancellationToken);
             return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
+        }
+        
+        private static IMessageActivity GetExitMessageActivity(string messageText, string platform)
+        {
+            IMessageActivity ma;
+            switch (platform.ToLower())
+            {
+                case Telegram:
+                    ma = Activity.CreateMessageActivity();
+                    var sendMessageParams = new SendMessageParameters(messageText, new ReplyKeyboardRemove());
+                    var channelData = new SendMessage(sendMessageParams);
+                    ma.ChannelData = JsonConvert.SerializeObject(channelData);
+                    return ma;
+                default:
+                    ma = MessageFactory.Text(messageText);
+                    ma.SuggestedActions = new SuggestedActions {Actions = new List<CardAction>()};
+                    return ma;
+            };
         }
     }
 
