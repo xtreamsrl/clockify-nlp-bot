@@ -6,6 +6,7 @@ using Bot.Data;
 using Bot.States;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Connector;
 
 namespace Bot.Clockify.Reports
 {
@@ -50,7 +51,9 @@ namespace Bot.Clockify.Reports
                     return await stepContext.EndDialogAsync(null, cancellationToken);
                 }
 
+                string channel = stepContext.Context.Activity.ChannelId;
                 string summary = await _reportSummaryService.Summary(
+                    channel,
                     userProfile,
                     dateRange
                 );

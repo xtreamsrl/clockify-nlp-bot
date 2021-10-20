@@ -22,7 +22,7 @@ namespace Bot.Clockify.Reports
             _messageSource = messageSource;
         }
 
-        public async Task<string> Summary(UserProfile userProfile, DateRange dateRange)
+        public async Task<string> Summary(string channel, UserProfile userProfile, DateRange dateRange)
         {
             var tokenData = await _tokenRepository.ReadAsync(userProfile.ClockifyTokenId!);
             string clockifyToken = tokenData.Value;
@@ -53,7 +53,7 @@ namespace Bot.Clockify.Reports
 
                 if (reportEntries.Count > 0)
                 {
-                    workspaceBuilder.Append(ReportUtil.SummaryForReportEntries(reportEntries));
+                    workspaceBuilder.Append(ReportUtil.SummaryForReportEntries(channel, reportEntries));
                     fullSummary.Append(workspaceBuilder);
                 }
                 else

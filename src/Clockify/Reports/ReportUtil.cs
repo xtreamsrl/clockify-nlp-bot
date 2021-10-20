@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using Bot.Clockify.Models;
+using Microsoft.Bot.Connector;
 
 namespace Bot.Clockify.Reports
 {
@@ -27,17 +28,21 @@ namespace Bot.Clockify.Reports
             return reportEntries;
         }
 
-        public static string SummaryForReportEntries(IEnumerable<ReportEntry> reportEntries)
+        public static string SummaryForReportEntries(string channel, IEnumerable<ReportEntry> reportEntries)
         {
             var summary = new StringBuilder();
             var sortedEntries = 
                 reportEntries.OrderBy(entry => entry.Project).ThenBy(entry => entry.Task);
             foreach (var reportEntry in sortedEntries)
             {
+                string project = reportEntry.Project.Contains("_") && channel == Channels.Telegram
+                    ? string.Join("\\_", reportEntry.Project.Split("_"))
+                    : reportEntry.Project;
+
                 summary.Append(
                     reportEntry.Task != ""
-                        ? $"\n- **{reportEntry.Project}** - {reportEntry.Task}: {FormatDuration(reportEntry.Hours)}"
-                        : $"\n- **{reportEntry.Project}**: {FormatDuration(reportEntry.Hours)}");
+                        ? $"\n- **{project}** - {reportEntry.Task}: {FormatDuration(reportEntry.Hours)}"
+                        : $"\n- **{project}**: {FormatDuration(reportEntry.Hours)}");
             }
             return summary.ToString();
         }
