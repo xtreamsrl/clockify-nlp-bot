@@ -32,63 +32,56 @@ namespace Bot.Common.Recognizer
         public async Task<T> RecognizeAsync<T>(ITurnContext turnContext, CancellationToken cancellationToken)
             where T : IRecognizerConvert, new()
         {
-            var result = new T();
-            result.Convert(await RecognizeInternalAsync(turnContext, cancellationToken).ConfigureAwait(false));
-            return result;
-        }
-
-        private async Task<RecognizerResult> RecognizeInternalAsync(ITurnContext turnContext,
-            CancellationToken cancellationToken)
-        {
-            if (turnContext.Activity.Type != ActivityTypes.Message)
-            {
-                return null;
-            }
+            // TODO here we need to use our model, otherwise is complex to reconstruct luis response based on the intent
+            // if (turnContext.Activity.Type != ActivityTypes.Message)
+            // {
+            //     return null;
+            // }
 
             string? utterance = turnContext.Activity?.AsMessageActivity()?.Text;
-            RecognizerResult recognizerResult;
+            TimeSurveyBotLuis luisResult = null;
 
             if (string.IsNullOrWhiteSpace(utterance))
             {
-                recognizerResult = new RecognizerResult
+                luisResult = new TimeSurveyBotLuis()
                 {
                     Text = utterance,
-                    Intents = new Dictionary<string, IntentScore> { { string.Empty, new IntentScore { Score = 1.0 } } },
-                    Entities = new JObject(),
+                    Intents = new Dictionary<TimeSurveyBotLuis.Intent, IntentScore>
+                        { { TimeSurveyBotLuis.Intent.None, new IntentScore { Score = 1.0 } } },
                 };
             }
             else
             {
                 var (intents, entities) = ExtractIntentsAndEntities(utterance);
-                recognizerResult = new RecognizerResult
+                luisResult = new TimeSurveyBotLuis
                 {
                     Text = utterance,
                     Intents = intents,
-                    Entities = entities,
+                    // Entities = entities,
                 };
             }
 
-            return recognizerResult;
+            // TODO Verify
+            return (object) luisResult is T ? (T)(object) luisResult : default;
         }
 
-        private static (Dictionary<string, IntentScore> intents, JObject entities) ExtractIntentsAndEntities(
-            string utterance)
+
+        private static (Dictionary<TimeSurveyBotLuis.Intent, IntentScore> intents, JObject entities)
+            ExtractIntentsAndEntities(string utterance)
         {
             int indexOfColon = utterance.IndexOf(":", StringComparison.Ordinal);
             
-            string intent = utterance[..indexOfColon];
-            var intents = new Dictionary<string, IntentScore> { { intent, new IntentScore { Score = 1.0 } } };
-            
-            string[] entitiesStrings = utterance[indexOfColon..].Split(",");
-            JObject entities = ExtractEntities(entitiesStrings);
-            
-            return (intents, entities);
-        }
+            string intentString = indexOfColon == -1 ? utterance : utterance[..indexOfColon];
+            var intent = Enum.TryParse(intentString, true, out TimeSurveyBotLuis.Intent result)
+                ? result
+                : TimeSurveyBotLuis.Intent.None;
+            var intents = new Dictionary<TimeSurveyBotLuis.Intent, IntentScore>
+                { { intent, new IntentScore { Score = 1.0 } } };
 
-        private static JObject ExtractEntities(string[] entitiesStrings)
-        {
-            
-            throw new NotImplementedException();
+            // string[] entitiesStrings = utterance[indexOfColon..].Split(",");
+            JObject entities = new JObject();
+
+            return (intents, entities);
         }
     }
 }
