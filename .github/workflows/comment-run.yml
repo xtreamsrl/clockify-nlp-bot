@@ -1,4 +1,4 @@
-﻿name: "Comment run"
+﻿name: Comment run
 on:
   issue_comment:
     types: [created, edited]
