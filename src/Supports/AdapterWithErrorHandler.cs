@@ -1,4 +1,5 @@
-﻿using Bot.Common;
+﻿using System;
+using Bot.Common;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Builder.TraceExtensions;
@@ -11,7 +12,8 @@ namespace Bot.Supports
     public class AdapterWithErrorHandler : BotFrameworkHttpAdapter
     {
         public AdapterWithErrorHandler(IHostEnvironment environment, IConfiguration configuration,
-            ILogger<BotFrameworkHttpAdapter> logger, ICommonMessageSource messageSource) : base(configuration, logger)
+            ILogger<BotFrameworkHttpAdapter> logger, ICommonMessageSource messageSource,
+            ConversationState? conversationState = default) : base(configuration, logger)
         {
             OnTurnError = async (turnContext, exception) =>
             {
@@ -27,6 +29,22 @@ namespace Bot.Supports
                 else
                 {
                     await turnContext.SendActivityAsync(MessageFactory.Text(messageSource.GenericError));
+                }
+                
+                if (conversationState != null)
+                {
+                    try
+                    {
+                        // Delete the conversationState for the current conversation to prevent the
+                        // bot from getting stuck in a error-loop caused by being in a bad state.
+                        // ConversationState should be thought of as similar to "cookie-state" in a Web pages.
+                        await conversationState.DeleteAsync(turnContext);
+                    }
+                    catch (Exception e)
+                    {
+                        logger.LogError(e,
+                            "Exception caught on attempting to Delete ConversationState : {ExMessage}", e.Message);
+                    }
                 }
 
                 // Send a trace activity, which will be displayed in the Bot Framework Emulator
