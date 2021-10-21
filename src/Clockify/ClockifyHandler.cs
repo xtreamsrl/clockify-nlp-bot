@@ -1,13 +1,9 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Bot.Clockify.Client;
 using Bot.Clockify.Fill;
-using Bot.Clockify.Models;
 using Bot.Clockify.Reports;
 using Bot.Common.Recognizer;
-using Bot.Data;
 using Bot.States;
 using Bot.Supports;
 using Microsoft.Bot.Builder;
@@ -21,23 +17,18 @@ namespace Bot.Clockify
         private readonly ReportDialog _reportDialog;
         private readonly StopReminderDialog _stopReminderDialog;
         private readonly ClockifySetupDialog _clockifySetupDialog;
-        private readonly IClockifyService _clockifyService;
         private readonly DialogSet _dialogSet;
         private readonly IStatePropertyAccessor<DialogState> _dialogState;
-        private readonly ITokenRepository _tokenRepository;
 
         public ClockifyHandler(EntryFillDialog fillDialog, ReportDialog reportDialog,
-            StopReminderDialog stopReminderDialog, IClockifyService clockifyService,
-            ConversationState conversationState, ClockifySetupDialog clockifySetupDialog,
-            ITokenRepository tokenRepository)
+            StopReminderDialog stopReminderDialog, ConversationState conversationState,
+            ClockifySetupDialog clockifySetupDialog)
         {
             _dialogState = conversationState.CreateProperty<DialogState>("ClockifyDialogState");
             _fillDialog = fillDialog;
             _reportDialog = reportDialog;
             _stopReminderDialog = stopReminderDialog;
-            _clockifyService = clockifyService;
             _clockifySetupDialog = clockifySetupDialog;
-            _tokenRepository = tokenRepository;
             _dialogSet = new DialogSet(_dialogState)
                 .Add(_fillDialog)
                 .Add(_stopReminderDialog)
