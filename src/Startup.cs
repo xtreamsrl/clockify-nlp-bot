@@ -19,12 +19,14 @@ using F23.StringSimilarity.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.AI.Luis;
 using Microsoft.Bot.Builder.Azure;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using LuisPredictionOptions = Microsoft.Bot.Builder.AI.LuisV3.LuisPredictionOptions;
 
 namespace Bot
 {
@@ -108,11 +110,13 @@ namespace Bot
             services.AddSingleton(storage);
             services.AddSingleton<ConversationState>();
             services.AddSingleton<UserState>();
-            services.AddSingleton<IRecognizer, CommonRecognizer>();
             services.AddSingleton<IBot, Supports.Bot>();
             services.AddSingleton<IAzureBlobReader, AzureBlobReader>();
             services.AddSingleton<IUserProfileStorageReader, UserProfileStorageReader>();
             services.AddSingleton<IUserProfilesProvider, UserProfilesProvider>();
+
+            ConfigureRecognizer(services, _configuration["LuisAppId"], _configuration["LuisAPIKey"],
+                _configuration["LuisAPIHostName"]);
 
             // Bot supports
             services.AddSingleton<IBotHandler, UtilityHandler>();
@@ -157,6 +161,39 @@ namespace Bot
             services.AddMemoryCache();
             services.AddSingleton<ITokenRepository>(
                 sp => new TokenRepository(secretClient, sp.GetRequiredService<IMemoryCache>(), cacheSeconds));
+        }
+
+        private static void ConfigureRecognizer(IServiceCollection services, string? luisAppId, string? luisApiKey,
+            string? luisApiHostName)
+        {
+            bool luisIsConfigured = !string.IsNullOrEmpty(luisAppId) &&
+                                    !string.IsNullOrEmpty(luisApiKey) &&
+                                    !string.IsNullOrEmpty(luisApiHostName);
+            if (!luisIsConfigured)
+            {
+                services.AddSingleton<IRecognizer, InMemoryCommonRecognizer>();
+            }
+            else
+            {
+                var luisApplication = new LuisApplication(
+                    luisAppId,
+                    luisApiKey,
+                    "https://" + luisApiHostName
+                );
+
+                // Set the recognizer options depending on which endpoint version you want to use.
+                // More details can be found in https://docs.microsoft.com/en-gb/azure/cognitive-services/luis/luis-migration-api-v3
+                var recognizerOptions = new LuisRecognizerOptionsV3(luisApplication)
+                {
+                    PredictionOptions = new LuisPredictionOptions
+                    {
+                        IncludeInstanceData = true
+                    }
+                };
+
+                services.AddSingleton<IRecognizer>(sp => new CommonRecognizer(new LuisRecognizer(recognizerOptions)));
+            }
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
