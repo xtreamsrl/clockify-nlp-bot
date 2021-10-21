@@ -32,23 +32,17 @@ namespace Bot.Common.Recognizer
         public async Task<T> RecognizeAsync<T>(ITurnContext turnContext, CancellationToken cancellationToken)
             where T : IRecognizerConvert, new()
         {
-            // TODO here we need to use our model, otherwise is complex to reconstruct luis response based on the intent
-            // if (turnContext.Activity.Type != ActivityTypes.Message)
-            // {
-            //     return null;
-            // }
+            if (turnContext.Activity.Type != ActivityTypes.Message)
+            {
+                return ConvertToT<T>(DefaultIntent());
+            }
 
             string? utterance = turnContext.Activity?.AsMessageActivity()?.Text;
-            TimeSurveyBotLuis luisResult = null;
+            TimeSurveyBotLuis luisResult;
 
             if (string.IsNullOrWhiteSpace(utterance))
             {
-                luisResult = new TimeSurveyBotLuis()
-                {
-                    Text = utterance,
-                    Intents = new Dictionary<TimeSurveyBotLuis.Intent, IntentScore>
-                        { { TimeSurveyBotLuis.Intent.None, new IntentScore { Score = 1.0 } } },
-                };
+                luisResult = DefaultIntent(utterance);
             }
             else
             {
@@ -57,16 +51,31 @@ namespace Bot.Common.Recognizer
                 {
                     Text = utterance,
                     Intents = intents,
-                    // Entities = entities,
+                    Entities = entities
                 };
             }
 
-            // TODO Verify
+            // TODO Verify, it works, but we should do it better
+            return ConvertToT<T>(luisResult);
+        }
+
+        private static T ConvertToT<T>(TimeSurveyBotLuis luisResult) where T : IRecognizerConvert, new()
+        {
+            // TODO maybe substitute default with new T()
             return (object) luisResult is T ? (T)(object) luisResult : default;
         }
 
+        private static TimeSurveyBotLuis DefaultIntent(string? utterance = null)
+        {
+            return new TimeSurveyBotLuis
+            {
+                Text = utterance ?? "",
+                Intents = new Dictionary<TimeSurveyBotLuis.Intent, IntentScore>
+                    { { TimeSurveyBotLuis.Intent.None, new IntentScore { Score = 1.0 } } },
+            };
+        }
 
-        private static (Dictionary<TimeSurveyBotLuis.Intent, IntentScore> intents, JObject entities)
+        private static (Dictionary<TimeSurveyBotLuis.Intent, IntentScore> intents, TimeSurveyBotLuis._Entities entities)
             ExtractIntentsAndEntities(string utterance)
         {
             int indexOfColon = utterance.IndexOf(":", StringComparison.Ordinal);
@@ -78,10 +87,19 @@ namespace Bot.Common.Recognizer
             var intents = new Dictionary<TimeSurveyBotLuis.Intent, IntentScore>
                 { { intent, new IntentScore { Score = 1.0 } } };
 
-            // string[] entitiesStrings = utterance[indexOfColon..].Split(",");
-            JObject entities = new JObject();
+            var entities = indexOfColon != -1
+                ? ExtractEntities(utterance[indexOfColon..].Split(","))  // TODO check when we have only one entity
+                : new TimeSurveyBotLuis._Entities();
 
             return (intents, entities);
         }
+        
+        // TODO we can use a map of Intent: string[]
+        // TODO foreach intent provide a converter string -> TimeSurveyBotLuis._Entities
+        private static TimeSurveyBotLuis._Entities ExtractEntities(string[] entities)
+        {
+            return new TimeSurveyBotLuis._Entities();
+        }
+        
     }
 }
