@@ -12,12 +12,19 @@ namespace Bot.Common.Recognizer
 {
     public class InMemoryCommonRecognizer : IRecognizer
     {
+        /// <summary>
+        /// Returns an empty RecognizerResult. Please use the generic method instead.
+        /// </summary>
+        /// <param name="turnContext">The context for a turn of a bot.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects
+        /// or threads to receive notice of cancellation.</param>
+        /// <returns>An empty RecognizerResult</returns>
         public Task<RecognizerResult> RecognizeAsync(ITurnContext turnContext, CancellationToken cancellationToken)
         {
             if (turnContext.Activity.Type != ActivityTypes.Message)
             {
                 // it's kind of safe to return null, we won't use any result
-                return null;
+                return null!;
             }
 
             string? utterance = turnContext.Activity?.AsMessageActivity()?.Text;
@@ -31,6 +38,18 @@ namespace Bot.Common.Recognizer
                 });
         }
 
+        /// <summary>
+        /// Creates a TimeSurveyBotLuis instance from user message text formatted with the convention:
+        ///
+        /// <c>Intent: entity1, ...</c>
+        ///
+        /// </summary>
+        /// 
+        /// <param name="turnContext">The context for a turn of a bot.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects
+        /// or threads to receive notice of cancellation.</param>
+        /// <typeparam name="T">Use only TimeSurveyBotLuis</typeparam>
+        /// <returns>A TimeSurveyBotLuis instance</returns>
         public Task<T> RecognizeAsync<T>(ITurnContext turnContext, CancellationToken cancellationToken)
             where T : IRecognizerConvert, new()
         {
@@ -63,7 +82,7 @@ namespace Bot.Common.Recognizer
         private static T ConvertToT<T>(TimeSurveyBotLuis luisResult) where T : IRecognizerConvert, new()
         {
             // it's kind of safe to return null, we won't use any result
-            return (object)luisResult is T ? (T)(object)luisResult : default;
+            return (luisResult is T ? (T)(object)luisResult : default)!;
         }
 
         private static TimeSurveyBotLuis DefaultIntent(string? utterance = null)
