@@ -98,7 +98,8 @@ namespace Bot.Common.Recognizer
         private static TimeSurveyBotLuis._Entities ExtractEntities(TimeSurveyBotLuis.Intent intent,
             IEnumerable<string> entities)
         {
-            IReadOnlyList<string> polishedEntities = entities.Select(e => e.Trim(' ')).ToArray();
+            IReadOnlyList<string> polishedEntities =
+                entities.Select(e => e.Trim(' ')).Where(e => !string.IsNullOrEmpty(e)).ToArray();
             switch (intent)
             {
                 case TimeSurveyBotLuis.Intent.Fill:
