@@ -30,23 +30,23 @@ namespace Bot.Common.Recognizer
             return Enumerable.First<InstanceData>(workedEntityInstances).Text;
         }
 
-        public string TimePeriod()
+        public string WorkedDuration()
         {
             var workedPeriodInstances = Entities._instance.datetime;
             if (
                 workedPeriodInstances == null ||
                 workedPeriodInstances.Length == 0 ||
-                Enumerable.First<InstanceData>(workedPeriodInstances).Text == null)
+                workedPeriodInstances.First<InstanceData>().Text == null)
             {
-                throw new InvalidWorkedPeriodInstanceException("No worked period has been recognized");
+                throw new InvalidWorkedDurationException("No worked duration has been recognized");
             }
 
-            return Enumerable.First<InstanceData>(workedPeriodInstances).Text;
+            return workedPeriodInstances.First<InstanceData>().Text;
         }
 
-        public double TimePeriodInMinutes(string culture = Culture.English)
+        public double WorkedDurationInMinutes(string culture = Culture.English)
         {
-            string timePeriod = TimePeriod();
+            string timePeriod = WorkedDuration();
             try
             {
                 var recognizedDateTime = DateTimeRecognizer.RecognizeDateTime(timePeriod, culture).First();
@@ -57,16 +57,30 @@ namespace Bot.Common.Recognizer
                     string recognizedSeconds = resolvedDateTime["value"];
                     return double.Parse(recognizedSeconds) / 60;
                 }
-                throw new InvalidWorkedPeriodInstanceException(
-                    $"No worked period has been recognized. Type {dateTimeType} not supported.");
+                throw new InvalidWorkedDurationException(
+                    $"No worked duration has been recognized. Type {dateTimeType} not supported.");
             }
             catch (Exception ex) when (
                 ex is FormatException ||
                 ex is InvalidOperationException
             )
             {
-                throw new InvalidWorkedPeriodInstanceException("No worked period has been recognized");
+                throw new InvalidWorkedEntityException("No worked duration has been recognized");
             }
+        }
+
+        public (DateTime start, DateTime end) WorkedPeriod(double minutes, string culture = Culture.English)
+        {
+            var workedPeriodInstances = Entities._instance.datetime;
+            if (workedPeriodInstances.Length > 1)
+            {
+                string? instance = workedPeriodInstances[1].Text;
+                var recognizedDateTime = DateTimeRecognizer.RecognizeDateTime(instance, culture).First();
+                var resolvedPeriod = ((List<Dictionary<string, string>>)recognizedDateTime.Resolution["values"])[0];
+                // TODO: use resolvedPeriod to pick a (start, end) period
+            }
+            var thisMorning = DateTime.Today.AddHours(9);
+            return (thisMorning, thisMorning.AddMinutes(minutes));
         }
     }
 }
