@@ -50,7 +50,7 @@ namespace Bot.Clockify.Reports
         public static string FormatDuration(float duration)
         {
             double days = duration / 8.0;
-            return $"{days:0.00} days";
+            return $"{days:0.00}d";
         }
 
         private static float DurationInDecimal(HydratedTimeEntryDo hydratedTimeEntry)
