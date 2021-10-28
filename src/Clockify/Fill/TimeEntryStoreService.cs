@@ -19,19 +19,18 @@ namespace Bot.Clockify.Fill
             _tagName = configuration["Tag"];
         }
 
-        public async Task<double> AddTimeEntries(string clockifyToken, ProjectDo project, TaskDo? task, double minutes)
+        public async Task<double> AddTimeEntries(string clockifyToken, ProjectDo project, TaskDo? task, DateTime start, DateTime end)
         {
             string? tagId = await _clockifyService.GetTagAsync(clockifyToken, project.WorkspaceId, _tagName);
             string userId = (await _clockifyService.GetCurrentUserAsync(clockifyToken)).Id;
             string workspaceId = project.WorkspaceId;
-            var startTime = new DateTimeOffset(DateTime.Today.AddHours(9));
             var timeEntry = new TimeEntryReq
             (
                 project.Id,
-                startTime,
+                start,
                 taskId: task?.Id,
                 billable: project.Billable,
-                end: startTime.AddMinutes(minutes),
+                end: end,
                 tagIds: (tagId != null) ? new List<string> {tagId} : null
             );
 

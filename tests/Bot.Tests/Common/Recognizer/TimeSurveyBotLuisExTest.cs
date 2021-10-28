@@ -37,7 +37,7 @@ namespace Bot.Tests.Common.Recognizer
                 }
             };
             
-            luisResult.TimePeriod().Should().Be(timePeriod);
+            luisResult.WorkedDuration().Should().Be(timePeriod);
         }
         
         [Fact]
@@ -81,17 +81,17 @@ namespace Bot.Tests.Common.Recognizer
                 }
             };
             
-            Func<string> getDateTimeWithNullDateTimeEntities = () =>  lsEmptyDateTimeTextInstance.TimePeriod();
-            getDateTimeWithNullDateTimeEntities.Should().ThrowExactly<InvalidWorkedPeriodInstanceException>()
-                .WithMessage("No worked period has been recognized");
+            Func<string> getDateTimeWithNullDateTimeEntities = () =>  lsEmptyDateTimeTextInstance.WorkedDuration();
+            getDateTimeWithNullDateTimeEntities.Should().ThrowExactly<InvalidWorkedDurationException>()
+                .WithMessage("No worked duration has been recognized");
             
-            Func<string> getDateTimeWithEmptyEntities = () =>  lsEmptyInstance.TimePeriod();
-            getDateTimeWithEmptyEntities.Should().ThrowExactly<InvalidWorkedPeriodInstanceException>()
-                .WithMessage("No worked period has been recognized");
+            Func<string> getDateTimeWithEmptyEntities = () =>  lsEmptyInstance.WorkedDuration();
+            getDateTimeWithEmptyEntities.Should().ThrowExactly<InvalidWorkedDurationException>()
+                .WithMessage("No worked duration has been recognized");
 
-            Func<string> getDateTimeWithNullDateTimeText = () => lsNullDateTimeInstance.TimePeriod();
-            getDateTimeWithNullDateTimeText.Should().ThrowExactly<InvalidWorkedPeriodInstanceException>()
-                .WithMessage("No worked period has been recognized");
+            Func<string> getDateTimeWithNullDateTimeText = () => lsNullDateTimeInstance.WorkedDuration();
+            getDateTimeWithNullDateTimeText.Should().ThrowExactly<InvalidWorkedDurationException>()
+                .WithMessage("No worked duration has been recognized");
         }
 
         [Fact]
@@ -118,7 +118,7 @@ namespace Bot.Tests.Common.Recognizer
 
             const double expectedMinutes = 480.00;
             
-            luisResult.TimePeriodInMinutes().Should().Be(expectedMinutes);
+            luisResult.WorkedDurationInMinutes().Should().Be(expectedMinutes);
         }
         
     }
