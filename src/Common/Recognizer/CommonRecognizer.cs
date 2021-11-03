@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.AI.Luis;
+using LuisPredictionOptions = Microsoft.Bot.Builder.AI.LuisV3.LuisPredictionOptions;
 
 namespace Bot.Common.Recognizer
 {
@@ -9,9 +10,25 @@ namespace Bot.Common.Recognizer
     {
         private readonly LuisRecognizer _recognizer;
 
-        public CommonRecognizer(LuisRecognizer recognizer)
+        public CommonRecognizer(string luisAppId, string luisApiKey, string luisApiHostName)
         {
-            _recognizer = recognizer;
+            var luisApplication = new LuisApplication(
+                luisAppId,
+                luisApiKey,
+                "https://" + luisApiHostName
+            );
+
+            // Set the recognizer options depending on which endpoint version you want to use.
+            // More details can be found in https://docs.microsoft.com/en-gb/azure/cognitive-services/luis/luis-migration-api-v3
+            var recognizerOptions = new LuisRecognizerOptionsV3(luisApplication)
+            {
+                PredictionOptions = new LuisPredictionOptions
+                {
+                    IncludeInstanceData = true
+                }
+            };
+            
+            _recognizer = new LuisRecognizer(recognizerOptions);
         }
 
         public async Task<RecognizerResult> RecognizeAsync(ITurnContext turnContext,

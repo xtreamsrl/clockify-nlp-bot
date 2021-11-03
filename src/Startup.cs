@@ -19,14 +19,12 @@ using F23.StringSimilarity.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Bot.Builder;
-using Microsoft.Bot.Builder.AI.Luis;
 using Microsoft.Bot.Builder.Azure;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using LuisPredictionOptions = Microsoft.Bot.Builder.AI.LuisV3.LuisPredictionOptions;
 
 namespace Bot
 {
@@ -175,23 +173,7 @@ namespace Bot
             }
             else
             {
-                var luisApplication = new LuisApplication(
-                    luisAppId,
-                    luisApiKey,
-                    "https://" + luisApiHostName
-                );
-
-                // Set the recognizer options depending on which endpoint version you want to use.
-                // More details can be found in https://docs.microsoft.com/en-gb/azure/cognitive-services/luis/luis-migration-api-v3
-                var recognizerOptions = new LuisRecognizerOptionsV3(luisApplication)
-                {
-                    PredictionOptions = new LuisPredictionOptions
-                    {
-                        IncludeInstanceData = true
-                    }
-                };
-
-                services.AddSingleton<IRecognizer>(sp => new CommonRecognizer(new LuisRecognizer(recognizerOptions)));
+                services.AddSingleton<IRecognizer>(sp => new CommonRecognizer(luisAppId!, luisApiKey!, luisApiHostName!));
             }
 
         }
