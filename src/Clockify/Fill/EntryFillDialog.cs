@@ -77,8 +77,10 @@ namespace Bot.Clockify.Fill
                 var recognizedProject =
                     await _clockifyWorkableRecognizer.RecognizeProject(luisResult.ProjectName(), clockifyToken);
                 stepContext.Values["Project"] = recognizedProject;
-                double minutes = luisResult.TimePeriodInMinutes();
-                stepContext.Values["Minutes"] = minutes;
+                double minutes = luisResult.WorkedDurationInMinutes();
+                var (start, end) = luisResult.WorkedPeriod(minutes);
+                stepContext.Values["Start"] = start;
+                stepContext.Values["End"] = end;
                 string fullEntity = recognizedProject.Name;
                 stepContext.Values["FullEntity"] = fullEntity;
                 if (await _worthAskingForTask.IsWorthAskingForTask(recognizedProject, userProfile))
@@ -117,7 +119,7 @@ namespace Bot.Clockify.Fill
                 }
 
                 return await AddEntryAndExit(stepContext, cancellationToken, clockifyToken,
-                    recognizedProject, minutes, fullEntity, null);
+                    recognizedProject, start, end, fullEntity, null);
             }
             catch (CannotRecognizeProjectException e)
             {
@@ -134,7 +136,7 @@ namespace Bot.Clockify.Fill
                         e.Option2.Name)), cancellationToken);
                 return await stepContext.EndDialogAsync(null, cancellationToken);
             }
-            catch (Exception e) when (e is InvalidWorkedPeriodInstanceException ||
+            catch (Exception e) when (e is InvalidWorkedDurationException ||
                                       e is InvalidWorkedEntityException)
             {
                 _logger.LogError(e, "{ExMessage}", e.Message);
@@ -150,7 +152,8 @@ namespace Bot.Clockify.Fill
         {
             var clockifyTokenId = (string) stepContext.Values["ClockifyTokenId"];
             var project = (ProjectDo) stepContext.Values["Project"];
-            var minutes = (double) stepContext.Values["Minutes"];
+            var start = (DateTime) stepContext.Values["Start"];
+            var end = (DateTime) stepContext.Values["End"];
             TaskDo? recognizedTask = null;
             var requestedTask = stepContext.Result.ToString();
             var fullEntity = (string) stepContext.Values["FullEntity"];
@@ -166,7 +169,7 @@ namespace Bot.Clockify.Fill
                     var tokenData = await _tokenRepository.ReadAsync(clockifyTokenId);
                     string clockifyToken = tokenData.Value;
                     return await AddEntryAndExit(stepContext, cancellationToken, clockifyToken,
-                        project, minutes, fullEntity, recognizedTask);
+                        project, start, end, fullEntity, recognizedTask);
                 }
                 case Abort:
                     await stepContext.Context.SendActivityAsync(MessageFactory.Text(_messageSource.TaskAbort),
@@ -191,7 +194,7 @@ namespace Bot.Clockify.Fill
                     }
 
                     return await AddEntryAndExit(stepContext, cancellationToken, clockifyToken,
-                        project, minutes, fullEntity, recognizedTask);
+                        project, start, end, fullEntity, recognizedTask);
                 }
             }
         }
@@ -201,10 +204,10 @@ namespace Bot.Clockify.Fill
         {
             var clockifyTokenId = (string) stepContext.Values["ClockifyTokenId"];
             var project = (ProjectDo) stepContext.Values["Project"];
-            var minutes = (double) stepContext.Values["Minutes"];
-            var newTaskName = stepContext.Result.ToString();
+            var start = (DateTime) stepContext.Values["Start"];
+            var end = (DateTime) stepContext.Values["End"];            var newTaskName = stepContext.Result.ToString();
             var fullEntity = (string) stepContext.Values["FullEntity"];
-
+            
             var tokenData = await _tokenRepository.ReadAsync(clockifyTokenId);
             string clockifyToken = tokenData.Value;
             try
@@ -212,7 +215,7 @@ namespace Bot.Clockify.Fill
                 var createdTask = await _clockifyService.CreateTaskAsync(clockifyToken, new TaskReq(newTaskName!),
                     project.Id, project.WorkspaceId);
                 fullEntity += " - " + createdTask.Name;
-                return await AddEntryAndExit(stepContext, cancellationToken, clockifyToken, project, minutes, 
+                return await AddEntryAndExit(stepContext, cancellationToken, clockifyToken, project, start, end, 
                     fullEntity, createdTask);
             }
             catch (Exception)
@@ -221,7 +224,7 @@ namespace Bot.Clockify.Fill
                 await stepContext.Context.SendActivityAsync(
                     MessageFactory.Text(_messageSource.TaskCreationError), cancellationToken);
                 // TODO Maybe we should just return the error and end the dialog.
-                return await AddEntryAndExit(stepContext, cancellationToken, clockifyToken, project, minutes,
+                return await AddEntryAndExit(stepContext, cancellationToken, clockifyToken, project, start, end,
                     fullEntity, null);
             }
         }
@@ -245,12 +248,13 @@ namespace Bot.Clockify.Fill
         }
 
         private async Task<DialogTurnResult> AddEntryAndExit(DialogContext stepContext,
-            CancellationToken cancellationToken,
-            string clockifyToken, ProjectDo recognizedProject, double minutes, string fullEntity, TaskDo? task)
+            CancellationToken cancellationToken, string clockifyToken, ProjectDo recognizedProject, 
+            DateTime start, DateTime end, string fullEntity, TaskDo? task)
         {
-            var current =
-                await _timeEntryStoreService.AddTimeEntries(clockifyToken, recognizedProject, task, minutes);
-            var messageText = string.Format(_messageSource.AddEntryFeedback, minutes, fullEntity, current);
+            double current =
+                await _timeEntryStoreService.AddTimeEntries(clockifyToken, recognizedProject, task, start, end);
+            string messageText = 
+                string.Format(_messageSource.AddEntryFeedback, (end-start).TotalMinutes, fullEntity, current);
             string platform = stepContext.Context.Activity.ChannelId;
             var ma = GetExitMessageActivity(messageText, platform);
             await stepContext.Context.SendActivityAsync(ma, cancellationToken);
