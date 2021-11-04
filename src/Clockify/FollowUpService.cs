@@ -43,7 +43,7 @@ namespace Bot.Clockify
             };
         }
 
-        public async Task<string> SendFollowUpAsync(IBotFrameworkHttpAdapter adapter)
+        public async Task<string> SendFollowUpAsync(BotAdapter adapter)
         {
             var botCallback = FollowUpCallback(() => _messageSource.FollowUp);
             var followUpCounter = 0;
@@ -52,8 +52,8 @@ namespace Bot.Clockify
 
             var utcNow = _dateTimeProvider.DateTimeUtcNow();
             List<UserProfile> usersToFollowUp = userProfiles
-                .Where(u => u.ClockifyTokenId != null && u.ConversationReference != null)
-                .Where(u => u.LastFollowUpTimestamp != null)
+                .Where(u => u.ClockifyTokenId == null && u.ConversationReference != null)
+                .Where(u => u.LastFollowUpTimestamp is null)
                 .Where(u => u.LastConversationUpdate >= utcNow.FirstDayOfYear().Date &&
                             u.LastConversationUpdate <= utcNow.Subtract(TimeSpan.FromDays(2)))
                 .ToList();
@@ -62,7 +62,7 @@ namespace Bot.Clockify
             {
                 try
                 {
-                    ((BotAdapter)adapter).ContinueConversationAsync(
+                    adapter.ContinueConversationAsync(
                         _microsoftAppId,
                         userProfile.ConversationReference,
                         botCallback,

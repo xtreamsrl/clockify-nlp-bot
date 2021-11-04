@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.Bot.Builder.Integration.AspNet.Core;
+using Microsoft.Bot.Builder;
 
 namespace Bot.Clockify
 {
     public interface IFollowUpService
     {
-        Task<string> SendFollowUpAsync(IBotFrameworkHttpAdapter adapter);
+        Task<string> SendFollowUpAsync(BotAdapter adapter);
     }
 }

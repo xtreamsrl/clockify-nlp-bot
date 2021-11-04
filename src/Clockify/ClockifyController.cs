@@ -2,6 +2,7 @@
 using Bot.Remind;
 using Bot.Security;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 
 namespace Bot.Clockify
@@ -41,7 +42,7 @@ namespace Bot.Clockify
             string apiToken = ProactiveApiKeyUtil.Extract(Request);
             _proactiveBotApiKeyValidator.Validate(apiToken);
 
-            return await _followUpService.SendFollowUpAsync(_adapter);
+            return await _followUpService.SendFollowUpAsync((BotAdapter)_adapter);
         }
     }
 }
