@@ -30,6 +30,15 @@ namespace Bot.Tests.Clockify
                 LastConversationUpdate = datetimeNow.Subtract(TimeSpan.FromDays(3)),
                 ConversationReference = new ConversationReference()
             };
+            var expected = new List<UserProfile>
+            {
+                new UserProfile
+                {
+                    LastConversationUpdate = datetimeNow.Subtract(TimeSpan.FromDays(3)),
+                    ConversationReference = new ConversationReference(),
+                    LastFollowUpTimestamp = datetimeNow
+                }
+            };
 
             var mockUserProfileProvider = new Mock<IUserProfilesProvider>();
             mockUserProfileProvider.Setup(u => u.GetUserProfilesAsync())
@@ -44,9 +53,9 @@ namespace Bot.Tests.Clockify
 
             var adapter = new TestAdapter();
 
-            string followUpUsers = await followUpService.SendFollowUpAsync(adapter);
+            var followedUsers = await followUpService.SendFollowUpAsync(adapter);
 
-            followUpUsers.Should().Be("Sent follow up to 1 users");
+            followedUsers.Should().BeEquivalentTo(expected);
         }
         
         [Fact]
@@ -78,9 +87,9 @@ namespace Bot.Tests.Clockify
 
             var adapter = new TestAdapter();
 
-            string followUpUsers = await followUpService.SendFollowUpAsync(adapter);
+            var followedUsers = await followUpService.SendFollowUpAsync(adapter);
 
-            followUpUsers.Should().Be("Sent follow up to 0 users");
+            followedUsers.Should().BeEmpty();
         }
         
         [Fact]
@@ -112,9 +121,9 @@ namespace Bot.Tests.Clockify
 
             var adapter = new TestAdapter();
 
-            string followUpUsers = await followUpService.SendFollowUpAsync(adapter);
+            var followedUsers = await followUpService.SendFollowUpAsync(adapter);
 
-            followUpUsers.Should().Be("Sent follow up to 0 users");
+            followedUsers.Should().BeEmpty();
         }
         
         [Fact]
@@ -145,9 +154,9 @@ namespace Bot.Tests.Clockify
 
             var adapter = new TestAdapter();
 
-            string followUpUsers = await followUpService.SendFollowUpAsync(adapter);
+            var followedUsers = await followUpService.SendFollowUpAsync(adapter);
 
-            followUpUsers.Should().Be("Sent follow up to 0 users");
+            followedUsers.Should().BeEmpty();
         }
     }
 }

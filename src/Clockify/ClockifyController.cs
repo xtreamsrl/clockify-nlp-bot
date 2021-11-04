@@ -42,7 +42,9 @@ namespace Bot.Clockify
             string apiToken = ProactiveApiKeyUtil.Extract(Request);
             _proactiveBotApiKeyValidator.Validate(apiToken);
 
-            return await _followUpService.SendFollowUpAsync((BotAdapter)_adapter);
+            var followedUsers =  await _followUpService.SendFollowUpAsync((BotAdapter)_adapter);
+
+            return $"Sent follow up to {followedUsers.Count} users";
         }
     }
 }

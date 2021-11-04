@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Bot.States;
 using Microsoft.Bot.Builder;
 
 namespace Bot.Clockify
 {
     public interface IFollowUpService
     {
-        Task<string> SendFollowUpAsync(BotAdapter adapter);
+        Task<List<UserProfile>> SendFollowUpAsync(BotAdapter adapter);
     }
 }

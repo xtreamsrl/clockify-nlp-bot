@@ -43,10 +43,9 @@ namespace Bot.Clockify
             };
         }
 
-        public async Task<string> SendFollowUpAsync(BotAdapter adapter)
+        public async Task<List<UserProfile>> SendFollowUpAsync(BotAdapter adapter)
         {
             var botCallback = FollowUpCallback(() => _messageSource.FollowUp);
-            var followUpCounter = 0;
 
             List<UserProfile> userProfiles = await _userProfilesProvider.GetUserProfilesAsync();
 
@@ -58,6 +57,7 @@ namespace Bot.Clockify
                             u.LastConversationUpdate <= utcNow.Subtract(TimeSpan.FromDays(2)))
                 .ToList();
 
+            var followedUsers = new List<UserProfile>();
             foreach (var userProfile in usersToFollowUp)
             {
                 try
@@ -68,7 +68,7 @@ namespace Bot.Clockify
                         botCallback,
                         default).Wait(1000);
                     userProfile.LastFollowUpTimestamp = _dateTimeProvider.DateTimeUtcNow();
-                    followUpCounter++;
+                    followedUsers.Add(userProfile);
                 }
                 catch (Exception e)
                 {
@@ -77,7 +77,7 @@ namespace Bot.Clockify
                 }
             }
 
-            return $"Sent follow up to {followUpCounter} users";
+            return followedUsers;
         }
     }
 }
