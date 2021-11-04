@@ -28,5 +28,9 @@ namespace Bot.States
             get => _timeZone ?? TZConvert.GetTimeZoneInfo("Europe/Rome");
             set => _timeZone = value;
         }
+
+        public DateTime? LastFollowUpTimestamp { get; set; }
+        
+        public DateTime? LastConversationUpdate { get; set; }
     }
 }

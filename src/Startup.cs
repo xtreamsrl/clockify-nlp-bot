@@ -85,6 +85,7 @@ namespace Bot
             services.AddSingleton<IRemindService, EntryFillRemindService>();
             services.AddSingleton<IRemindService, SmartWorkingRemindService>();
             services.AddSingleton<IRemindServiceResolver, RemindServiceResolver>();
+            services.AddSingleton<IFollowUpService, FollowUpService>();
             services.AddSingleton<NextWeekRemoteWorkingDialog, NextWeekRemoteWorkingDialog>();
             services.AddSingleton<LongTermRemoteWorkingDialog, LongTermRemoteWorkingDialog>();
             services.AddSingleton<TeamAvailabilityService, TeamAvailabilityService>();
