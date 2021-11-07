@@ -66,8 +66,9 @@ namespace Bot.Clockify.Reports
 
             if (totalHours > 0)
             {
+                var days = totalHours / 8.0;
                 string intro = string.Format(_messageSource.ReportTotalHours, dateRange.ToString(),
-                   ReportUtil.FormatDuration(totalHours), (int)totalHours);
+                             days, (int)totalHours);
                 return intro + "\n\n" + fullSummary;
             }
 

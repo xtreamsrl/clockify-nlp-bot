@@ -31,7 +31,7 @@ namespace Bot.Clockify.Reports
         public static string SummaryForReportEntries(string channel, IEnumerable<ReportEntry> reportEntries)
         {
             var summary = new StringBuilder();
-            var sortedEntries =
+            var sortedEntries = 
                 reportEntries.OrderBy(entry => entry.Project).ThenBy(entry => entry.Task);
             foreach (var reportEntry in sortedEntries)
             {
@@ -60,7 +60,7 @@ namespace Bot.Clockify.Reports
 
             if (start == null || end == null) return 0.0f;
 
-            return (float)end.Value.Subtract(start.Value).TotalSeconds / 3600;
+            return (float) end.Value.Subtract(start.Value).TotalSeconds / 3600;
         }
     }
 }

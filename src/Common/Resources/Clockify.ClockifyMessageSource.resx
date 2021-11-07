@@ -169,7 +169,7 @@
     <value>I can see you want to report some hours, but I really can't understand how many 😕</value>
   </data>
   <data name="ReportTotalHours" xml:space="preserve">
-    <value>Between {0}, you worked **{1}** ({2}) hours</value>
+    <value>Between {0}, you worked **{1:0.00}** days ({2} hours)</value>
   </data>
   <data name="ReportNoWork" xml:space="preserve">
     <value>No work to report on workspace **{0}**</value>
