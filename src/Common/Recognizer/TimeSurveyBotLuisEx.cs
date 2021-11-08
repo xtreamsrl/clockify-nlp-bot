@@ -96,7 +96,8 @@ namespace Bot.Common.Recognizer
             {
                 var date = DateTime.Parse(periodData["value"]);
                 var start = new DateTime(date.Year, date.Month, date.Day, 9, 0, 0);
-                return (start, start.AddMinutes(minutes));
+                var startUtc = TimeZoneInfo.ConvertTimeToUtc(start, timeZone);
+                return (startUtc, startUtc.AddMinutes(minutes));
             }
 
             if (dateTimeType.Equals("datetime"))

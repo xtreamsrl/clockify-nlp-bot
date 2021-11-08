@@ -127,9 +127,9 @@ namespace Bot.Tests.Common.Recognizer
         [Fact]
         public void WorkedPeriod_DateWithoutTime_ReturnsWorkedPeriodFromNineAm()
         {
-            var mondayFirstNovember = new DateTime(2021, 11, 1, 15, 0, 0);
-            var lastFridayStart = new DateTime(2021, 10, 29, 9, 0, 0);
-            var lastFridayEnd = new DateTime(2021, 10, 29, 11, 0, 0);
+            var mondayFirstNovember = new DateTime(2021, 11, 8, 15, 0, 0);
+            var lastFridayStart = new DateTime(2021, 11, 5, 8, 0, 0);
+            var lastFridayEnd = new DateTime(2021, 11, 5, 10, 0, 0);
 
             var mockDateTimeProvider = new Mock<IDateTimeProvider>();
             mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
