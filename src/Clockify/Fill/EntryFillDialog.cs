@@ -80,6 +80,7 @@ namespace Bot.Clockify.Fill
                 var recognizedProject =
                     await _clockifyWorkableRecognizer.RecognizeProject(luisResult.ProjectName(), clockifyToken);
                 stepContext.Values["Project"] = recognizedProject;
+                stepContext.Values["TimeZone"] = userProfile.TimeZone;
                 double minutes = luisResult.WorkedDurationInMinutes();
                 var (start, end) = luisResult.WorkedPeriod(_dateTimeProvider, minutes, userProfile.TimeZone);
                 stepContext.Values["Start"] = start;
@@ -250,12 +251,13 @@ namespace Bot.Clockify.Fill
             }
         }
 
-        private async Task<DialogTurnResult> AddEntryAndExit(DialogContext stepContext,
+        private async Task<DialogTurnResult> AddEntryAndExit(WaterfallStepContext stepContext,
             CancellationToken cancellationToken, string clockifyToken, ProjectDo recognizedProject, 
             DateTime start, DateTime end, string fullEntity, TaskDo? task)
         {
+            var timeZone = (TimeZoneInfo) stepContext.Values["TimeZone"];
             double current =
-                await _timeEntryStoreService.AddTimeEntries(clockifyToken, recognizedProject, task, start, end);
+                await _timeEntryStoreService.AddTimeEntries(clockifyToken, recognizedProject, task, start, end, timeZone);
             string messageText = 
                 string.Format(_messageSource.AddEntryFeedback, (end-start).TotalMinutes, fullEntity, current);
             string platform = stepContext.Context.Activity.ChannelId;
