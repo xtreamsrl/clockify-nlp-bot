@@ -128,8 +128,9 @@ namespace Bot.Tests.Common.Recognizer
         public void WorkedPeriod_DateWithoutTime_ReturnsWorkedPeriodFromNineAm()
         {
             var mondayFirstNovember = new DateTime(2021, 11, 8, 15, 0, 0);
-            var lastFridayStart = new DateTime(2021, 11, 5, 8, 0, 0);
-            var lastFridayEnd = new DateTime(2021, 11, 5, 10, 0, 0);
+            var lastFridayStart = new DateTime(2021, 11, 5, 6, 0, 0);
+            var lastFridayEnd = new DateTime(2021, 11, 5, 8, 0, 0);
+            var timeZonePlusThree = TZConvert.GetTimeZoneInfo("Europe/Moscow");
 
             var mockDateTimeProvider = new Mock<IDateTimeProvider>();
             mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
@@ -161,7 +162,7 @@ namespace Bot.Tests.Common.Recognizer
             };
 
             var (start, end) = luisResult.WorkedPeriod(mockDateTimeProvider.Object, 120,
-                TZConvert.GetTimeZoneInfo("Europe/Rome"));
+                timeZonePlusThree);
 
             start.Should().Be(lastFridayStart);
             end.Should().Be(lastFridayEnd);
@@ -171,8 +172,9 @@ namespace Bot.Tests.Common.Recognizer
         public void WorkedPeriod_PeriodStartingFromDateTime_ReturnsWorkedPeriod()
         {
             var mondayFirstNovember = new DateTime(2021, 11, 8, 15, 0, 0);
-            var lastFridayStart = new DateTime(2021, 11, 5, 15, 0, 0);
-            var lastFridayEnd = new DateTime(2021, 11, 5, 17, 0, 0);
+            var lastFridayStart = new DateTime(2021, 11, 5, 13, 0, 0);
+            var lastFridayEnd = new DateTime(2021, 11, 5, 15, 0, 0);
+            var timeZonePlusThree = TZConvert.GetTimeZoneInfo("Europe/Moscow");
 
             var mockDateTimeProvider = new Mock<IDateTimeProvider>();
             mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
@@ -204,7 +206,7 @@ namespace Bot.Tests.Common.Recognizer
             };
 
             var (start, end) = luisResult.WorkedPeriod(mockDateTimeProvider.Object, 120,
-                TZConvert.GetTimeZoneInfo("Europe/Rome"));
+                timeZonePlusThree);
 
             start.Should().Be(lastFridayStart);
             end.Should().Be(lastFridayEnd);
@@ -214,8 +216,9 @@ namespace Bot.Tests.Common.Recognizer
         public void WorkedPeriod_TillSelectedHour_ReturnsWorkedPeriod()
         {
             var mondayFirstNovember = new DateTime(2021, 11, 1, 16, 0, 0);
-            var expectedStart = new DateTime(2021, 11, 1, 15, 0, 0);
-            var expectedEnd = new DateTime(2021, 11, 1, 17, 0, 0);
+            var expectedStart = new DateTime(2021, 11, 1, 13, 0, 0);
+            var expectedEnd = new DateTime(2021, 11, 1, 15, 0, 0);
+            var timeZonePlusThree = TZConvert.GetTimeZoneInfo("Europe/Moscow");
 
             var mockDateTimeProvider = new Mock<IDateTimeProvider>();
             mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
@@ -247,7 +250,7 @@ namespace Bot.Tests.Common.Recognizer
             };
 
             var (start, end) = luisResult.WorkedPeriod(mockDateTimeProvider.Object, 120,
-                TZConvert.GetTimeZoneInfo("Europe/Rome"));
+                timeZonePlusThree);
 
             start.Should().Be(expectedStart);
             end.Should().Be(expectedEnd);
@@ -257,8 +260,9 @@ namespace Bot.Tests.Common.Recognizer
         public void WorkedPeriod_FromSelectedHour_ReturnsWorkedPeriod()
         {
             var mondayFirstNovember = new DateTime(2021, 11, 1, 16, 0, 0);
-            var expectedStart = new DateTime(2021, 11, 1, 15, 0, 0);
-            var expectedEnd = new DateTime(2021, 11, 1, 17, 0, 0);
+            var expectedStart = new DateTime(2021, 11, 1, 13, 0, 0);
+            var expectedEnd = new DateTime(2021, 11, 1, 15, 0, 0);
+            var timeZonePlusThree = TZConvert.GetTimeZoneInfo("Europe/Moscow");
 
             var mockDateTimeProvider = new Mock<IDateTimeProvider>();
             mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
@@ -290,7 +294,7 @@ namespace Bot.Tests.Common.Recognizer
             };
 
             var (start, end) = luisResult.WorkedPeriod(mockDateTimeProvider.Object, 120,
-                TZConvert.GetTimeZoneInfo("Europe/Rome"));
+                timeZonePlusThree);
 
             start.Should().Be(expectedStart);
             end.Should().Be(expectedEnd);
@@ -300,8 +304,9 @@ namespace Bot.Tests.Common.Recognizer
         public void WorkedPeriod_FromToHoursRange_ReturnsWorkedPeriod()
         {
             var mondayFirstNovember = new DateTime(2021, 11, 1, 16, 0, 0);
-            var expectedStart = new DateTime(2021, 11, 1, 8, 0, 0);
-            var expectedEnd = new DateTime(2021, 11, 1, 10, 0, 0);
+            var expectedStart = new DateTime(2021, 11, 1, 6, 0, 0);
+            var expectedEnd = new DateTime(2021, 11, 1, 8, 0, 0);
+            var timeZonePlusThree = TZConvert.GetTimeZoneInfo("Europe/Moscow");
 
             var mockDateTimeProvider = new Mock<IDateTimeProvider>();
             mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
@@ -333,7 +338,7 @@ namespace Bot.Tests.Common.Recognizer
             };
 
             var (start, end) = luisResult.WorkedPeriod(mockDateTimeProvider.Object, 120,
-                TZConvert.GetTimeZoneInfo("Europe/Rome"));
+                timeZonePlusThree);
 
             start.Should().Be(expectedStart);
             end.Should().Be(expectedEnd);
@@ -343,6 +348,7 @@ namespace Bot.Tests.Common.Recognizer
         public void WorkedPeriod_HoursRangeMismatchWithDuration_ThrowsInvalidWorkedPeriodException()
         {
             var mondayFirstNovember = new DateTime(2021, 11, 1, 16, 0, 0);
+            var timeZonePlusThree = TZConvert.GetTimeZoneInfo("Europe/Moscow");
 
             var mockDateTimeProvider = new Mock<IDateTimeProvider>();
             mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
@@ -374,7 +380,7 @@ namespace Bot.Tests.Common.Recognizer
             };
 
             Func<(DateTime, DateTime)> action = () =>
-                luisResult.WorkedPeriod(mockDateTimeProvider.Object, 60, TZConvert.GetTimeZoneInfo("Europe/Rome"));
+                luisResult.WorkedPeriod(mockDateTimeProvider.Object, 60, timeZonePlusThree);
 
             action.Should().ThrowExactly<InvalidWorkedPeriodException>()
                 .WithMessage("Worked period time span differs from the duration provided. Expected 60 but got 120");
@@ -384,6 +390,7 @@ namespace Bot.Tests.Common.Recognizer
         public void WorkedPeriod_DateTimeIsDuration_ThrowsInvalidWorkedPeriodException()
         {
             var mondayFirstNovember = new DateTime(2021, 11, 1, 16, 0, 0);
+            var timeZonePlusThree = TZConvert.GetTimeZoneInfo("Europe/Moscow");
 
             var mockDateTimeProvider = new Mock<IDateTimeProvider>();
             mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
@@ -415,7 +422,7 @@ namespace Bot.Tests.Common.Recognizer
             };
 
             Func<(DateTime, DateTime)> action = () =>
-                luisResult.WorkedPeriod(mockDateTimeProvider.Object, 60, TZConvert.GetTimeZoneInfo("Europe/Rome"));
+                luisResult.WorkedPeriod(mockDateTimeProvider.Object, 60, timeZonePlusThree);
 
             action.Should().ThrowExactly<InvalidWorkedPeriodException>()
                 .WithMessage("Date time type duration is not allowed");
@@ -425,8 +432,9 @@ namespace Bot.Tests.Common.Recognizer
         public void WorkedPeriod_NoHoursRange_ReturnsWorkedPeriodStartingFromNineAm()
         {
             var mondayFirstNovember = new DateTime(2021, 11, 1, 16, 0, 0);
-            var expectedStart = new DateTime(2021, 11, 1, 8, 0, 0);
-            var expectedEnd = new DateTime(2021, 11, 1, 10, 0, 0);
+            var expectedStart = new DateTime(2021, 11, 1, 6, 0, 0);
+            var expectedEnd = new DateTime(2021, 11, 1, 8, 0, 0);
+            var timeZonePlusThree = TZConvert.GetTimeZoneInfo("Europe/Moscow");
 
             var mockDateTimeProvider = new Mock<IDateTimeProvider>();
             mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
@@ -453,7 +461,7 @@ namespace Bot.Tests.Common.Recognizer
             };
 
             var (start, end) = luisResult.WorkedPeriod(mockDateTimeProvider.Object, 120,
-                TZConvert.GetTimeZoneInfo("Europe/Rome"));
+                timeZonePlusThree);
 
             start.Should().Be(expectedStart);
             end.Should().Be(expectedEnd);
