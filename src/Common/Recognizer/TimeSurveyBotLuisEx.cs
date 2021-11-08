@@ -101,7 +101,7 @@ namespace Bot.Common.Recognizer
 
             if (dateTimeType.Equals("datetime"))
             {
-                var datetime = DateTime.Parse(periodData["value"]);
+                var datetime = ParseToUtc(periodData["value"], timeZone);
                 return (datetime, datetime.AddMinutes(minutes));
             }
 
