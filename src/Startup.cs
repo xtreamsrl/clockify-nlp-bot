@@ -109,11 +109,13 @@ namespace Bot
             services.AddSingleton(storage);
             services.AddSingleton<ConversationState>();
             services.AddSingleton<UserState>();
-            services.AddSingleton<IRecognizer, CommonRecognizer>();
             services.AddSingleton<IBot, Supports.Bot>();
             services.AddSingleton<IAzureBlobReader, AzureBlobReader>();
             services.AddSingleton<IUserProfileStorageReader, UserProfileStorageReader>();
             services.AddSingleton<IUserProfilesProvider, UserProfilesProvider>();
+
+            ConfigureRecognizer(services, _configuration["LuisAppId"], _configuration["LuisAPIKey"],
+                _configuration["LuisAPIHostName"]);
 
             // Bot supports
             services.AddSingleton<IBotHandler, UtilityHandler>();
@@ -158,6 +160,23 @@ namespace Bot
             services.AddMemoryCache();
             services.AddSingleton<ITokenRepository>(
                 sp => new TokenRepository(secretClient, sp.GetRequiredService<IMemoryCache>(), cacheSeconds));
+        }
+
+        private static void ConfigureRecognizer(IServiceCollection services, string? luisAppId, string? luisApiKey,
+            string? luisApiHostName)
+        {
+            bool luisIsConfigured = !string.IsNullOrEmpty(luisAppId) &&
+                                    !string.IsNullOrEmpty(luisApiKey) &&
+                                    !string.IsNullOrEmpty(luisApiHostName);
+            if (!luisIsConfigured)
+            {
+                services.AddSingleton<IRecognizer, InMemoryCommonRecognizer>();
+            }
+            else
+            {
+                services.AddSingleton<IRecognizer>(sp => new CommonRecognizer(luisAppId!, luisApiKey!, luisApiHostName!));
+            }
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
