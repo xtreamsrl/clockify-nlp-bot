@@ -25,6 +25,7 @@ namespace Bot.Clockify
         {
             _userProfilesProvider = userProfilesProvider;
             _microsoftAppId = configuration["MicrosoftAppId"];
+            // The adapter needs a non empty app id. A default one is generated for running the bot locally.
             if (string.IsNullOrEmpty(_microsoftAppId))
             {
                 _microsoftAppId = Guid.NewGuid().ToString();
