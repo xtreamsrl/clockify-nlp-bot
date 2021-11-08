@@ -155,6 +155,6 @@
 Please don't exceed one year window</value>
     </data>
     <data name="FollowUp" xml:space="preserve">
-        <value>Hey! It looks like you haven't set up a clockify token already</value>
+        <value>Hey 👋 I noticed you never setup a Clockify token...{0}{0}Help me help you! Once you're setup I will assist you in your daily time tracking.</value>
     </data>
 </root>

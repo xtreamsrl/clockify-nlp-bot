@@ -46,7 +46,7 @@ namespace Bot.Clockify
 
         public async Task<List<UserProfile>> SendFollowUpAsync(BotAdapter adapter)
         {
-            var botCallback = FollowUpCallback(() => _messageSource.FollowUp);
+            var botCallback = FollowUpCallback(() => string.Format(_messageSource.FollowUp, "\n"));
 
             List<UserProfile> userProfiles = await _userProfilesProvider.GetUserProfilesAsync();
 
@@ -54,8 +54,8 @@ namespace Bot.Clockify
             List<UserProfile> usersToFollowUp = userProfiles
                 .Where(u => u.ClockifyTokenId == null && u.ConversationReference != null)
                 .Where(u => u.LastFollowUpTimestamp is null)
-                .Where(u => u.LastConversationUpdate >= utcNow.FirstDayOfYear().Date &&
-                            u.LastConversationUpdate <= utcNow.Subtract(TimeSpan.FromDays(2)))
+                // .Where(u => u.LastConversationUpdate >= utcNow.FirstDayOfYear().Date &&
+                //             u.LastConversationUpdate <= utcNow.Subtract(TimeSpan.FromDays(2)))
                 .ToList();
 
             var followedUsers = new List<UserProfile>();
