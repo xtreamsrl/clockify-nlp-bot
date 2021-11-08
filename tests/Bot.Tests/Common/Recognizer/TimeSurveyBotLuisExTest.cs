@@ -214,7 +214,8 @@ namespace Bot.Tests.Common.Recognizer
         public void WorkedPeriod_TillSelectedHour_ReturnsWorkedPeriod()
         {
             var mondayFirstNovember = new DateTime(2021, 11, 1, 16, 0, 0);
-            var expectedEnd = new DateTime(2021, 11, 1, 18, 0, 0);
+            var expectedStart = new DateTime(2021, 11, 1, 15, 0, 0);
+            var expectedEnd = new DateTime(2021, 11, 1, 17, 0, 0);
 
             var mockDateTimeProvider = new Mock<IDateTimeProvider>();
             mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
@@ -248,7 +249,7 @@ namespace Bot.Tests.Common.Recognizer
             var (start, end) = luisResult.WorkedPeriod(mockDateTimeProvider.Object, 120,
                 TZConvert.GetTimeZoneInfo("Europe/Rome"));
 
-            start.Should().Be(mondayFirstNovember);
+            start.Should().Be(expectedStart);
             end.Should().Be(expectedEnd);
         }
 
@@ -256,7 +257,8 @@ namespace Bot.Tests.Common.Recognizer
         public void WorkedPeriod_FromSelectedHour_ReturnsWorkedPeriod()
         {
             var mondayFirstNovember = new DateTime(2021, 11, 1, 16, 0, 0);
-            var expectedEnd = new DateTime(2021, 11, 1, 18, 0, 0);
+            var expectedStart = new DateTime(2021, 11, 1, 15, 0, 0);
+            var expectedEnd = new DateTime(2021, 11, 1, 17, 0, 0);
 
             var mockDateTimeProvider = new Mock<IDateTimeProvider>();
             mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
@@ -290,7 +292,7 @@ namespace Bot.Tests.Common.Recognizer
             var (start, end) = luisResult.WorkedPeriod(mockDateTimeProvider.Object, 120,
                 TZConvert.GetTimeZoneInfo("Europe/Rome"));
 
-            start.Should().Be(mondayFirstNovember);
+            start.Should().Be(expectedStart);
             end.Should().Be(expectedEnd);
         }
 
@@ -298,8 +300,8 @@ namespace Bot.Tests.Common.Recognizer
         public void WorkedPeriod_FromToHoursRange_ReturnsWorkedPeriod()
         {
             var mondayFirstNovember = new DateTime(2021, 11, 1, 16, 0, 0);
-            var expectedStart = new DateTime(2021, 11, 1, 9, 0, 0);
-            var expectedEnd = new DateTime(2021, 11, 1, 11, 0, 0);
+            var expectedStart = new DateTime(2021, 11, 1, 8, 0, 0);
+            var expectedEnd = new DateTime(2021, 11, 1, 10, 0, 0);
 
             var mockDateTimeProvider = new Mock<IDateTimeProvider>();
             mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())

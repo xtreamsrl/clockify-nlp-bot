@@ -107,7 +107,7 @@ namespace Bot.Common.Recognizer
 
             if (dateTimeType.Equals("timerange") && periodData.ContainsKey("Mod") && periodData["Mod"].Equals("before"))
             {
-                var time = DateTime.Parse(periodData["end"]);
+                var time = ParseToUtc(periodData["end"], timeZone);
                 var datetime = new DateTime(refTime.Year, refTime.Month, refTime.Day, time.Hour, time.Minute,
                     time.Second);
                 return (datetime.Subtract(TimeSpan.FromMinutes(minutes)), datetime);
@@ -115,7 +115,7 @@ namespace Bot.Common.Recognizer
 
             if (dateTimeType.Equals("timerange") && periodData.ContainsKey("Mod") && periodData["Mod"].Equals("since"))
             {
-                var time = DateTime.Parse(periodData["start"]);
+                var time = ParseToUtc(periodData["start"], timeZone);
                 var datetime = new DateTime(refTime.Year, refTime.Month, refTime.Day, time.Hour, time.Minute,
                     time.Second);
                 return (datetime, datetime.AddMinutes(minutes));
@@ -123,10 +123,10 @@ namespace Bot.Common.Recognizer
 
             if (dateTimeType.Equals("timerange") && !periodData.ContainsKey("Mod"))
             {
-                var timeStart = DateTime.Parse(periodData["start"]);
+                var timeStart = ParseToUtc(periodData["start"], timeZone);
                 var datetimeStart = new DateTime(refTime.Year, refTime.Month, refTime.Day, timeStart.Hour,
                     timeStart.Minute, timeStart.Second);
-                var timeEnd = DateTime.Parse(periodData["end"]);
+                var timeEnd = ParseToUtc(periodData["end"], timeZone);
                 var datetimeEnd = new DateTime(refTime.Year, refTime.Month, refTime.Day, timeEnd.Hour,
                     timeEnd.Minute, timeEnd.Second);
 
@@ -142,6 +142,12 @@ namespace Bot.Common.Recognizer
             }
 
             throw new InvalidWorkedPeriodException($"Date time type {dateTimeType} is not allowed");
+        }
+        
+        private static DateTime ParseToUtc(string localDateTimeString, TimeZoneInfo timeZone)
+        {
+            var localDt = DateTime.Parse(localDateTimeString);
+            return TimeZoneInfo.ConvertTimeToUtc(localDt, timeZone);
         }
     }
 }
