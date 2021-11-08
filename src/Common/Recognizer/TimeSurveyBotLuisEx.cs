@@ -69,26 +69,27 @@ namespace Bot.Common.Recognizer
             }
         }
 
-        public (DateTime start, DateTime end) WorkedPeriod(IDateTimeProvider dateTimeProvider, double minutes,
+        public (DateTime start, DateTime end) WorkedPeriod(IDateTimeProvider dateTimeProvider, double minutes, TimeZoneInfo timeZone,
             string culture = Culture.English)
         {
             var workedPeriodInstances = Entities._instance.datetime;
+            var userNow = TimeZoneInfo.ConvertTime(dateTimeProvider.DateTimeUtcNow(), timeZone);
             if (workedPeriodInstances.Length > 1)
             {
                 string? instance = workedPeriodInstances[1].Text;
-                var refTime = dateTimeProvider.DateTimeUtcNow();
                 var recognizedDateTime =
-                    DateTimeRecognizer.RecognizeDateTime(instance, culture, refTime: refTime).First();
+                    DateTimeRecognizer.RecognizeDateTime(instance, culture, refTime: userNow).First();
                 var resolvedPeriod = ((List<Dictionary<string, string>>)recognizedDateTime.Resolution["values"])[0];
-                return RecognizedWorkedPeriod(refTime, resolvedPeriod, minutes);
+                return RecognizedWorkedPeriod(userNow, resolvedPeriod, minutes, timeZone);
             }
 
-            var thisMorning = dateTimeProvider.DateTimeUtcNow().Date.AddHours(9);
-            return (thisMorning, thisMorning.AddMinutes(minutes));
+            var thisMorning = userNow.Date.AddHours(9);
+            var thisMorningUtc = TimeZoneInfo.ConvertTimeToUtc(thisMorning);
+            return (thisMorningUtc, thisMorningUtc.AddMinutes(minutes));
         }
 
         private static (DateTime start, DateTime end) RecognizedWorkedPeriod(DateTime refTime,
-            IReadOnlyDictionary<string, string> periodData, double minutes)
+            IReadOnlyDictionary<string, string> periodData, double minutes, TimeZoneInfo timeZone)
         {
             string dateTimeType = periodData["type"];
             if (dateTimeType.Equals("date"))

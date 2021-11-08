@@ -36,6 +36,7 @@ namespace Bot.Clockify.Fill
 
             await _clockifyService.AddTimeEntryAsync(clockifyToken, workspaceId, timeEntry);
 
+            // TODO timezone and separate total hours calculation
             var todayEntries = await _clockifyService.GetHydratedTimeEntriesAsync(clockifyToken, workspaceId, userId,
                 new DateTimeOffset(DateTime.Today), new DateTimeOffset(DateTime.Today.AddDays(1)));
 
