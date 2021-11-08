@@ -84,7 +84,7 @@ namespace Bot.Common.Recognizer
             }
 
             var thisMorning = userNow.Date.AddHours(9);
-            var thisMorningUtc = TimeZoneInfo.ConvertTimeToUtc(thisMorning);
+            var thisMorningUtc = TimeZoneInfo.ConvertTimeToUtc(thisMorning, timeZone);
             return (thisMorningUtc, thisMorningUtc.AddMinutes(minutes));
         }
 
