@@ -93,7 +93,7 @@ namespace Bot.Tests.Clockify
         }
         
         [Fact]
-        private async void SendFollowUpAsync_LastConversationUpdateIsPreviousYear_DoNotFollowUp()
+        private async void SendFollowUpAsync_LastConversationUpdateIsBeforeJanuary2021_DoNotFollowUp()
         {
             var configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection()

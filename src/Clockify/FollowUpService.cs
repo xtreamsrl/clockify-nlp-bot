@@ -54,8 +54,8 @@ namespace Bot.Clockify
             List<UserProfile> usersToFollowUp = userProfiles
                 .Where(u => u.ClockifyTokenId == null && u.ConversationReference != null)
                 .Where(u => u.LastFollowUpTimestamp is null)
-                // .Where(u => u.LastConversationUpdate >= utcNow.FirstDayOfYear().Date &&
-                //             u.LastConversationUpdate <= utcNow.Subtract(TimeSpan.FromDays(2)))
+                .Where(u => u.LastConversationUpdate >= new DateTime(2021, 1, 1) &&
+                            u.LastConversationUpdate <= utcNow.Subtract(TimeSpan.FromDays(2)))
                 .ToList();
 
             var followedUsers = new List<UserProfile>();
