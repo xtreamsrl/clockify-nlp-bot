@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Bot.Clockify.Fill;
@@ -19,12 +21,15 @@ namespace Bot.Clockify
         private readonly UserSettingsDialog _userSettingsDialog;
         private readonly StopReminderDialog _stopReminderDialog;
         private readonly ClockifySetupDialog _clockifySetupDialog;
+        private readonly LogoutDialog _logoutDialog;
         private readonly DialogSet _dialogSet;
         private readonly IStatePropertyAccessor<DialogState> _dialogState;
 
+        private readonly IEnumerable<string> _logoutIntent = new HashSet<string> { "log out", "logout" };
+        
         public ClockifyHandler(EntryFillDialog fillDialog, ReportDialog reportDialog,
             StopReminderDialog stopReminderDialog, UserSettingsDialog userSettingsDialog, ConversationState conversationState,
-            ClockifySetupDialog clockifySetupDialog)
+            ClockifySetupDialog clockifySetupDialog, LogoutDialog logoutDialog)
         {
             _dialogState = conversationState.CreateProperty<DialogState>("ClockifyDialogState");
             _fillDialog = fillDialog;
@@ -32,12 +37,14 @@ namespace Bot.Clockify
             _userSettingsDialog = userSettingsDialog;
             _stopReminderDialog = stopReminderDialog;
             _clockifySetupDialog = clockifySetupDialog;
+            _logoutDialog = logoutDialog;
             _dialogSet = new DialogSet(_dialogState)
                 .Add(_fillDialog)
                 .Add(_stopReminderDialog)
                 .Add(_userSettingsDialog)
                 .Add(_reportDialog)
-                .Add(_clockifySetupDialog);
+                .Add(_clockifySetupDialog)
+                .Add(_logoutDialog);
         }
 
         public async Task<bool> Handle(ITurnContext turnContext, CancellationToken cancellationToken,
@@ -51,6 +58,12 @@ namespace Bot.Clockify
             var dialogContext = await _dialogSet.CreateContextAsync(turnContext, cancellationToken);
 
             if (await RunClockifySetupIfNeeded(turnContext, cancellationToken, userProfile)) return true;
+            
+            if (_logoutIntent.Contains(turnContext.Activity.Text))
+            {
+                await dialogContext.BeginDialogAsync(_logoutDialog.Id, cancellationToken: cancellationToken);
+                return true;
+            }
 
             try
             {

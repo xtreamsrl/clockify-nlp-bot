@@ -35,5 +35,10 @@
         string RemindEntryFillYesterday { get; }
 
         string FollowUp { get; }
+        
+        string LogoutPrompt { get; }
+        string LogoutYes { get; }
+        string LogoutNo { get; }
+        string LogoutRetryPrompt { get; }
     }
 }
