@@ -62,6 +62,7 @@ namespace Bot
             services.AddSingleton<IReportSummaryService, ReportSummaryService>();
             services.AddSingleton<IReportExtractor, ReportExtractor>();
             services.AddSingleton<EntryFillDialog>();
+            services.AddSingleton<LogoutDialog>();
             services.AddSingleton<StopReminderDialog>();
             services.AddSingleton<WorthAskingForTaskService>();
             services.AddSingleton<ITimeEntryStoreService, TimeEntryStoreService>();

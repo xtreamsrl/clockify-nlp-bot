@@ -40,6 +40,11 @@ namespace Bot.Clockify
         public string ReportDateRangeExceedOneYear => GetString(nameof(ReportDateRangeExceedOneYear));
 
         public string FollowUp => GetString(nameof(FollowUp));
+        
+        public string LogoutPrompt => GetString(nameof(LogoutPrompt));
+        public string LogoutYes => GetString(nameof(LogoutYes));
+        public string LogoutNo => GetString(nameof(LogoutNo));
+        public string LogoutRetryPrompt => GetString(nameof(LogoutRetryPrompt));
 
         public string RemindStoppedAlready => GetString(nameof(RemindStoppedAlready));
         public string RemindStopAnswer => GetString(nameof(RemindStopAnswer));
