@@ -24,10 +24,12 @@
         string ReportTotalHours { get; }
         string ReportNoWork { get; }
         string ReportWork { get; }
-        
+        string ReportDateRangeExceedOneYear { get; }
+
         string RemindStoppedAlready { get; }
         string RemindStopAnswer { get; }
         string RemindEntryFill { get; }
-        string ReportDateRangeExceedOneYear { get; }
+
+        string FollowUp { get; }
     }
 }

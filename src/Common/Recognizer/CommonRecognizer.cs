@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.AI.Luis;
-using Microsoft.Extensions.Configuration;
 using LuisPredictionOptions = Microsoft.Bot.Builder.AI.LuisV3.LuisPredictionOptions;
 
 namespace Bot.Common.Recognizer
@@ -12,21 +10,12 @@ namespace Bot.Common.Recognizer
     {
         private readonly LuisRecognizer _recognizer;
 
-        public CommonRecognizer(IConfiguration configuration)
+        public CommonRecognizer(string luisAppId, string luisApiKey, string luisApiHostName)
         {
-            bool luisIsConfigured = !string.IsNullOrEmpty(configuration["LuisAppId"]) &&
-                                    !string.IsNullOrEmpty(configuration["LuisAPIKey"]) &&
-                                    !string.IsNullOrEmpty(configuration["LuisAPIHostName"]);
-            if (!luisIsConfigured)
-            {
-                throw new Exception(
-                    "LUIS is not configured. To enable all capabilities, add 'LuisAppId', 'LuisAPIKey' and 'LuisAPIHostName' to the appsettings.json file.");
-            }
-
             var luisApplication = new LuisApplication(
-                configuration["LuisAppId"],
-                configuration["LuisAPIKey"],
-                "https://" + configuration["LuisAPIHostName"]
+                luisAppId,
+                luisApiKey,
+                "https://" + luisApiHostName
             );
 
             // Set the recognizer options depending on which endpoint version you want to use.
@@ -38,7 +27,7 @@ namespace Bot.Common.Recognizer
                     IncludeInstanceData = true
                 }
             };
-
+            
             _recognizer = new LuisRecognizer(recognizerOptions);
         }
 
