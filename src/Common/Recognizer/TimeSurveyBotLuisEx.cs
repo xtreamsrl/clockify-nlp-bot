@@ -69,18 +69,78 @@ namespace Bot.Common.Recognizer
             }
         }
 
-        public (DateTime start, DateTime end) WorkedPeriod(double minutes, string culture = Culture.English)
+        public (DateTime start, DateTime end) WorkedPeriod(IDateTimeProvider dateTimeProvider, double minutes,
+            string culture = Culture.English)
         {
             var workedPeriodInstances = Entities._instance.datetime;
             if (workedPeriodInstances.Length > 1)
             {
                 string? instance = workedPeriodInstances[1].Text;
-                var recognizedDateTime = DateTimeRecognizer.RecognizeDateTime(instance, culture).First();
+                var refTime = dateTimeProvider.DateTimeUtcNow();
+                var recognizedDateTime =
+                    DateTimeRecognizer.RecognizeDateTime(instance, culture, refTime: refTime).First();
                 var resolvedPeriod = ((List<Dictionary<string, string>>)recognizedDateTime.Resolution["values"])[0];
-                // TODO: use resolvedPeriod to pick a (start, end) period
+                return RecognizedWorkedPeriod(refTime, resolvedPeriod, minutes);
             }
-            var thisMorning = DateTime.Today.AddHours(9);
+
+            var thisMorning = dateTimeProvider.DateTimeUtcNow().Date.AddHours(9);
             return (thisMorning, thisMorning.AddMinutes(minutes));
+        }
+
+        private static (DateTime start, DateTime end) RecognizedWorkedPeriod(DateTime refTime,
+            IReadOnlyDictionary<string, string> periodData, double minutes)
+        {
+            string dateTimeType = periodData["type"];
+            if (dateTimeType.Equals("date"))
+            {
+                var date = DateTime.Parse(periodData["value"]);
+                var start = new DateTime(date.Year, date.Month, date.Day, 9, 0, 0);
+                return (start, start.AddMinutes(minutes));
+            }
+
+            if (dateTimeType.Equals("datetime"))
+            {
+                var datetime = DateTime.Parse(periodData["value"]);
+                return (datetime, datetime.AddMinutes(minutes));
+            }
+
+            if (dateTimeType.Equals("timerange") && periodData.ContainsKey("Mod") && periodData["Mod"].Equals("before"))
+            {
+                var time = DateTime.Parse(periodData["end"]);
+                var datetime = new DateTime(refTime.Year, refTime.Month, refTime.Day, time.Hour, time.Minute,
+                    time.Second);
+                return (datetime.Subtract(TimeSpan.FromMinutes(minutes)), datetime);
+            }
+
+            if (dateTimeType.Equals("timerange") && periodData.ContainsKey("Mod") && periodData["Mod"].Equals("since"))
+            {
+                var time = DateTime.Parse(periodData["start"]);
+                var datetime = new DateTime(refTime.Year, refTime.Month, refTime.Day, time.Hour, time.Minute,
+                    time.Second);
+                return (datetime, datetime.AddMinutes(minutes));
+            }
+
+            if (dateTimeType.Equals("timerange") && !periodData.ContainsKey("Mod"))
+            {
+                var timeStart = DateTime.Parse(periodData["start"]);
+                var datetimeStart = new DateTime(refTime.Year, refTime.Month, refTime.Day, timeStart.Hour,
+                    timeStart.Minute, timeStart.Second);
+                var timeEnd = DateTime.Parse(periodData["end"]);
+                var datetimeEnd = new DateTime(refTime.Year, refTime.Month, refTime.Day, timeEnd.Hour,
+                    timeEnd.Minute, timeEnd.Second);
+
+                double minutesBetweenDates = datetimeEnd.Subtract(datetimeStart).TotalMinutes;
+                // Floating point comparison, we check that the difference is greater than one minute.
+                if (Math.Abs(minutesBetweenDates - minutes) > 1)
+                {
+                    throw new InvalidWorkedPeriodException(
+                        $"Worked period time span differs from the duration provided. Expected {minutes} but got {minutesBetweenDates}");
+                }
+
+                return (datetimeStart, datetimeEnd);
+            }
+
+            throw new InvalidWorkedPeriodException($"Date time type {dateTimeType} is not allowed");
         }
     }
 }
