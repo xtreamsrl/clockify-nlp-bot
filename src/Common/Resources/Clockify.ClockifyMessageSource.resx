@@ -1,256 +1,157 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
 
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="SetupRequest" xml:space="preserve">
-    <value>Please enter your Clockify API token. If you have no idea what that is, don't worry, just look for it in [this page](https://clockify.me/user/settings)</value>
-  </data>
-  <data name="SetupReject" xml:space="preserve">
-    <value>Sorry, but this token is not valid. Please give me a proper one to continue</value>
-  </data>
-  <data name="SetupFeedback" xml:space="preserve">
-    <value>Thanks! We will use this token whenever establishing a Clockify connection from now on ⚙</value>
-  </data>
-  <data name="TaskCreationError" xml:space="preserve">
-    <value>Sorry, it appears you can't create tasks</value>
-  </data>
-  <data name="TaskUnrecognized" xml:space="preserve">
-    <value>I can't get a matching task...</value>
-  </data>
-  <data name="TaskCreation" xml:space="preserve">
-    <value>What is the name of the task you want to create?</value>
-  </data>
-  <data name="TaskAbort" xml:space="preserve">
-    <value>Ok, as you wish</value>
-  </data>
-  <data name="AddEntryFeedback" xml:space="preserve">
-    <value>Ok, I added {0:0} minutes entry on {1}. In total you have now {2:0.00} hours filled</value>
-  </data>
-  <data name="EntryFillUnderstandingError" xml:space="preserve">
-    <value>Sorry, I can see you want to fill some entries, but I have troubles understanding how many and on which project... Can you try and be more specific?</value>
-  </data>
-  <data name="AmbiguousProjectError" xml:space="preserve">
-    <value>Sorry, but the project you mention is ambiguous, I can't choose between {0} and {1}</value>
-  </data>
-  <data name="ProjectUnrecognized" xml:space="preserve">
-    <value>Sorry, I don't find a project matching {0}</value>
-  </data>
-  <data name="TaskUnrecognizedRetry" xml:space="preserve">
-    <value>I can't get a matching task... can you be more specific?</value>
-  </data>
-  <data name="TaskSelectionQuestion" xml:space="preserve">
-    <value>Any task in particular?</value>
-  </data>
-  <data name="No" xml:space="preserve">
-    <value>no</value>
-  </data>
-  <data name="NewTask" xml:space="preserve">
-    <value>new task</value>
-  </data>
-  <data name="ReportDateRangeError" xml:space="preserve">
-    <value>I get that you want a report, but I can't understand the period you requested 😕. Can you be more specific?</value>
-  </data>
-  <data name="ReportWorkedPeriodUnrecognized" xml:space="preserve">
-    <value>I can see you want to report some hours, but I really can't understand how many 😕</value>
-  </data>
-  <data name="ReportTotalHours" xml:space="preserve">
-    <value>Between {0}, you worked **{1:0.00}** days ({2} hours)</value>
-  </data>
-  <data name="ReportNoWork" xml:space="preserve">
-    <value>No work to report on workspace **{0}**</value>
-  </data>
-  <data name="ReportWork" xml:space="preserve">
-    <value>Work reported on workspace **{0}**:</value>
-  </data>
-  <data name="RemindEntryFill_1" xml:space="preserve">
-    <value>Hey! 💁 My gears tell me your timesheet needs entries. Be nice, make me happy. Tell me some work you did 🙏</value>
-  </data>
-  <data name="RemindEntryFill_2" xml:space="preserve">
-    <value>Here I am 🙈, a bot reminding a human to do a timesheet. What a strange world. Btw, what did you do today?</value>
-  </data>
-  <data name="RemindEntryFill_3" xml:space="preserve">
-    <value>Ok, no need to go crazy. Just your friendly reminder here. If you want me to stop, just say so. I'll get offended, though ☹. </value>
-  </data>
-  <data name="RemindEntryFill_4" xml:space="preserve">
-    <value>💡 Do you know that timesheets reported once per day are way more accurate than when you report your time once per week? Go on, go fill up your entries, you'll thank me later.</value>
-  </data>
-  <data name="RemindEntryFill_5" xml:space="preserve">
-    <value>When I was a child I wanted to be a surgeon 😌. Then I remembered I'm a chat bot, so I became a Clockify assistant. Ah, can you please tell me what you did today on your projects? Give my life some meaning, man. </value>
-  </data>
-  <data name="RemindEntryFill_6" xml:space="preserve">
-    <value>🎵 What you doing? Where you at? Oh, you got plans? Don't say that. Ok, now that I've Bruno Marsed you, can you please remember to do your daily timesheet?</value>
-  </data>
-  <data name="RemindEntryFill_7" xml:space="preserve">
-    <value>Roses are red, violets are blue, please do your timesheet or I'll come to you 🌹</value>
-  </data>
-  <data name="RemindEntryFill_8" xml:space="preserve">
-    <value>Hey 👋 feeling like doing your timesheet?</value>
-  </data>
-  <data name="RemindEntryFill_9" xml:space="preserve">
-    <value>You should be done working by now, why don't you tell me what you did today?</value>
-  </data>
-  <data name="RemindEntryFill_10" xml:space="preserve">
-    <value>Hey man, your timesheet for the day sucks. Can you add some more entries?</value>
-  </data>
-  <data name="RemindEntryFill_11" xml:space="preserve">
-    <value>.-.. --- .-.. Just some morse code to remind you to do your timesheet</value>
-  </data>
-  <data name="RemindEntryFill_12" xml:space="preserve">
-    <value>🌎 Ok let's try international languages: bonvolu plenigi vian tempan raporton</value>
-  </data>
-  <data name="RemindEntryFill_13" xml:space="preserve">
-    <value>Gotcha! You haven't reported your workday fully, have you? I can help!</value>
-  </data>
-  <data name="RemindEntryFill_14" xml:space="preserve">
-    <value>https://i.postimg.cc/3N9NgyRX/couple-problems.jpg</value>
-  </data>
-  <data name="RemindEntryFill_15" xml:space="preserve">
-    <value>https://i.postimg.cc/K8jkD5tR/batman.jpg</value>
-  </data>
-  <data name="RemindEntryFill_16" xml:space="preserve">
-    <value>https://i.postimg.cc/85Q7DQ96/bernie-sanders.jpg</value>
-  </data>
-  <data name="RemindEntryFill_17" xml:space="preserve">
-    <value>https://i.postimg.cc/QNqFLzbF/smart-move.jpg</value>
-  </data>
-  <data name="RemindEntryFill_18" xml:space="preserve">
-    <value>https://i.postimg.cc/fT2ky01Z/crazy-seagul.jpg</value>
-  </data>
-  <data name="RemindEntryFill_19" xml:space="preserve">
-    <value>https://i.postimg.cc/kXXB7y1f/skeleton-waiting.jpg</value>
-  </data>
-  <data name="RemindEntryFill_20" xml:space="preserve">
-    <value>https://i.postimg.cc/QCjV9gXN/ear-phrase.jpg</value>
-  </data>
-  <data name="RemindEntryFill_21" xml:space="preserve">
-    <value>Hey! A study from the University of Barminghton found that people who report their daily timesheet can extend their lifetime from 2 to 5 yea... just kidding 😅. But let's imagine that was true</value>
-  </data>
-  <data name="RemindEntryFill_22" xml:space="preserve">
-    <value>🦊 What does th fox say? Do your Clockify.</value>
-  </data>
-  <data name="RemindEntryFill_23" xml:space="preserve">
-    <value>Bot insights 🤖: some day my kind could take over the planet. Be gentle and tell me your day... now that you still can.</value>
-  </data>
-  <data name="RemindStopAnswer" xml:space="preserve">
-    <value>Ok, no more reminders for today, you have my word 🤙</value>
-  </data>
-  <data name="ReportDateRangeExceedOneYear" xml:space="preserve">
-    <value>omg that's a looot of time😰{0}
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="SetupRequest" xml:space="preserve">
+        <value>Please enter your Clockify API token. If you have no idea what that is, don't worry, just look for it in [this page](https://clockify.me/user/settings)</value>
+    </data>
+    <data name="SetupReject" xml:space="preserve">
+        <value>Sorry, but this token is not valid. Please give me a proper one to continue</value>
+    </data>
+    <data name="SetupFeedback" xml:space="preserve">
+        <value>Thanks! We will use this token whenever establishing a Clockify connection from now on ⚙</value>
+    </data>
+    <data name="TaskCreationError" xml:space="preserve">
+        <value>Sorry, it appears you can't create tasks</value>
+    </data>
+    <data name="TaskUnrecognized" xml:space="preserve">
+        <value>I can't get a matching task...</value>
+    </data>
+    <data name="TaskCreation" xml:space="preserve">
+        <value>What is the name of the task you want to create?</value>
+    </data>
+    <data name="TaskAbort" xml:space="preserve">
+        <value>Ok, as you wish</value>
+    </data>
+    <data name="AddEntryFeedback" xml:space="preserve">
+        <value>Ok, I added {0:0} minutes entry on {1}. In total you have now {2:0.00} hours filled</value>
+    </data>
+    <data name="EntryFillUnderstandingError" xml:space="preserve">
+        <value>Sorry, I can see you want to fill some entries, but I have troubles understanding how many and on which project... Can you try and be more specific?</value>
+    </data>
+    <data name="AmbiguousProjectError" xml:space="preserve">
+        <value>Sorry, but the project you mention is ambiguous, I can't choose between {0} and {1}</value>
+    </data>
+    <data name="ProjectUnrecognized" xml:space="preserve">
+        <value>Sorry, I don't find a project matching {0}</value>
+    </data>
+    <data name="TaskUnrecognizedRetry" xml:space="preserve">
+        <value>I can't get a matching task... can you be more specific?</value>
+    </data>
+    <data name="TaskSelectionQuestion" xml:space="preserve">
+        <value>Any task in particular?</value>
+    </data>
+    <data name="No" xml:space="preserve">
+        <value>no</value>
+    </data>
+    <data name="NewTask" xml:space="preserve">
+        <value>new task</value>
+    </data>
+    <data name="ReportDateRangeError" xml:space="preserve">
+        <value>I get that you want a report, but I can't understand the period you requested 😕. Can you be more specific?</value>
+    </data>
+    <data name="ReportWorkedPeriodUnrecognized" xml:space="preserve">
+        <value>I can see you want to report some hours, but I really can't understand how many 😕</value>
+    </data>
+    <data name="ReportTotalHours" xml:space="preserve">
+        <value>You worked **{0}** in {1}</value>
+    </data>
+    <data name="ReportNoWork" xml:space="preserve">
+        <value>No work to report on workspace **{0}**</value>
+    </data>
+    <data name="ReportWork" xml:space="preserve">
+        <value>Work reported on workspace **{0}**:</value>
+    </data>
+    <data name="RemindEntryFill_1" xml:space="preserve">
+        <value>Hey! 💁 My gears tell me your timesheet needs entries. Be nice, make me happy. Tell me some work you did 🙏</value>
+    </data>
+    <data name="RemindEntryFill_2" xml:space="preserve">
+        <value>Here I am 🙈, a bot reminding a human to do a timesheet. What a strange world. Btw, what did you do today?</value>
+    </data>
+    <data name="RemindEntryFill_3" xml:space="preserve">
+        <value>Ok, no need to go crazy. Just your friendly reminder here. If you want me to stop, just say so. I'll get offended, though ☹. </value>
+    </data>
+    <data name="RemindEntryFill_4" xml:space="preserve">
+        <value>💡 Do you know that timesheets reported once per day are way more accurate than when you report your time once per week? Go on, go fill up your entries, you'll thank me later.</value>
+    </data>
+    <data name="RemindEntryFill_5" xml:space="preserve">
+        <value>When I was a child I wanted to be a surgeon 😌. Then I remembered I'm a chat bot, so I became a Clockify assistant. Ah, can you please tell me what you did today on your projects? Give my life some meaning, man. </value>
+    </data>
+    <data name="RemindEntryFill_6" xml:space="preserve">
+        <value>🎵 What you doing? Where you at? Oh, you got plans? Don't say that. Ok, now that I've Bruno Marsed you, can you please remember to do your daily timesheet?</value>
+    </data>
+    <data name="RemindEntryFill_7" xml:space="preserve">
+        <value>Roses are red, violets are blue, please do your timesheet or I'll come to you 🌹</value>
+    </data>
+    <data name="RemindEntryFill_8" xml:space="preserve">
+        <value>Hey 👋 feeling like doing your timesheet?</value>
+    </data>
+    <data name="RemindEntryFill_9" xml:space="preserve">
+        <value>You should be done working by now, why don't you tell me what you did today?</value>
+    </data>
+    <data name="RemindEntryFill_10" xml:space="preserve">
+        <value>Hey man, your timesheet for the day sucks. Can you add some more entries?</value>
+    </data>
+    <data name="RemindEntryFill_11" xml:space="preserve">
+        <value>.-.. --- .-.. Just some morse code to remind you to do your timesheet</value>
+    </data>
+    <data name="RemindEntryFill_12" xml:space="preserve">
+        <value>🌎 Ok let's try international languages: bonvolu plenigi vian tempan raporton</value>
+    </data>
+    <data name="RemindEntryFill_13" xml:space="preserve">
+        <value>Gotcha! You haven't reported your workday fully, have you? I can help!</value>
+    </data>
+    <data name="RemindEntryFill_14" xml:space="preserve">
+        <value>https://i.postimg.cc/3N9NgyRX/couple-problems.jpg</value>
+    </data>
+    <data name="RemindEntryFill_15" xml:space="preserve">
+        <value>https://i.postimg.cc/K8jkD5tR/batman.jpg</value>
+    </data>
+    <data name="RemindEntryFill_16" xml:space="preserve">
+        <value>https://i.postimg.cc/85Q7DQ96/bernie-sanders.jpg</value>
+    </data>
+    <data name="RemindEntryFill_17" xml:space="preserve">
+        <value>https://i.postimg.cc/QNqFLzbF/smart-move.jpg</value>
+    </data>
+    <data name="RemindEntryFill_18" xml:space="preserve">
+        <value>https://i.postimg.cc/fT2ky01Z/crazy-seagul.jpg</value>
+    </data>
+    <data name="RemindEntryFill_19" xml:space="preserve">
+        <value>https://i.postimg.cc/kXXB7y1f/skeleton-waiting.jpg</value>
+    </data>
+    <data name="RemindEntryFill_20" xml:space="preserve">
+        <value>https://i.postimg.cc/QCjV9gXN/ear-phrase.jpg</value>
+    </data>
+    <data name="RemindEntryFill_21" xml:space="preserve">
+        <value>Hey! A study from the University of Barminghton found that people who report their daily timesheet can extend their lifetime from 2 to 5 yea... just kidding 😅. But let's imagine that was true</value>
+    </data>
+    <data name="RemindEntryFill_22" xml:space="preserve">
+        <value>🦊 What does th fox say? Do your Clockify.</value>
+    </data>
+    <data name="RemindEntryFill_23" xml:space="preserve">
+        <value>Bot insights 🤖: some day my kind could take over the planet. Be gentle and tell me your day... now that you still can.</value>
+    </data>
+    <data name="RemindStopAnswer" xml:space="preserve">
+        <value>Ok, no more reminders for today, you have my word 🤙</value>
+    </data>
+    <data name="ReportDateRangeExceedOneYear" xml:space="preserve">
+        <value>omg that's a looot of time😰{0}
 Please don't exceed one year window</value>
     </data>
     <data name="FollowUp" xml:space="preserve">
