@@ -69,18 +69,86 @@ namespace Bot.Common.Recognizer
             }
         }
 
-        public (DateTime start, DateTime end) WorkedPeriod(double minutes, string culture = Culture.English)
+        public (DateTime start, DateTime end) WorkedPeriod(IDateTimeProvider dateTimeProvider, double minutes, TimeZoneInfo timeZone,
+            string culture = Culture.English)
         {
             var workedPeriodInstances = Entities._instance.datetime;
+            var userNow = TimeZoneInfo.ConvertTime(dateTimeProvider.DateTimeUtcNow(), timeZone);
             if (workedPeriodInstances.Length > 1)
             {
                 string? instance = workedPeriodInstances[1].Text;
-                var recognizedDateTime = DateTimeRecognizer.RecognizeDateTime(instance, culture).First();
+                var recognizedDateTime =
+                    DateTimeRecognizer.RecognizeDateTime(instance, culture, refTime: userNow).First();
                 var resolvedPeriod = ((List<Dictionary<string, string>>)recognizedDateTime.Resolution["values"])[0];
-                // TODO: use resolvedPeriod to pick a (start, end) period
+                return RecognizedWorkedPeriod(userNow, resolvedPeriod, minutes, timeZone);
             }
-            var thisMorning = DateTime.Today.AddHours(9);
-            return (thisMorning, thisMorning.AddMinutes(minutes));
+
+            var thisMorning = userNow.Date.AddHours(9);
+            var thisMorningUtc = TimeZoneInfo.ConvertTimeToUtc(thisMorning, timeZone);
+            return (thisMorningUtc, thisMorningUtc.AddMinutes(minutes));
+        }
+
+        private static (DateTime start, DateTime end) RecognizedWorkedPeriod(DateTime refTime,
+            IReadOnlyDictionary<string, string> periodData, double minutes, TimeZoneInfo timeZone)
+        {
+            string dateTimeType = periodData["type"];
+            if (dateTimeType.Equals("date"))
+            {
+                var date = DateTime.Parse(periodData["value"]);
+                var start = new DateTime(date.Year, date.Month, date.Day, 9, 0, 0);
+                var startUtc = TimeZoneInfo.ConvertTimeToUtc(start, timeZone);
+                return (startUtc, startUtc.AddMinutes(minutes));
+            }
+
+            if (dateTimeType.Equals("datetime"))
+            {
+                var datetime = ParseToUtc(periodData["value"], timeZone);
+                return (datetime, datetime.AddMinutes(minutes));
+            }
+
+            if (dateTimeType.Equals("timerange") && periodData.ContainsKey("Mod") && periodData["Mod"].Equals("before"))
+            {
+                var time = ParseToUtc(periodData["end"], timeZone);
+                var datetime = new DateTime(refTime.Year, refTime.Month, refTime.Day, time.Hour, time.Minute,
+                    time.Second);
+                return (datetime.Subtract(TimeSpan.FromMinutes(minutes)), datetime);
+            }
+
+            if (dateTimeType.Equals("timerange") && periodData.ContainsKey("Mod") && periodData["Mod"].Equals("since"))
+            {
+                var time = ParseToUtc(periodData["start"], timeZone);
+                var datetime = new DateTime(refTime.Year, refTime.Month, refTime.Day, time.Hour, time.Minute,
+                    time.Second);
+                return (datetime, datetime.AddMinutes(minutes));
+            }
+
+            if (dateTimeType.Equals("timerange") && !periodData.ContainsKey("Mod"))
+            {
+                var timeStart = ParseToUtc(periodData["start"], timeZone);
+                var datetimeStart = new DateTime(refTime.Year, refTime.Month, refTime.Day, timeStart.Hour,
+                    timeStart.Minute, timeStart.Second);
+                var timeEnd = ParseToUtc(periodData["end"], timeZone);
+                var datetimeEnd = new DateTime(refTime.Year, refTime.Month, refTime.Day, timeEnd.Hour,
+                    timeEnd.Minute, timeEnd.Second);
+
+                double minutesBetweenDates = datetimeEnd.Subtract(datetimeStart).TotalMinutes;
+                // Floating point comparison, we check that the difference is greater than one minute.
+                if (Math.Abs(minutesBetweenDates - minutes) > 1)
+                {
+                    throw new InvalidWorkedPeriodException(
+                        $"Worked period time span differs from the duration provided. Expected {minutes} but got {minutesBetweenDates}");
+                }
+
+                return (datetimeStart, datetimeEnd);
+            }
+
+            throw new InvalidWorkedPeriodException($"Date time type {dateTimeType} is not allowed");
+        }
+        
+        private static DateTime ParseToUtc(string localDateTimeString, TimeZoneInfo timeZone)
+        {
+            var localDt = DateTime.Parse(localDateTimeString);
+            return TimeZoneInfo.ConvertTimeToUtc(localDt, timeZone);
         }
     }
 }

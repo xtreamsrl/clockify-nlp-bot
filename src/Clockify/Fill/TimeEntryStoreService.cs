@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bot.Clockify.Client;
 using Bot.Clockify.Models;
+using Bot.Common;
 using Microsoft.Extensions.Configuration;
 
 namespace Bot.Clockify.Fill
@@ -12,14 +13,18 @@ namespace Bot.Clockify.Fill
     {
         private readonly IClockifyService _clockifyService;
         private readonly string _tagName;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public TimeEntryStoreService(IClockifyService clockifyService, IConfiguration configuration)
+        public TimeEntryStoreService(IClockifyService clockifyService, IConfiguration configuration,
+            IDateTimeProvider dateTimeProvider)
         {
             _clockifyService = clockifyService;
+            _dateTimeProvider = dateTimeProvider;
             _tagName = configuration["Tag"];
         }
 
-        public async Task<double> AddTimeEntries(string clockifyToken, ProjectDo project, TaskDo? task, DateTime start, DateTime end)
+        public async Task<double> AddTimeEntries(string clockifyToken, ProjectDo project, TaskDo? task, DateTime start,
+            DateTime end, TimeZoneInfo timeZone)
         {
             string? tagId = await _clockifyService.GetTagAsync(clockifyToken, project.WorkspaceId, _tagName);
             string userId = (await _clockifyService.GetCurrentUserAsync(clockifyToken)).Id;
@@ -31,13 +36,15 @@ namespace Bot.Clockify.Fill
                 taskId: task?.Id,
                 billable: project.Billable,
                 end: end,
-                tagIds: (tagId != null) ? new List<string> {tagId} : null
+                tagIds: tagId != null ? new List<string> { tagId } : null
             );
 
             await _clockifyService.AddTimeEntryAsync(clockifyToken, workspaceId, timeEntry);
 
+            // TODO Extract total hours calculation into another method
+            var userToday = TimeZoneInfo.ConvertTime(_dateTimeProvider.DateTimeUtcNow(), timeZone).Date;
             var todayEntries = await _clockifyService.GetHydratedTimeEntriesAsync(clockifyToken, workspaceId, userId,
-                new DateTimeOffset(DateTime.Today), new DateTimeOffset(DateTime.Today.AddDays(1)));
+                new DateTimeOffset(userToday), new DateTimeOffset(userToday.AddDays(1)));
 
             return todayEntries
                 .Where(entry => entry.TimeInterval.Start.HasValue && entry.TimeInterval.End.HasValue)

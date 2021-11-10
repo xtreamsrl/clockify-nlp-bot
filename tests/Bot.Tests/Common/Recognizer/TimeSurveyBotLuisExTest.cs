@@ -1,7 +1,10 @@
 ﻿using System;
+using Bot.Common;
 using Bot.Common.Recognizer;
 using FluentAssertions;
 using Microsoft.Bot.Builder.AI.Luis;
+using Moq;
+using TimeZoneConverter;
 using Xunit;
 
 namespace Bot.Tests.Common.Recognizer
@@ -9,7 +12,7 @@ namespace Bot.Tests.Common.Recognizer
     public class TimeSurveyBotLuisExTest
     {
         [Fact]
-        public void TimePeriod_ValidEntitiesInstance_ReturnsFirstDateTimeText()
+        public void WorkedDuration_ValidEntitiesInstance_ReturnsFirstDateTimeText()
         {
             const string timePeriod = "from 01 July to 10 July";
             var instances = new TimeSurveyBotLuis._Entities._Instance
@@ -36,12 +39,12 @@ namespace Bot.Tests.Common.Recognizer
                     _instance = instances
                 }
             };
-            
+
             luisResult.WorkedDuration().Should().Be(timePeriod);
         }
-        
+
         [Fact]
-        public void TimePeriod_NullOrEmptyDateTimeInstance_ThrowsException()
+        public void WorkedDuration_NullOrEmptyDateTimeInstance_ThrowsException()
         {
             var emptyDateTimeTextEntities = new TimeSurveyBotLuis._Entities._Instance
             {
@@ -61,7 +64,7 @@ namespace Bot.Tests.Common.Recognizer
                     _instance = emptyDateTimeTextEntities
                 }
             };
-            
+
             var nullDateTimeInstance = new TimeSurveyBotLuis._Entities._Instance
             {
                 datetime = null
@@ -80,12 +83,12 @@ namespace Bot.Tests.Common.Recognizer
                     _instance = new TimeSurveyBotLuis._Entities._Instance()
                 }
             };
-            
-            Func<string> getDateTimeWithNullDateTimeEntities = () =>  lsEmptyDateTimeTextInstance.WorkedDuration();
+
+            Func<string> getDateTimeWithNullDateTimeEntities = () => lsEmptyDateTimeTextInstance.WorkedDuration();
             getDateTimeWithNullDateTimeEntities.Should().ThrowExactly<InvalidWorkedDurationException>()
                 .WithMessage("No worked duration has been recognized");
-            
-            Func<string> getDateTimeWithEmptyEntities = () =>  lsEmptyInstance.WorkedDuration();
+
+            Func<string> getDateTimeWithEmptyEntities = () => lsEmptyInstance.WorkedDuration();
             getDateTimeWithEmptyEntities.Should().ThrowExactly<InvalidWorkedDurationException>()
                 .WithMessage("No worked duration has been recognized");
 
@@ -95,7 +98,7 @@ namespace Bot.Tests.Common.Recognizer
         }
 
         [Fact]
-        public void TimePeriodInMinutes_EightHoursPeriod_ReturnsMinutes()
+        public void WorkedDurationInMinutes_EightHoursPeriod_ReturnsMinutes()
         {
             var instances = new TimeSurveyBotLuis._Entities._Instance
             {
@@ -117,9 +120,351 @@ namespace Bot.Tests.Common.Recognizer
             };
 
             const double expectedMinutes = 480.00;
-            
+
             luisResult.WorkedDurationInMinutes().Should().Be(expectedMinutes);
         }
-        
+
+        [Fact]
+        public void WorkedPeriod_DateWithoutTime_ReturnsWorkedPeriodFromNineAm()
+        {
+            var mondayFirstNovember = new DateTime(2021, 11, 8, 15, 0, 0);
+            var lastFridayStart = new DateTime(2021, 11, 5, 6, 0, 0);
+            var lastFridayEnd = new DateTime(2021, 11, 5, 8, 0, 0);
+            var timeZonePlusThree = TZConvert.GetTimeZoneInfo("Europe/Moscow");
+
+            var mockDateTimeProvider = new Mock<IDateTimeProvider>();
+            mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
+                .Returns(mondayFirstNovember);
+
+            var instances = new TimeSurveyBotLuis._Entities._Instance
+            {
+                datetime = new[]
+                {
+                    new InstanceData
+                    {
+                        Text = "2 hours",
+                        Type = "builtin.datetimeV2.duration"
+                    },
+                    new InstanceData
+                    {
+                        Text = "last friday",
+                        Type = "builtin.datetimeV2.datetime"
+                    }
+                }
+            };
+
+            var luisResult = new TimeSurveyBotLuis
+            {
+                Entities = new TimeSurveyBotLuis._Entities
+                {
+                    _instance = instances
+                }
+            };
+
+            var (start, end) = luisResult.WorkedPeriod(mockDateTimeProvider.Object, 120,
+                timeZonePlusThree);
+
+            start.Should().Be(lastFridayStart);
+            end.Should().Be(lastFridayEnd);
+        }
+
+        [Fact]
+        public void WorkedPeriod_PeriodStartingFromDateTime_ReturnsWorkedPeriod()
+        {
+            var mondayFirstNovember = new DateTime(2021, 11, 8, 15, 0, 0);
+            var lastFridayStart = new DateTime(2021, 11, 5, 13, 0, 0);
+            var lastFridayEnd = new DateTime(2021, 11, 5, 15, 0, 0);
+            var timeZonePlusThree = TZConvert.GetTimeZoneInfo("Europe/Moscow");
+
+            var mockDateTimeProvider = new Mock<IDateTimeProvider>();
+            mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
+                .Returns(mondayFirstNovember);
+
+            var instances = new TimeSurveyBotLuis._Entities._Instance
+            {
+                datetime = new[]
+                {
+                    new InstanceData
+                    {
+                        Text = "2 hours",
+                        Type = "builtin.datetimeV2.duration"
+                    },
+                    new InstanceData
+                    {
+                        Text = "last friday at 4pm",
+                        Type = "builtin.datetimeV2.datetime"
+                    }
+                }
+            };
+
+            var luisResult = new TimeSurveyBotLuis
+            {
+                Entities = new TimeSurveyBotLuis._Entities
+                {
+                    _instance = instances
+                }
+            };
+
+            var (start, end) = luisResult.WorkedPeriod(mockDateTimeProvider.Object, 120,
+                timeZonePlusThree);
+
+            start.Should().Be(lastFridayStart);
+            end.Should().Be(lastFridayEnd);
+        }
+
+        [Fact]
+        public void WorkedPeriod_TillSelectedHour_ReturnsWorkedPeriod()
+        {
+            var mondayFirstNovember = new DateTime(2021, 11, 1, 16, 0, 0);
+            var expectedStart = new DateTime(2021, 11, 1, 13, 0, 0);
+            var expectedEnd = new DateTime(2021, 11, 1, 15, 0, 0);
+            var timeZonePlusThree = TZConvert.GetTimeZoneInfo("Europe/Moscow");
+
+            var mockDateTimeProvider = new Mock<IDateTimeProvider>();
+            mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
+                .Returns(mondayFirstNovember);
+
+            var instances = new TimeSurveyBotLuis._Entities._Instance
+            {
+                datetime = new[]
+                {
+                    new InstanceData
+                    {
+                        Text = "2 hours",
+                        Type = "builtin.datetimeV2.duration"
+                    },
+                    new InstanceData
+                    {
+                        Text = "till 6 pm",
+                        Type = "builtin.datetimeV2.datetime"
+                    }
+                }
+            };
+
+            var luisResult = new TimeSurveyBotLuis
+            {
+                Entities = new TimeSurveyBotLuis._Entities
+                {
+                    _instance = instances
+                }
+            };
+
+            var (start, end) = luisResult.WorkedPeriod(mockDateTimeProvider.Object, 120,
+                timeZonePlusThree);
+
+            start.Should().Be(expectedStart);
+            end.Should().Be(expectedEnd);
+        }
+
+        [Fact]
+        public void WorkedPeriod_FromSelectedHour_ReturnsWorkedPeriod()
+        {
+            var mondayFirstNovember = new DateTime(2021, 11, 1, 16, 0, 0);
+            var expectedStart = new DateTime(2021, 11, 1, 13, 0, 0);
+            var expectedEnd = new DateTime(2021, 11, 1, 15, 0, 0);
+            var timeZonePlusThree = TZConvert.GetTimeZoneInfo("Europe/Moscow");
+
+            var mockDateTimeProvider = new Mock<IDateTimeProvider>();
+            mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
+                .Returns(mondayFirstNovember);
+
+            var instances = new TimeSurveyBotLuis._Entities._Instance
+            {
+                datetime = new[]
+                {
+                    new InstanceData
+                    {
+                        Text = "2 hours",
+                        Type = "builtin.datetimeV2.duration"
+                    },
+                    new InstanceData
+                    {
+                        Text = "from 4 pm",
+                        Type = "builtin.datetimeV2.datetime"
+                    }
+                }
+            };
+
+            var luisResult = new TimeSurveyBotLuis
+            {
+                Entities = new TimeSurveyBotLuis._Entities
+                {
+                    _instance = instances
+                }
+            };
+
+            var (start, end) = luisResult.WorkedPeriod(mockDateTimeProvider.Object, 120,
+                timeZonePlusThree);
+
+            start.Should().Be(expectedStart);
+            end.Should().Be(expectedEnd);
+        }
+
+        [Fact]
+        public void WorkedPeriod_FromToHoursRange_ReturnsWorkedPeriod()
+        {
+            var mondayFirstNovember = new DateTime(2021, 11, 1, 16, 0, 0);
+            var expectedStart = new DateTime(2021, 11, 1, 6, 0, 0);
+            var expectedEnd = new DateTime(2021, 11, 1, 8, 0, 0);
+            var timeZonePlusThree = TZConvert.GetTimeZoneInfo("Europe/Moscow");
+
+            var mockDateTimeProvider = new Mock<IDateTimeProvider>();
+            mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
+                .Returns(mondayFirstNovember);
+
+            var instances = new TimeSurveyBotLuis._Entities._Instance
+            {
+                datetime = new[]
+                {
+                    new InstanceData
+                    {
+                        Text = "2 hours",
+                        Type = "builtin.datetimeV2.duration"
+                    },
+                    new InstanceData
+                    {
+                        Text = "from 9 am to 11 am",
+                        Type = "builtin.datetimeV2.datetime"
+                    }
+                }
+            };
+
+            var luisResult = new TimeSurveyBotLuis
+            {
+                Entities = new TimeSurveyBotLuis._Entities
+                {
+                    _instance = instances
+                }
+            };
+
+            var (start, end) = luisResult.WorkedPeriod(mockDateTimeProvider.Object, 120,
+                timeZonePlusThree);
+
+            start.Should().Be(expectedStart);
+            end.Should().Be(expectedEnd);
+        }
+
+        [Fact]
+        public void WorkedPeriod_HoursRangeMismatchWithDuration_ThrowsInvalidWorkedPeriodException()
+        {
+            var mondayFirstNovember = new DateTime(2021, 11, 1, 16, 0, 0);
+            var timeZonePlusThree = TZConvert.GetTimeZoneInfo("Europe/Moscow");
+
+            var mockDateTimeProvider = new Mock<IDateTimeProvider>();
+            mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
+                .Returns(mondayFirstNovember);
+
+            var instances = new TimeSurveyBotLuis._Entities._Instance
+            {
+                datetime = new[]
+                {
+                    new InstanceData
+                    {
+                        Text = "1 hours",
+                        Type = "builtin.datetimeV2.duration"
+                    },
+                    new InstanceData
+                    {
+                        Text = "from 9 am to 11 am",
+                        Type = "builtin.datetimeV2.datetime"
+                    }
+                }
+            };
+
+            var luisResult = new TimeSurveyBotLuis
+            {
+                Entities = new TimeSurveyBotLuis._Entities
+                {
+                    _instance = instances
+                }
+            };
+
+            Func<(DateTime, DateTime)> action = () =>
+                luisResult.WorkedPeriod(mockDateTimeProvider.Object, 60, timeZonePlusThree);
+
+            action.Should().ThrowExactly<InvalidWorkedPeriodException>()
+                .WithMessage("Worked period time span differs from the duration provided. Expected 60 but got 120");
+        }
+
+        [Fact]
+        public void WorkedPeriod_DateTimeIsDuration_ThrowsInvalidWorkedPeriodException()
+        {
+            var mondayFirstNovember = new DateTime(2021, 11, 1, 16, 0, 0);
+            var timeZonePlusThree = TZConvert.GetTimeZoneInfo("Europe/Moscow");
+
+            var mockDateTimeProvider = new Mock<IDateTimeProvider>();
+            mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
+                .Returns(mondayFirstNovember);
+
+            var instances = new TimeSurveyBotLuis._Entities._Instance
+            {
+                datetime = new[]
+                {
+                    new InstanceData
+                    {
+                        Text = "1 hours",
+                        Type = "builtin.datetimeV2.duration"
+                    },
+                    new InstanceData
+                    {
+                        Text = "for 60 minutes",
+                        Type = "builtin.datetimeV2.duration"
+                    }
+                }
+            };
+
+            var luisResult = new TimeSurveyBotLuis
+            {
+                Entities = new TimeSurveyBotLuis._Entities
+                {
+                    _instance = instances
+                }
+            };
+
+            Func<(DateTime, DateTime)> action = () =>
+                luisResult.WorkedPeriod(mockDateTimeProvider.Object, 60, timeZonePlusThree);
+
+            action.Should().ThrowExactly<InvalidWorkedPeriodException>()
+                .WithMessage("Date time type duration is not allowed");
+        }
+
+        [Fact]
+        public void WorkedPeriod_NoHoursRange_ReturnsWorkedPeriodStartingFromNineAm()
+        {
+            var mondayFirstNovember = new DateTime(2021, 11, 1, 16, 0, 0);
+            var expectedStart = new DateTime(2021, 11, 1, 6, 0, 0);
+            var expectedEnd = new DateTime(2021, 11, 1, 8, 0, 0);
+            var timeZonePlusThree = TZConvert.GetTimeZoneInfo("Europe/Moscow");
+
+            var mockDateTimeProvider = new Mock<IDateTimeProvider>();
+            mockDateTimeProvider.Setup(d => d.DateTimeUtcNow())
+                .Returns(mondayFirstNovember);
+
+            var instances = new TimeSurveyBotLuis._Entities._Instance
+            {
+                datetime = new[]
+                {
+                    new InstanceData
+                    {
+                        Text = "2 hours",
+                        Type = "builtin.datetimeV2.duration"
+                    }
+                }
+            };
+
+            var luisResult = new TimeSurveyBotLuis
+            {
+                Entities = new TimeSurveyBotLuis._Entities
+                {
+                    _instance = instances
+                }
+            };
+
+            var (start, end) = luisResult.WorkedPeriod(mockDateTimeProvider.Object, 120,
+                timeZonePlusThree);
+
+            start.Should().Be(expectedStart);
+            end.Should().Be(expectedEnd);
+        }
     }
 }
