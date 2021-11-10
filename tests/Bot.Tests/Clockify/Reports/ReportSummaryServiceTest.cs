@@ -59,7 +59,7 @@ namespace Bot.Tests.Clockify.Reports
             string summary = await reportSummaryService.Summary(Channels.Telegram, userProfile, dateRange);
 
             // Assert
-            summary.Should().BeEquivalentTo($"You worked **2.72d** in 01 January 2020 - 01 March 2020" +
+            summary.Should().BeEquivalentTo($"Between 01 January 2020 - 01 March 2020, you worked **2.72** days (21 hours)" +
                                             "\n\n\n\nWork reported on workspace **workspace1**:" +
                                             "\n- **forecasting**: 0.75d" +
                                             "\n- **r&d** - blockchain: 1.53d" +
@@ -108,7 +108,7 @@ namespace Bot.Tests.Clockify.Reports
             string summary = await reportSummaryService.Summary(Channels.Telegram, userProfile, dateRange);
 
             // Assert
-            summary.Should().BeEquivalentTo($"You worked **2.28d** in 01 January 2020 - 01 March 2020" +
+            summary.Should().BeEquivalentTo($"Between 01 January 2020 - 01 March 2020, you worked **2.28** days (18 hours)" +
                                             "\n\n\n- **forecasting**: 0.75d" +
                                             "\n- **r&d** - blockchain: 1.53d");
         }
