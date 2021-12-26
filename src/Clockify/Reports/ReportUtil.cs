@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using Bot.Clockify.Models;
 using Microsoft.Bot.Connector;
+using Microsoft.Recognizers.Text;
 
 namespace Bot.Clockify.Reports
 {
@@ -50,7 +51,7 @@ namespace Bot.Clockify.Reports
         public static string FormatDuration(float duration)
         {
             double days = duration / 8.0;
-            return $"{days:0.00}d";
+            return $"{days:0.00}d ({duration:0.00}h)";
         }
 
         private static float DurationInDecimal(HydratedTimeEntryDo hydratedTimeEntry)
