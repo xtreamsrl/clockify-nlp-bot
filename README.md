@@ -74,6 +74,52 @@ Make sure to provide required configuration values. The app currently needs a va
   "MicrosoftAppPassword": ""
 }
 ```
+Description: 
+* LuisAppID: AppId for the app you created within luis.ai
+* LuisAPIKey: API Key you set for your LUIS service under portal.azure.com
+* LuisAPIHostName: Hostname from portal.azure.com without https://!
+* ProactiveBotApiKey: The API Key you need to trigger https://<yourbot>:3978/api/timesheet/remind (pass the API-Key as header info "ProactiveBotApiKey")
+* MicrosoftAppId: The AppId of your WebApplication you get from portal.azure.com
+* MicrosoftAppPassword: The password for your application. You also get this from portal.azure.com
+* KeyVaultName: the name of your Vault storage for storing the tokens
+
+Important: if you test the bot locally, you should use a reduced set of settings: 
+
+```json
+{
+  "LuisAppId": "",
+  "LuisAPIKey": "",
+  "LuisAPIHostName": "",
+  "ProactiveBotApiKey": ""
+}
+```
+You still need the LUIS service to be active.
+
+###LUIS
+For proper operation, you must provide a LUIS model. This can be done at luis.ai
+
+####Intents
+You must create different intents. The intents below are the ones that i've figured out to be the minimum. 
+Add also @datetimeV2 as a feature. 
+
+![images/img1.JPG](images/img1.JPG)
+
+![images/img2.jpg](images/img2.jpg)
+![images/img3.jpg](images/img3.jpg)
+
+####Entities
+You need also at least one additional entity called "WorkedEntity". This stores the project you have worked on. 
+
+![images/img4.jpg](images/img4.jpg)
+
+###Auto reminder
+
+The auto reminder is triggered by an endpoint. You have to call [GET] http://localhost:3978/api/timesheet/remind and pass ProactiveBotApiKey within the header and pass as value the "ProactiveBotApiKey" value. 
+
+### Clockify
+The first time you contact the bot, he will ask you for your clockify API-Key and stores it within the KeyVault. 
+
+###Run
 
 Then run the bot. For example, from a terminal:
 
