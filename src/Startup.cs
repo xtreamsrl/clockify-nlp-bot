@@ -81,6 +81,7 @@ namespace Bot
             services.AddSingleton<INeedRemindService, TimeSheetNotFullEnough>();
             services.AddSingleton<INeedRemindService, UserDidNotSayStop>();
             services.AddSingleton<INeedRemindService, NotOnLeave>();
+            services.AddSingleton<INeedRemindService, PastDayNotComplete>();
             services.AddSingleton<ICompositeNeedReminderService, CompositeNeedReminderService>();
             services.AddSingleton<IRemindService, EntryFillRemindService>();
             services.AddSingleton<IRemindService, SmartWorkingRemindService>();
