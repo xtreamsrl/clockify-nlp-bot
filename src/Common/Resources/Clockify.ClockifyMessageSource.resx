@@ -142,10 +142,22 @@
         <value>Hey! A study from the University of Barminghton found that people who report their daily timesheet can extend their lifetime from 2 to 5 yea... just kidding 😅. But let's imagine that was true</value>
     </data>
     <data name="RemindEntryFill_22" xml:space="preserve">
-        <value>🦊 What does th fox say? Do your Clockify.</value>
+        <value>🦊 What does the fox say? Do your Clockify.</value>
     </data>
     <data name="RemindEntryFill_23" xml:space="preserve">
-        <value>Bot insights 🤖: some day my kind could take over the planet. Be gentle and tell me your day... now that you still can.</value>
+        <value>Bot facts 🤖: some day my kind could take over the planet. Be gentle and tell me your day... now that you still can.</value>
+    </data>
+    <data name="RemindEntryFill_24" xml:space="preserve">
+        <value>https://i.postimg.cc/9XZZtXmk/bike.jpg</value>
+    </data>
+    <data name="RemindEntryFill_25" xml:space="preserve">
+        <value>https://i.postimg.cc/MKYBNsjb/change-my-mind.jpg</value>
+    </data>
+    <data name="RemindEntryFill_26" xml:space="preserve">
+        <value>https://i.postimg.cc/02vmtgry/irritated.jpg</value>
+    </data>
+    <data name="RemindEntryFill_27" xml:space="preserve">
+        <value>https://i.postimg.cc/K8vT2nPX/pablo.jpg</value>
     </data>
     <data name="RemindStopAnswer" xml:space="preserve">
         <value>Ok, no more reminders for today, you have my word 🤙</value>
