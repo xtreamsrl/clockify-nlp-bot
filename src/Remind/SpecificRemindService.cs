@@ -59,7 +59,9 @@ namespace Bot.Remind
             TodayReminder = 1,
             YesterdayReminder = 2,
             WeekReminder = 4,
-            DicReminder = 8
+            OutOfWorkTime = 8,
+            UserSaidStop = 16,
+            UserOnLeave = 32
         };
 
 

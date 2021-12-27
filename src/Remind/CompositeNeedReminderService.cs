@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bot.Clockify;
+using Bot.DIC;
 using Bot.States;
 
 namespace Bot.Remind
@@ -34,30 +35,19 @@ namespace Bot.Remind
                 //Check if the particular reminder was set to true
                 if (reminderIsNeeded)
                 {
-                    if (service.GetType() == typeof(PastDayNotComplete) ||
-                        service.GetType() == typeof(TimeSheetNotFullEnough))
-                    {
-                        if (service.GetType() == typeof(PastDayNotComplete)) reminder |= SpecificRemindService.ReminderType.YesterdayReminder;
-                        if (service.GetType() == typeof(TimeSheetNotFullEnough)) reminder |= SpecificRemindService.ReminderType.TodayReminder;
-                    }
+                    //The reminder for this service is needed, check why it is needed and set the flags
+                    if (service.GetType() == typeof(PastDayNotComplete)) reminder |= SpecificRemindService.ReminderType.YesterdayReminder;
+                    if (service.GetType() == typeof(TimeSheetNotFullEnough)) reminder |= SpecificRemindService.ReminderType.TodayReminder;
                 }
                 else
                 {
-                    //As soon as one reminder check was negative, we return "NoReminder" since all checks needs to be true!
-                    //TODO not always break! We can remind for yesterdays times even if it is early morning!
-                    return SpecificRemindService.ReminderType.NoReminder;
+                    //The reminder for this service is not needed. Therefore we check, what was negative and set the appropriate flag!
+                    if (service.GetType() == typeof(EndOfWorkingDay)) reminder |= SpecificRemindService.ReminderType.OutOfWorkTime;
+                    if (service.GetType() == typeof(UserDidNotSayStop)) reminder |= SpecificRemindService.ReminderType.UserSaidStop;
+                    if (service.GetType() == typeof(NotOnLeave)) reminder |= SpecificRemindService.ReminderType.UserOnLeave;
                 }
             }
-            
             return reminder;
-
-            // foreach (var service in _services.Select(service => service.ReminderIsNeeded(profile)))
-            // {
-            //     
-            // }
-            //
-            // bool[] conditions = await Task.WhenAll(_services.Select(service => service.ReminderIsNeeded(profile)));
-            // return conditions.All(c => c);
         }
     }
 }
