@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using Bot.Clockify.Models;
 using Microsoft.Bot.Connector;
+using Microsoft.Recognizers.Text;
 
 namespace Bot.Clockify.Reports
 {

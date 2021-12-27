@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bot.Clockify.Fill;
 using Bot.Clockify.Reports;
+using Bot.Clockify.User;
 using Bot.Common.Recognizer;
 using Bot.States;
 using Bot.Supports;
@@ -15,23 +16,26 @@ namespace Bot.Clockify
     {
         private readonly EntryFillDialog _fillDialog;
         private readonly ReportDialog _reportDialog;
+        private readonly UserSettingsDialog _userSettingsDialog;
         private readonly StopReminderDialog _stopReminderDialog;
         private readonly ClockifySetupDialog _clockifySetupDialog;
         private readonly DialogSet _dialogSet;
         private readonly IStatePropertyAccessor<DialogState> _dialogState;
 
         public ClockifyHandler(EntryFillDialog fillDialog, ReportDialog reportDialog,
-            StopReminderDialog stopReminderDialog, ConversationState conversationState,
+            StopReminderDialog stopReminderDialog, UserSettingsDialog userSettingsDialog, ConversationState conversationState,
             ClockifySetupDialog clockifySetupDialog)
         {
             _dialogState = conversationState.CreateProperty<DialogState>("ClockifyDialogState");
             _fillDialog = fillDialog;
             _reportDialog = reportDialog;
+            _userSettingsDialog = userSettingsDialog;
             _stopReminderDialog = stopReminderDialog;
             _clockifySetupDialog = clockifySetupDialog;
             _dialogSet = new DialogSet(_dialogState)
                 .Add(_fillDialog)
                 .Add(_stopReminderDialog)
+                .Add(_userSettingsDialog)
                 .Add(_reportDialog)
                 .Add(_clockifySetupDialog);
         }
@@ -52,6 +56,9 @@ namespace Bot.Clockify
             {
                 switch (luisResult.TopIntentWithMinScore())
                 {
+                    case TimeSurveyBotLuis.Intent.SetWorkingHours:
+                        await dialogContext.BeginDialogAsync(_userSettingsDialog.Id, luisResult, cancellationToken);
+                        return true;
                     case TimeSurveyBotLuis.Intent.Report:
                         await dialogContext.BeginDialogAsync(_reportDialog.Id, luisResult, cancellationToken);
                         return true;

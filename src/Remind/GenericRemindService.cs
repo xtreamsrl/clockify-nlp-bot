@@ -37,13 +37,14 @@ namespace Bot.Remind
         {
             var reminderCounter = 0;
 
-            async Task<bool> ReminderNeeded(UserProfile u) => await _compositeNeedRemindService.ReminderIsNeeded(u);
+            async Task<SpecificRemindService.ReminderType> ReminderNeeded(UserProfile u) => await _compositeNeedRemindService.ReminderIsNeeded(u);
 
             List<UserProfile> userProfiles = await _userProfilesProvider.GetUserProfilesAsync();
 
+            //Fetch all users where the ReminderType is not set to "NoReminder"
             List<UserProfile> userToRemind = userProfiles
                 .Where(u => u.ClockifyTokenId != null && u.ConversationReference != null)
-                .Where(u => ReminderNeeded(u).Result)
+                .Where(u => ReminderNeeded(u).Result != SpecificRemindService.ReminderType.NoReminder)
                 .ToList();
 
             foreach (var userProfile in userToRemind)
