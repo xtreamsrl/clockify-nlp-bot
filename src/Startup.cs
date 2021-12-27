@@ -6,6 +6,7 @@ using Bot.Clockify;
 using Bot.Clockify.Client;
 using Bot.Clockify.Fill;
 using Bot.Clockify.Reports;
+using Bot.Clockify.User;
 using Bot.Common;
 using Bot.Common.Recognizer;
 using Bot.Data;
@@ -62,6 +63,7 @@ namespace Bot
             services.AddSingleton<IReportSummaryService, ReportSummaryService>();
             services.AddSingleton<IReportExtractor, ReportExtractor>();
             services.AddSingleton<EntryFillDialog>();
+            services.AddSingleton<UserSettingsDialog>();
             services.AddSingleton<StopReminderDialog>();
             services.AddSingleton<WorthAskingForTaskService>();
             services.AddSingleton<ITimeEntryStoreService, TimeEntryStoreService>();
@@ -81,8 +83,10 @@ namespace Bot
             services.AddSingleton<INeedRemindService, TimeSheetNotFullEnough>();
             services.AddSingleton<INeedRemindService, UserDidNotSayStop>();
             services.AddSingleton<INeedRemindService, NotOnLeave>();
+            services.AddSingleton<INeedRemindService, PastDayNotComplete>();
             services.AddSingleton<ICompositeNeedReminderService, CompositeNeedReminderService>();
-            services.AddSingleton<IRemindService, EntryFillRemindService>();
+            services.AddSingleton<ISpecificRemindService, EntryFillRemindService>();
+            services.AddSingleton<ISpecificRemindServiceResolver, SpecificRemindServiceResolver>();
             services.AddSingleton<IRemindService, SmartWorkingRemindService>();
             services.AddSingleton<IRemindServiceResolver, RemindServiceResolver>();
             services.AddSingleton<IFollowUpService, FollowUpService>();

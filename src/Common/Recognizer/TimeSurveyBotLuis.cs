@@ -29,7 +29,8 @@ namespace Bot.Common.Recognizer
             Report,
             Thanks,
             Utilities_Help,
-            Utilities_Stop
+            Utilities_Stop,
+            SetWorkingHours
         };
         [JsonProperty("intents")]
         public Dictionary<Intent, IntentScore> Intents;

@@ -20,6 +20,8 @@ namespace Bot.States
         public string? LastName { get; set; }
         
         public ConversationReference? ConversationReference { get; set; }
+        
+        public double? WorkingHours { get; set; }
 
         public DateTime? StopRemind { get; set; }
         public bool Experimental { get; set; }

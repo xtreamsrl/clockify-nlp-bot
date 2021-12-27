@@ -9,12 +9,12 @@ using Bot.States;
 
 namespace Bot.Clockify
 {
-    public class TimeSheetNotFullEnough : INeedRemindService
+    public class PastDayNotComplete : INeedRemindService
     {
         private readonly IClockifyService _clockifyService;
         private readonly ITokenRepository _tokenRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
-
+        
         //Get de default hours to work. If not defined, assume 8hours
         public static readonly string DefaultWorkingHours =
             Environment.GetEnvironmentVariable("DEFAULT_WORKING_HOURS") ?? "8";
@@ -24,14 +24,14 @@ namespace Bot.Clockify
         public static readonly string MinimumHoursFilledPercentage =
             Environment.GetEnvironmentVariable("MINIMUM_HOURS_FILLED_PERCENTAGE") ?? "75";
 
-        public TimeSheetNotFullEnough(IClockifyService clockifyService, ITokenRepository tokenRepository,
+        public PastDayNotComplete(IClockifyService clockifyService, ITokenRepository tokenRepository,
             IDateTimeProvider dateTimeProvider)
         {
             _clockifyService = clockifyService;
             _tokenRepository = tokenRepository;
             _dateTimeProvider = dateTimeProvider;
         }
-
+        
         public async Task<bool> ReminderIsNeeded(UserProfile userProfile)
         {
             try
@@ -43,12 +43,19 @@ namespace Bot.Clockify
 
                 TimeZoneInfo userTimeZone = userProfile.TimeZone;
                 var userNow = TimeZoneInfo.ConvertTime(_dateTimeProvider.DateTimeUtcNow(), userTimeZone);
-                var userStartToday = userNow.Date;
-                var userEndOfToday = userStartToday.AddDays(1);
+
+                var userStartDay = userNow.Date.AddDays(-1); //Get past day
+
+                //Check for weekends. If we got one, go back in time. 
+                while (userStartDay.DayOfWeek == DayOfWeek.Sunday || userStartDay.DayOfWeek == DayOfWeek.Saturday)
+                {
+                    userStartDay = userStartDay.AddDays(-1); //Go back in time till we have no weekend anymore
+                }
+                var userEndDay = userStartDay.AddDays(1); //Add one day to the startDay for a 1 day range
 
                 double totalHoursInserted = (await Task.WhenAll(workspaces.Select(ws =>
-                        _clockifyService.GetHydratedTimeEntriesAsync(clockifyToken, ws.Id, userId, userStartToday,
-                            userEndOfToday))))
+                        _clockifyService.GetHydratedTimeEntriesAsync(clockifyToken, ws.Id, userId, userStartDay,
+                            userEndDay))))
                     .SelectMany(p => p)
                     .Sum(e =>
                     {
@@ -59,7 +66,7 @@ namespace Bot.Clockify
 
                         return 0;
                     });
-
+                
                 //Check if we have defined the working hours on user level. If so, calculate the minimum.
                 if (userProfile.WorkingHours != null)
                     return totalHoursInserted <
@@ -68,6 +75,7 @@ namespace Bot.Clockify
                 //Calculate the minimum amount of hours to be reported based on the defaults.
                 return totalHoursInserted < (double.Parse(DefaultWorkingHours) *
                                              (double.Parse(MinimumHoursFilledPercentage) / 100));
+                
             }
             catch (Exception)
             {

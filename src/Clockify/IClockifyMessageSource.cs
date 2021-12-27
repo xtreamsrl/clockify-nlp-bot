@@ -11,6 +11,8 @@
         string TaskCreation { get; }
         string TaskAbort { get; }
         string AddEntryFeedback { get; }
+        string SetWorkingHoursFeedback { get; }
+        string SetWorkingHoursUnchangedFeedback { get; }
         string EntryFillUnderstandingError { get; }
         string AmbiguousProjectError { get; }
         string ProjectUnrecognized { get; }
@@ -29,6 +31,8 @@
         string RemindStoppedAlready { get; }
         string RemindStopAnswer { get; }
         string RemindEntryFill { get; }
+        
+        string RemindEntryFillYesterday { get; }
 
         string FollowUp { get; }
     }

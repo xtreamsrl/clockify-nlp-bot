@@ -24,6 +24,8 @@ namespace Bot.Clockify
         public string TaskCreation => GetString(nameof(TaskCreation));
         public string TaskAbort => GetString(nameof(TaskAbort));
         public string AddEntryFeedback => GetString(nameof(AddEntryFeedback));
+        public string SetWorkingHoursFeedback => GetString(nameof(SetWorkingHoursFeedback));
+        public string SetWorkingHoursUnchangedFeedback => GetString(nameof(SetWorkingHoursUnchangedFeedback));
         public string EntryFillUnderstandingError => GetString(nameof(EntryFillUnderstandingError));
         public string AmbiguousProjectError => GetString(nameof(AmbiguousProjectError));
         public string ProjectUnrecognized => GetString(nameof(ProjectUnrecognized));
@@ -45,6 +47,8 @@ namespace Bot.Clockify
         public string RemindStopAnswer => GetString(nameof(RemindStopAnswer));
 
         public string RemindEntryFill => GetString(nameof(RemindEntryFill));
+
+        public string RemindEntryFillYesterday => GetString(nameof(RemindEntryFillYesterday));
 
         private string GetString(string name)
         {
