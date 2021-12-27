@@ -83,7 +83,8 @@ namespace Bot
             services.AddSingleton<INeedRemindService, NotOnLeave>();
             services.AddSingleton<INeedRemindService, PastDayNotComplete>();
             services.AddSingleton<ICompositeNeedReminderService, CompositeNeedReminderService>();
-            services.AddSingleton<IRemindService, EntryFillRemindService>();
+            services.AddSingleton<ISpecificRemindService, EntryFillRemindService>();
+            services.AddSingleton<ISpecificRemindServiceResolver, SpecificRemindServiceResolver>();
             services.AddSingleton<IRemindService, SmartWorkingRemindService>();
             services.AddSingleton<IRemindServiceResolver, RemindServiceResolver>();
             services.AddSingleton<IFollowUpService, FollowUpService>();

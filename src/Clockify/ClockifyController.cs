@@ -11,18 +11,18 @@ namespace Bot.Clockify
     public class ClockifyController : ControllerBase
     {
         private readonly IProactiveBotApiKeyValidator _proactiveBotApiKeyValidator;
-        private readonly IRemindService _entryFillRemindService;
+        private readonly ISpecificRemindService _entryFillRemindService;
         private readonly IBotFrameworkHttpAdapter _adapter;
         private readonly IFollowUpService _followUpService;
 
         public ClockifyController(IBotFrameworkHttpAdapter adapter,
-            IProactiveBotApiKeyValidator proactiveBotApiKeyValidator, IRemindServiceResolver remindServiceResolver,
+            IProactiveBotApiKeyValidator proactiveBotApiKeyValidator, ISpecificRemindServiceResolver specificRemindServiceResolver,
             IFollowUpService followUpService)
         {
             _adapter = adapter;
             _proactiveBotApiKeyValidator = proactiveBotApiKeyValidator;
             _followUpService = followUpService;
-            _entryFillRemindService = remindServiceResolver.Resolve("EntryFill");
+            _entryFillRemindService = specificRemindServiceResolver.Resolve("EntryFill");
         }
 
         [Route("api/timesheet/remind")]
@@ -32,7 +32,8 @@ namespace Bot.Clockify
             string apiToken = ProactiveApiKeyUtil.Extract(Request);
             _proactiveBotApiKeyValidator.Validate(apiToken);
 
-            return await _entryFillRemindService.SendReminderAsync(_adapter);
+            return await _entryFillRemindService.SendReminderAsync(_adapter,
+                SpecificRemindService.ReminderType.TodayReminder | SpecificRemindService.ReminderType.YesterdayReminder);
         }
 
         [Route("api/follow-up")]
@@ -42,7 +43,7 @@ namespace Bot.Clockify
             string apiToken = ProactiveApiKeyUtil.Extract(Request);
             _proactiveBotApiKeyValidator.Validate(apiToken);
 
-            var followedUsers =  await _followUpService.SendFollowUpAsync((BotAdapter)_adapter);
+            var followedUsers = await _followUpService.SendFollowUpAsync((BotAdapter)_adapter);
 
             return $"Sent follow up to {followedUsers.Count} users";
         }
