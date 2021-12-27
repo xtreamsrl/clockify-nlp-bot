@@ -99,11 +99,12 @@ namespace Bot.Remind
             return true;
         }
 
-        public async Task<string> SendReminderAsync(IBotFrameworkHttpAdapter adapter, ReminderType reminderTypes)
+        public async Task<string> SendReminderAsync(IBotFrameworkHttpAdapter adapter, ReminderType typesToRemind)
         {
             var reminderCounter = 0;
+            var userCounter = 0;
             //Check, whether we need to remind at least one event
-            if (reminderTypes != ReminderType.NoReminder)
+            if (typesToRemind != ReminderType.NoReminder)
             {
                 async Task<ReminderType> ReminderNeeded(UserProfile u) =>
                     await _compositeNeedRemindService.ReminderIsNeeded(u);
@@ -122,24 +123,28 @@ namespace Bot.Remind
                     //Check if we need to remind the user
                     if (userReminderTypes != ReminderType.NoReminder)
                     {
-                        //Switch between the different reminder types
-                        switch (userReminderTypes)
+                        userCounter++;
+                        
+                        //Check, if the user needs a reminder for today and if we also have requested a reminder for today.
+                        if (userReminderTypes.HasFlag(ReminderType.TodayReminder) &&
+                            typesToRemind.HasFlag(ReminderType.TodayReminder))
                         {
-                            case ReminderType.TodayReminder:
-                                if (SendSpecificReminderType(adapter, userProfile, ReminderType.TodayReminder))
-                                    reminderCounter++;
-                                break;
+                            if (SendSpecificReminderType(adapter, userProfile, ReminderType.TodayReminder))
+                                reminderCounter++;
+                        }
 
-                            case ReminderType.YesterdayReminder:
-                                if (SendSpecificReminderType(adapter, userProfile, ReminderType.YesterdayReminder))
-                                    reminderCounter++;
-                                break;
+                        //Check, if the user needs a reminder for yesterday and if we also have requested a reminder for yesterday.
+                        if (userReminderTypes.HasFlag(ReminderType.YesterdayReminder) &&
+                            typesToRemind.HasFlag(ReminderType.YesterdayReminder))
+                        {
+                            if (SendSpecificReminderType(adapter, userProfile, ReminderType.YesterdayReminder))
+                                reminderCounter++;
                         }
                     }
                 }
             }
-            return $"Sent reminder to {reminderCounter} users";
-        }
 
+            return $"Sent {reminderCounter} reminder to {userCounter} users";
+        }
     }
 }
