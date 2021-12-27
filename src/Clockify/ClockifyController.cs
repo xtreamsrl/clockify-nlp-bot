@@ -36,8 +36,8 @@ namespace Bot.Clockify
             string apiToken = ProactiveApiKeyUtil.Extract(Request);
             _proactiveBotApiKeyValidator.Validate(apiToken);
 
-            var typesToRemind = SpecificRemindService.ReminderType.YesterdayReminder |
-                                SpecificRemindService.ReminderType.TodayReminder;
+            //Only use TodayReminder as default to be compatible to the old behaviour of the endpoint
+            var typesToRemind = SpecificRemindService.ReminderType.TodayReminder;
 
             bool respectWorkingHours = true;
 
