@@ -44,10 +44,38 @@ namespace Bot.Data
             }
         }
 
+        public async Task<bool> RemoveAsync(string id)
+        {
+            if (id == null) throw new ArgumentNullException(id);
+            
+            //First check, whether we have the key locally stored within our cache. If so, remove it!
+            if (_cache.TryGetValue<TokenData>(id, out var _))
+            {
+                _cache.Remove(id);
+            }
+            
+            //Next start to delete the secret from our key vault.
+            try
+            {
+                await _secretClient.StartDeleteSecretAsync(id);
+            }
+            catch (RequestFailedException e)
+            {
+                if (e.Status == 404)
+                {
+                    throw new TokenNotFoundException("No token has been found with id " + id);
+                }
+
+                throw;
+            }
+
+            return true;
+        }
+
         public async Task<TokenData> WriteAsync(string value, string? id = null)
         {
             if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException(value);
-            
+
             string name = id ?? Guid.NewGuid().ToString();
             KeyVaultSecret secret = await _secretClient.SetSecretAsync(name, value);
             return CacheAndGetTokenData(secret);
@@ -56,7 +84,8 @@ namespace Bot.Data
         private TokenData CacheAndGetTokenData(KeyVaultSecret secret)
         {
             var tokenData = new TokenData(secret.Name, secret.Value);
-            _cache.Set(tokenData.Id, tokenData, new MemoryCacheEntryOptions { SlidingExpiration = TimeSpan.FromSeconds(_cacheSeconds) });
+            _cache.Set(tokenData.Id, tokenData,
+                new MemoryCacheEntryOptions { SlidingExpiration = TimeSpan.FromSeconds(_cacheSeconds) });
             return tokenData;
         }
     }

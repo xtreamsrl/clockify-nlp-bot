@@ -59,6 +59,7 @@ namespace Bot.Clockify
 
             if (await RunClockifySetupIfNeeded(turnContext, cancellationToken, userProfile)) return true;
             
+            //Check for fixed intents without using LUIS
             if (_logoutIntent.Contains(turnContext.Activity.Text))
             {
                 await dialogContext.BeginDialogAsync(_logoutDialog.Id, cancellationToken: cancellationToken);
