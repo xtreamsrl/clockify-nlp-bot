@@ -5,6 +5,7 @@ namespace Bot.Remind
 {
     public interface ISpecificRemindService
     {
-        Task<string> SendReminderAsync(IBotFrameworkHttpAdapter adapter, SpecificRemindService.ReminderType reminderTypes);
+        Task<string> SendReminderAsync(IBotFrameworkHttpAdapter adapter, SpecificRemindService.ReminderType reminderTypes,
+            bool respectWorkHours);
     }
 }

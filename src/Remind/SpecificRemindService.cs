@@ -99,7 +99,8 @@ namespace Bot.Remind
             return true;
         }
 
-        public async Task<string> SendReminderAsync(IBotFrameworkHttpAdapter adapter, ReminderType typesToRemind)
+        public async Task<string> SendReminderAsync(IBotFrameworkHttpAdapter adapter, ReminderType typesToRemind,
+            bool respectWorkHours)
         {
             var reminderCounter = 0;
             var userCounter = 0;
@@ -123,8 +124,15 @@ namespace Bot.Remind
                     //Check if we need to remind the user
                     if (userReminderTypes != ReminderType.NoReminder)
                     {
-                        userCounter++;
+                        //Check if we are out of working hours and we also want to check for this, break.
+                        if (userReminderTypes.HasFlag(ReminderType.OutOfWorkTime) && respectWorkHours)
+                        {
+                            break;
+                        }
                         
+                        //Only upcount for users, which are not affected by the "OutOfWorkTime" condition
+                        userCounter++;
+
                         //Check, if the user needs a reminder for today and if we also have requested a reminder for today.
                         if (userReminderTypes.HasFlag(ReminderType.TodayReminder) &&
                             typesToRemind.HasFlag(ReminderType.TodayReminder))

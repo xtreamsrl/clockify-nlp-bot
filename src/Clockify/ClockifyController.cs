@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Bot.Remind;
 using Bot.Security;
@@ -38,6 +39,15 @@ namespace Bot.Clockify
             var typesToRemind = SpecificRemindService.ReminderType.YesterdayReminder |
                                 SpecificRemindService.ReminderType.TodayReminder;
 
+            bool respectWorkingHours = true;
+
+            //Check, whether we should disturb the employee even if it is the mid of the day
+            if (Request.Query.ContainsKey("respectWorkingHours"))
+            {
+                if (Request.Query["respectWorkingHours"].Contains("true")) respectWorkingHours = true;
+                if (Request.Query["respectWorkingHours"].Contains("false")) respectWorkingHours = false;
+            }
+
             //Check for additional query parameters. If there are available, we will only remind those reminders
             if (Request.Query.ContainsKey("type"))
             {
@@ -51,7 +61,7 @@ namespace Bot.Clockify
                     typesToRemind |= SpecificRemindService.ReminderType.TodayReminder;
             }
 
-            return await _entryFillRemindService.SendReminderAsync(_adapter, typesToRemind);
+            return await _entryFillRemindService.SendReminderAsync(_adapter, typesToRemind, respectWorkingHours);
         }
 
         [Route("api/follow-up")]
