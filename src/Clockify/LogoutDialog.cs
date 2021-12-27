@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Bot.Data;
 using Bot.States;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
@@ -13,14 +14,16 @@ namespace Bot.Clockify
         private const string LogoutWaterfall = nameof(LogoutWaterfall);
         private readonly UserState _userState;
         private readonly IClockifyMessageSource _messageSource;
+        private readonly ITokenRepository _tokenRepository;
 
         private const string Yes = "yes";
         private const string No = "no";
 
-        public LogoutDialog(UserState userState, IClockifyMessageSource messageSource)
+        public LogoutDialog(UserState userState, IClockifyMessageSource messageSource, ITokenRepository tokenRepository)
         {
             _userState = userState;
             _messageSource = messageSource;
+            _tokenRepository = tokenRepository;
             AddDialog(new WaterfallDialog(LogoutWaterfall, new List<WaterfallStep>
             {
                 ConfirmationStep,
@@ -65,6 +68,12 @@ namespace Bot.Clockify
                     var userProfile =
                         await StaticUserProfileHelper.GetUserProfileAsync(_userState, stepContext.Context,
                             cancellationToken);
+                    
+                    //Removes the token from the repository! This change reflects immediateley also within all caches 
+                    //and also on the remote key vault!
+                    await _tokenRepository.RemoveAsync(userProfile.ClockifyTokenId!);
+                    
+                    //Now we can also remove the tokenID from the UserProfile
                     userProfile.ClockifyTokenId = null;
                     await stepContext.Context.SendActivityAsync(
                         MessageFactory.Text(_messageSource.LogoutYes), cancellationToken);
