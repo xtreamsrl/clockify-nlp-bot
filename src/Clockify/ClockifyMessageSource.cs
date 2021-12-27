@@ -46,6 +46,8 @@ namespace Bot.Clockify
 
         public string RemindEntryFill => GetString(nameof(RemindEntryFill));
 
+        public string RemindEntryFillYesterday => GetString(nameof(RemindEntryFillYesterday));
+
         private string GetString(string name)
         {
             if (!_localizer[name].ResourceNotFound) return _localizer[name].Value;

@@ -157,4 +157,7 @@ Please don't exceed one year window</value>
     <data name="FollowUp" xml:space="preserve">
         <value>Hey 👋 I noticed you never setup a Clockify token...{0}{0}Help me help you! Once you're setup I will assist you in your daily time tracking.</value>
     </data>
+    <data name="RemindEntryFillYesterday_1" xml:space="preserve">
+        <value>You have not filled in all of your hours for yesterday. Please do so!</value>
+    </data>
 </root>
