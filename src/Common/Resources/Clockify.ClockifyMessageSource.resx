@@ -160,4 +160,10 @@ Please don't exceed one year window</value>
     <data name="RemindEntryFillYesterday_1" xml:space="preserve">
         <value>You have not filled in all of your hours for yesterday. Please do so!</value>
     </data>
+    <data name="SetWorkingHoursFeedback" xml:space="preserve">
+        <value>Ok, I set your daily working hours to {0:0} hours. Happy working 🤖</value>
+    </data>
+    <data name="SetWorkingHoursUnchangedFeedback" xml:space="preserve">
+        <value>Your daily working hours were already set to {0:0} hours 😅. Nothing changed.</value>
+    </data>
 </root>

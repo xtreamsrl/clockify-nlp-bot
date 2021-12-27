@@ -6,6 +6,7 @@ using Bot.Clockify;
 using Bot.Clockify.Client;
 using Bot.Clockify.Fill;
 using Bot.Clockify.Reports;
+using Bot.Clockify.User;
 using Bot.Common;
 using Bot.Common.Recognizer;
 using Bot.Data;
@@ -62,6 +63,7 @@ namespace Bot
             services.AddSingleton<IReportSummaryService, ReportSummaryService>();
             services.AddSingleton<IReportExtractor, ReportExtractor>();
             services.AddSingleton<EntryFillDialog>();
+            services.AddSingleton<UserSettingsDialog>();
             services.AddSingleton<StopReminderDialog>();
             services.AddSingleton<WorthAskingForTaskService>();
             services.AddSingleton<ITimeEntryStoreService, TimeEntryStoreService>();

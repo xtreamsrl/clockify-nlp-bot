@@ -14,6 +14,15 @@ namespace Bot.Clockify
         private readonly IClockifyService _clockifyService;
         private readonly ITokenRepository _tokenRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
+        
+        //Get de default hours to work. If not defined, assume 8hours
+        public static readonly string DefaultWorkingHours =
+            Environment.GetEnvironmentVariable("DEFAULT_WORKING_HOURS") ?? "8";
+
+        //Get the minimum percentage of hours filled. If not defined, assume 75% of a default work day to be reported.
+        //This leads to 6 hours
+        public static readonly string MinimumHoursFilledPercentage =
+            Environment.GetEnvironmentVariable("MINIMUM_HOURS_FILLED_PERCENTAGE") ?? "75";
 
         public PastDayNotComplete(IClockifyService clockifyService, ITokenRepository tokenRepository,
             IDateTimeProvider dateTimeProvider)
@@ -57,7 +66,16 @@ namespace Bot.Clockify
 
                         return 0;
                     });
-                return totalHoursInserted < 6;
+                
+                //Check if we have defined the working hours on user level. If so, calculate the minimum.
+                if (userProfile.WorkingHours != null)
+                    return totalHoursInserted <
+                           (userProfile.WorkingHours * (double.Parse(MinimumHoursFilledPercentage) / 100));
+                
+                //Calculate the minimum amount of hours to be reported based on the defaults.
+                return totalHoursInserted < (double.Parse(DefaultWorkingHours) *
+                                             (double.Parse(MinimumHoursFilledPercentage) / 100));
+                
             }
             catch (Exception)
             {
