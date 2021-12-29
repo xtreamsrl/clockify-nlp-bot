@@ -40,14 +40,14 @@ namespace Bot.Supports
             var replyText = $"Echo BOT2: {turnContext.Activity.Text}";
             await turnContext.SendActivityAsync(MessageFactory.Text(replyText, replyText), cancellationToken);
             
-            // var userProfile =
-            //     await StaticUserProfileHelper.GetUserProfileAsync(_userState, turnContext, cancellationToken);
-            // userProfile.ConversationReference = turnContext.Activity.GetConversationReference();
-            // userProfile.LastConversationUpdate = _dateTimeProvider.DateTimeUtcNow();
-            //
-            // if (await _botHandlerChain.Handle(turnContext, cancellationToken, userProfile)) return;
-            //
-            // await turnContext.SendActivityAsync(MessageFactory.Text(_messageSource.MessageUnhandled), cancellationToken);
+            var userProfile =
+                await StaticUserProfileHelper.GetUserProfileAsync(_userState, turnContext, cancellationToken);
+            userProfile.ConversationReference = turnContext.Activity.GetConversationReference();
+            userProfile.LastConversationUpdate = _dateTimeProvider.DateTimeUtcNow();
+            
+            if (await _botHandlerChain.Handle(turnContext, cancellationToken, userProfile)) return;
+            
+            await turnContext.SendActivityAsync(MessageFactory.Text(_messageSource.MessageUnhandled), cancellationToken);
         }
     }
 }
