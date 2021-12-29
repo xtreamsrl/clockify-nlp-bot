@@ -36,13 +36,14 @@ namespace Bot.Supports
         protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext,
             CancellationToken cancellationToken)
         {
+            
             var userProfile =
                 await StaticUserProfileHelper.GetUserProfileAsync(_userState, turnContext, cancellationToken);
             userProfile.ConversationReference = turnContext.Activity.GetConversationReference();
             userProfile.LastConversationUpdate = _dateTimeProvider.DateTimeUtcNow();
-
+            
             if (await _botHandlerChain.Handle(turnContext, cancellationToken, userProfile)) return;
-
+            
             await turnContext.SendActivityAsync(MessageFactory.Text(_messageSource.MessageUnhandled), cancellationToken);
         }
     }

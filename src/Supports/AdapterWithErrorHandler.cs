@@ -3,23 +3,25 @@ using Bot.Common;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Builder.TraceExtensions;
+using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Bot.Supports
 {
-    public class AdapterWithErrorHandler : BotFrameworkHttpAdapter
+    public class AdapterWithErrorHandler : CloudAdapter
     {
-        public AdapterWithErrorHandler(IHostEnvironment environment, IConfiguration configuration,
+        
+        public AdapterWithErrorHandler(BotFrameworkAuthentication auth, IHostEnvironment environment, IConfiguration configuration,
             ILogger<BotFrameworkHttpAdapter> logger, ICommonMessageSource messageSource,
-            ConversationState? conversationState = default) : base(configuration, logger)
+            ConversationState? conversationState = default) : base(auth, logger)
         {
             OnTurnError = async (turnContext, exception) =>
             {
                 // Log any leaked exception from the application
                 logger.LogError(exception, "[OnTurnError] unhandled error : {ExMessage}", exception.Message);
-
+        
                 if (environment.IsDevelopment())
                 {
                     await turnContext.SendActivityAsync(
@@ -46,7 +48,7 @@ namespace Bot.Supports
                             "Exception caught on attempting to Delete ConversationState : {ExMessage}", e.Message);
                     }
                 }
-
+        
                 // Send a trace activity, which will be displayed in the Bot Framework Emulator
                 await turnContext.TraceActivityAsync("OnTurnError Trace", exception.Message,
                     "https://www.botframework.com/schemas/error", "TurnError");

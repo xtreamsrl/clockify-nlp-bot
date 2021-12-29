@@ -157,4 +157,25 @@ Please don't exceed one year window</value>
     <data name="FollowUp" xml:space="preserve">
         <value>Hey 👋 I noticed you never setup a Clockify token...{0}{0}Help me help you! Once you're setup I will assist you in your daily time tracking.</value>
     </data>
+    <data name="RemindEntryFillYesterday_1" xml:space="preserve">
+        <value>You have not filled in all of your hours for yesterday. Please do so!</value>
+    </data>
+    <data name="SetWorkingHoursFeedback" xml:space="preserve">
+        <value>Ok, I set your daily working hours to {0:0} hours. Happy working 🤖</value>
+    </data>
+    <data name="SetWorkingHoursUnchangedFeedback" xml:space="preserve">
+        <value>Your daily working hours were already set to {0:0} hours 😅. Nothing changed.</value>
+    </data>
+    <data name="LogoutPrompt" xml:space="preserve">
+        <value>Are you sure?</value>
+    </data>
+    <data name="LogoutYes" xml:space="preserve">
+        <value>You have successfully logged out of Clockify!</value>
+    </data>
+    <data name="LogoutNo" xml:space="preserve">
+        <value>As you wish!</value>
+    </data>
+    <data name="LogoutRetryPrompt" xml:space="preserve">
+        <value>Please answer with 'Yes' or 'No'</value>
+    </data>
 </root>
