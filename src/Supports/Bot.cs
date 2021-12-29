@@ -36,9 +36,6 @@ namespace Bot.Supports
         protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext,
             CancellationToken cancellationToken)
         {
-        
-            var replyText = $"Echo BOT2: {turnContext.Activity.Text}";
-            await turnContext.SendActivityAsync(MessageFactory.Text(replyText, replyText), cancellationToken);
             
             var userProfile =
                 await StaticUserProfileHelper.GetUserProfileAsync(_userState, turnContext, cancellationToken);
