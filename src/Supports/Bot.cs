@@ -15,23 +15,23 @@ namespace Bot.Supports
         private readonly ICommonMessageSource _messageSource;
         private readonly IDateTimeProvider _dateTimeProvider;
 
-        // public Bot(ConversationState conversationState, UserState userState, BotHandlerChain botHandlerChain,
-        //     ICommonMessageSource messageSource, IDateTimeProvider dateTimeProvider)
-        // {
-        //     _conversationState = conversationState;
-        //     _userState = userState;
-        //     _botHandlerChain = botHandlerChain;
-        //     _messageSource = messageSource;
-        //     _dateTimeProvider = dateTimeProvider;
-        // }
+        public Bot(ConversationState conversationState, UserState userState, BotHandlerChain botHandlerChain,
+            ICommonMessageSource messageSource, IDateTimeProvider dateTimeProvider)
+        {
+            _conversationState = conversationState;
+            _userState = userState;
+            _botHandlerChain = botHandlerChain;
+            _messageSource = messageSource;
+            _dateTimeProvider = dateTimeProvider;
+        }
 
-        // public override async Task OnTurnAsync(ITurnContext turnContext,
-        //     CancellationToken cancellationToken = new CancellationToken())
-        // {
-        //     await base.OnTurnAsync(turnContext, cancellationToken);
-        //     await _conversationState.SaveChangesAsync(turnContext, false, cancellationToken);
-        //     await _userState.SaveChangesAsync(turnContext, false, cancellationToken);
-        // }
+        public override async Task OnTurnAsync(ITurnContext turnContext,
+            CancellationToken cancellationToken = new CancellationToken())
+        {
+            await base.OnTurnAsync(turnContext, cancellationToken);
+            await _conversationState.SaveChangesAsync(turnContext, false, cancellationToken);
+            await _userState.SaveChangesAsync(turnContext, false, cancellationToken);
+        }
 
         protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext,
             CancellationToken cancellationToken)
